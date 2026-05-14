@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import { Heart, Award, Users, Leaf } from 'lucide-react';
+import falCompany from '@/assets/FAL_COMPANY.png';
 
 export default function About() {
   const values = [
@@ -26,8 +27,15 @@ export default function About() {
   ];
 
   return (
-    <section id="about" className="py-20 bg-muted">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="about" className="relative py-20 overflow-hidden">
+      <img
+        src={falCompany}
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 w-full h-full object-cover blur-sm scale-105"
+      />
+      <div className="absolute inset-0 bg-background/75" />
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -65,5 +73,6 @@ export default function About() {
         </div>
       </div>
     </section>
+
   );
 }

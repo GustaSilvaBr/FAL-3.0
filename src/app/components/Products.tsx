@@ -1,4 +1,4 @@
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { useState, useEffect } from 'react';
 import { Star } from 'lucide-react';
 
@@ -16,7 +16,7 @@ export default function Products() {
   ];
   const [activeCategory, setActiveCategory] = useState('Todos');
   const [currentIdx, setCurrentIdx] = useState(0);
-  const [centerVisible, setCenterVisible] = useState(true);
+  const [direction, setDirection] = useState(1);
 
   const featuredProduct = {
     name: 'Pipoca Nordeste Gravatá',
@@ -35,21 +35,15 @@ export default function Products() {
   const prevIdx = (currentIdx - 1 + featuredImages.length) % featuredImages.length;
   const nextIdx = (currentIdx + 1) % featuredImages.length;
 
-  const navigateTo = (newIdx: number) => {
-    setCenterVisible(false);
-    setTimeout(() => {
-      setCurrentIdx(newIdx);
-      setCenterVisible(true);
-    }, 150);
+  const navigateTo = (newIdx: number, dir: number) => {
+    setDirection(dir);
+    setCurrentIdx(newIdx);
   };
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCenterVisible(false);
-      setTimeout(() => {
-        setCurrentIdx(prev => (prev + 1) % featuredImages.length);
-        setCenterVisible(true);
-      }, 150);
+      setDirection(1);
+      setCurrentIdx(prev => (prev + 1) % featuredImages.length);
     }, 5000);
     return () => clearInterval(timer);
   }, []);
@@ -221,21 +215,26 @@ export default function Products() {
                   transition={{ duration: 0.55, delay: 0.1 }}
                   style={{ position: 'relative', zIndex: 1, marginRight: '-80px', flexShrink: 0 }}
                 >
-                  <motion.button
-                    onClick={() => navigateTo(prevIdx)}
-                    animate={{ scale: 0.82, rotate: -12, opacity: 0.88 }}
-                    whileHover={{ scale: 0.9, opacity: 1 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <img
-                      src={featuredImages[prevIdx]}
-                      alt="Anterior"
-                      className="w-36 h-36 lg:w-52 lg:h-52 object-contain drop-shadow-xl"
-                    />
-                  </motion.button>
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.button
+                      key={prevIdx}
+                      onClick={() => navigateTo(prevIdx, -1)}
+                      initial={{ opacity: 0 }}
+                      animate={{ scale: 0.82, rotate: -12, opacity: 0.88 }}
+                      exit={{ opacity: 0 }}
+                      whileHover={{ scale: 0.9, opacity: 1 }}
+                      transition={{ duration: 0.35 }}
+                    >
+                      <img
+                        src={featuredImages[prevIdx]}
+                        alt="Anterior"
+                        className="w-36 h-36 lg:w-52 lg:h-52 object-contain drop-shadow-xl"
+                      />
+                    </motion.button>
+                  </AnimatePresence>
                 </motion.div>
 
-                {/* Center/main image — rises from below on scroll, sways continuously */}
+                {/* Center/main image — rises from below on scroll, slides on navigation, sways continuously */}
                 <motion.div
                   initial={{ y: 50, opacity: 0 }}
                   whileInView={{ y: 0, opacity: 1 }}
@@ -247,12 +246,21 @@ export default function Products() {
                     animate={{ y: [0, -6, 0], scale: [1, 1.02, 1] }}
                     transition={{ duration: 4, ease: 'easeInOut', repeat: Infinity }}
                   >
-                    <img
-                      src={featuredImages[currentIdx]}
-                      alt={featuredProduct.name}
-                      className="w-52 h-52 lg:w-72 lg:h-72 object-contain drop-shadow-2xl"
-                      style={{ opacity: centerVisible ? 1 : 0, transition: 'opacity 150ms ease' }}
-                    />
+                    <div style={{ position: 'relative', width: 208, height: 208 }} className="lg:w-72 lg:h-72 overflow-hidden">
+                      <AnimatePresence initial={false} custom={direction}>
+                        <motion.img
+                          key={currentIdx}
+                          src={featuredImages[currentIdx]}
+                          alt={featuredProduct.name}
+                          className="absolute inset-0 w-full h-full object-contain drop-shadow-2xl"
+                          custom={direction}
+                          initial={(dir: number) => ({ x: dir > 0 ? 160 : -160, opacity: 0 })}
+                          animate={{ x: 0, opacity: 1 }}
+                          exit={(dir: number) => ({ x: dir > 0 ? -160 : 160, opacity: 0 })}
+                          transition={{ x: { type: 'spring', stiffness: 350, damping: 35 }, opacity: { duration: 0.25 } }}
+                        />
+                      </AnimatePresence>
+                    </div>
                   </motion.div>
                 </motion.div>
 
@@ -264,18 +272,23 @@ export default function Products() {
                   transition={{ duration: 0.55, delay: 0.1 }}
                   style={{ position: 'relative', zIndex: 1, marginLeft: '-80px', flexShrink: 0 }}
                 >
-                  <motion.button
-                    onClick={() => navigateTo(nextIdx)}
-                    animate={{ scale: 0.82, rotate: 12, opacity: 0.88 }}
-                    whileHover={{ scale: 0.9, opacity: 1 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <img
-                      src={featuredImages[nextIdx]}
-                      alt="Próximo"
-                      className="w-36 h-36 lg:w-52 lg:h-52 object-contain drop-shadow-xl"
-                    />
-                  </motion.button>
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.button
+                      key={nextIdx}
+                      onClick={() => navigateTo(nextIdx, 1)}
+                      initial={{ opacity: 0 }}
+                      animate={{ scale: 0.82, rotate: 12, opacity: 0.88 }}
+                      exit={{ opacity: 0 }}
+                      whileHover={{ scale: 0.9, opacity: 1 }}
+                      transition={{ duration: 0.35 }}
+                    >
+                      <img
+                        src={featuredImages[nextIdx]}
+                        alt="Próximo"
+                        className="w-36 h-36 lg:w-52 lg:h-52 object-contain drop-shadow-xl"
+                      />
+                    </motion.button>
+                  </AnimatePresence>
                 </motion.div>
 
               </div>

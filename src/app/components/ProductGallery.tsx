@@ -3,20 +3,36 @@ import { motion } from 'motion/react';
 export default function ProductGallery() {
   const productImages = [
     {
-      name: 'Pipoca',
-      image: new URL('../imports/WhatsApp_Image_2026-05-05_at_8.00.17_AM__1_.jpeg', import.meta.url).href,
-    },
-    {
       name: 'Amendoim',
-      image: new URL('../imports/WhatsApp_Image_2026-05-04_at_2.35.19_PM.jpeg', import.meta.url).href,
+      image: new URL('../../assets/products/Amendoim/amendoim.jpeg', import.meta.url).href,
     },
     {
       name: 'Batata Chips',
-      image: new URL('../imports/WhatsApp_Image_2026-05-04_at_2.51.45_PM.jpeg', import.meta.url).href,
+      image: new URL('../../assets/products/Batata Chips/batatachips_original.jpeg', import.meta.url).href,
+    },
+    {
+      name: 'Bolinhos de Goma',
+      image: new URL('../../assets/products/Bolinhos de Goma/bolinhos_De_goma_50g.png', import.meta.url).href,
     },
     {
       name: 'Paçoca',
-      image: new URL('../imports/WhatsApp_Image_2026-05-04_at_3.00.46_PM.jpeg', import.meta.url).href,
+      image: new URL('../../assets/products/Paçoca/paçoca.jpeg', import.meta.url).href,
+    },
+    {
+      name: 'Pipoca Gravatá',
+      image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipoca_gravatá_10g_0trans_yellow.jpeg', import.meta.url).href,
+    },
+    {
+      name: 'Salgadinhos',
+      image: new URL("../../assets/products/Salgadinhos/Pipofloc's/pipo_flocs_queijo_13g.jpeg", import.meta.url).href,
+    },
+    {
+      name: 'Salgadinhos de Trigo',
+      image: new URL('../../assets/products/Salgadinhos de Trigo/Belleza/belleza_queijo_40g.jpeg', import.meta.url).href,
+    },
+    {
+      name: 'Torresminho',
+      image: new URL('../../assets/products/Torresminho/piggys_bacon_30g.jpeg', import.meta.url).href,
     },
   ];
 
@@ -38,7 +54,7 @@ export default function ProductGallery() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-6">
           {productImages.map((product, index) => (
             <motion.div
               key={product.name}

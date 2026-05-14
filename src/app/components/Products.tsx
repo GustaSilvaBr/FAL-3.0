@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Star } from 'lucide-react';
 
 export default function Products() {
@@ -15,13 +15,44 @@ export default function Products() {
     'Torresminho',
   ];
   const [activeCategory, setActiveCategory] = useState('Todos');
+  const [currentIdx, setCurrentIdx] = useState(0);
+  const [centerVisible, setCenterVisible] = useState(true);
 
   const featuredProduct = {
     name: 'Pipoca Nordeste Gravatá',
     description: 'Nossa pipoca especial — crocante, amanteigada e irresistivelmente deliciosa. Feita com grãos selecionados e 0% de gordura trans. O favorito das famílias brasileiras!',
     variants: ['Crocantes e Amanteigadas', 'Natural'],
-    image: new URL('../imports/WhatsApp_Image_2026-05-05_at_8.00.17_AM__1_.jpeg', import.meta.url).href,
   };
+
+  const featuredImages = [
+    new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipoca_gravatá_10g_0trans_yellow.jpeg', import.meta.url).href,
+    new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipoca_gravatá_10g_0trans_white.jpeg', import.meta.url).href,
+    new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipocao_gravatá_40g_0trans_white.jpeg', import.meta.url).href,
+    new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipocao_gravatá_72g_0trans_white.jpeg', import.meta.url).href,
+    new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipocao_gravatá_90g_0trans_white.jpeg', import.meta.url).href,
+  ];
+
+  const prevIdx = (currentIdx - 1 + featuredImages.length) % featuredImages.length;
+  const nextIdx = (currentIdx + 1) % featuredImages.length;
+
+  const navigateTo = (newIdx: number) => {
+    setCenterVisible(false);
+    setTimeout(() => {
+      setCurrentIdx(newIdx);
+      setCenterVisible(true);
+    }, 150);
+  };
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCenterVisible(false);
+      setTimeout(() => {
+        setCurrentIdx(prev => (prev + 1) % featuredImages.length);
+        setCenterVisible(true);
+      }, 150);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
 
   const products = [
     // Amendoim
@@ -177,12 +208,77 @@ export default function Products() {
                 </button>
               </div>
             </div>
-            <div className="relative h-96 lg:h-auto flex items-center justify-center p-8">
-              <img
-                src={featuredProduct.image}
-                alt={featuredProduct.name}
-                className="w-full h-full object-contain drop-shadow-2xl"
-              />
+            <div className="relative flex items-center justify-center overflow-hidden min-h-[24rem] py-8">
+
+              {/* Three-image stage */}
+              <div className="flex items-center justify-center w-full px-4">
+
+                {/* Previous image — slides in from left on scroll */}
+                <motion.div
+                  initial={{ x: -60, opacity: 0 }}
+                  whileInView={{ x: 0, opacity: 1 }}
+                  viewport={{ once: true, amount: 0.4 }}
+                  transition={{ duration: 0.55, delay: 0.1 }}
+                  style={{ position: 'relative', zIndex: 1, marginRight: '-80px', flexShrink: 0 }}
+                >
+                  <motion.button
+                    onClick={() => navigateTo(prevIdx)}
+                    animate={{ scale: 0.82, rotate: -12, opacity: 0.88 }}
+                    whileHover={{ scale: 0.9, opacity: 1 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <img
+                      src={featuredImages[prevIdx]}
+                      alt="Anterior"
+                      className="w-36 h-36 lg:w-52 lg:h-52 object-contain drop-shadow-xl"
+                    />
+                  </motion.button>
+                </motion.div>
+
+                {/* Center/main image — rises from below on scroll, sways continuously */}
+                <motion.div
+                  initial={{ y: 50, opacity: 0 }}
+                  whileInView={{ y: 0, opacity: 1 }}
+                  viewport={{ once: true, amount: 0.4 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  style={{ position: 'relative', zIndex: 3, flexShrink: 0 }}
+                >
+                  <motion.div
+                    animate={{ y: [0, -6, 0], scale: [1, 1.02, 1] }}
+                    transition={{ duration: 4, ease: 'easeInOut', repeat: Infinity }}
+                  >
+                    <img
+                      src={featuredImages[currentIdx]}
+                      alt={featuredProduct.name}
+                      className="w-52 h-52 lg:w-72 lg:h-72 object-contain drop-shadow-2xl"
+                      style={{ opacity: centerVisible ? 1 : 0, transition: 'opacity 150ms ease' }}
+                    />
+                  </motion.div>
+                </motion.div>
+
+                {/* Next image — slides in from right on scroll */}
+                <motion.div
+                  initial={{ x: 60, opacity: 0 }}
+                  whileInView={{ x: 0, opacity: 1 }}
+                  viewport={{ once: true, amount: 0.4 }}
+                  transition={{ duration: 0.55, delay: 0.1 }}
+                  style={{ position: 'relative', zIndex: 1, marginLeft: '-80px', flexShrink: 0 }}
+                >
+                  <motion.button
+                    onClick={() => navigateTo(nextIdx)}
+                    animate={{ scale: 0.82, rotate: 12, opacity: 0.88 }}
+                    whileHover={{ scale: 0.9, opacity: 1 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <img
+                      src={featuredImages[nextIdx]}
+                      alt="Próximo"
+                      className="w-36 h-36 lg:w-52 lg:h-52 object-contain drop-shadow-xl"
+                    />
+                  </motion.button>
+                </motion.div>
+
+              </div>
             </div>
           </div>
         </motion.div>

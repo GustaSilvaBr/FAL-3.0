@@ -117,28 +117,36 @@ function ProductWheel() {
                 zIndex: hoveredIdx === i ? 30 : 1,
               }}
             >
+              {/* Counter-rotation wrapper */}
               <motion.div
-                className="flex items-center justify-center bg-white rounded-full shadow-lg overflow-hidden cursor-pointer"
-                style={{ width: 86, height: 86 }}
                 animate={{ rotate: -360 }}
                 transition={{ duration: DURATION, repeat: Infinity, ease: 'linear' }}
-                whileHover={{ scale: 2.4 }}
-                onHoverStart={() => setHoveredIdx(i)}
-                onHoverEnd={() => setHoveredIdx(null)}
-                title={product.name}
               >
-                <AnimatePresence mode="wait">
-                  <motion.img
-                    key={product.name}
-                    src={product.image}
-                    alt={product.name}
-                    className="w-[72px] h-[72px] object-contain"
-                    initial={{ opacity: 0, scale: 0.6 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.6 }}
-                    transition={{ duration: 0.35 }}
-                  />
-                </AnimatePresence>
+                {/* Hover-scale wrapper — separate from rotation so overflow-hidden doesn't clip */}
+                <motion.div
+                  style={{ width: 86, height: 86 }}
+                  whileHover={{ scale: 2.4 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                  onHoverStart={() => setHoveredIdx(i)}
+                  onHoverEnd={() => setHoveredIdx(null)}
+                  className="cursor-pointer"
+                  title={product.name}
+                >
+                  <div className="w-full h-full rounded-full bg-white shadow-lg overflow-hidden flex items-center justify-center">
+                    <AnimatePresence mode="wait">
+                      <motion.img
+                        key={product.name}
+                        src={product.image}
+                        alt={product.name}
+                        className="w-[72px] h-[72px] object-contain"
+                        initial={{ opacity: 0, scale: 0.6 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.6 }}
+                        transition={{ duration: 0.35 }}
+                      />
+                    </AnimatePresence>
+                  </div>
+                </motion.div>
               </motion.div>
             </div>
           );

@@ -5,6 +5,7 @@ import ProductGallery from './components/ProductGallery';
 import About from './components/About';
 import Brands from './components/Brands';
 import Products from './components/Products';
+import ProductCatalog from './components/ProductCatalog';
 import Footer from './components/Footer';
 
 export default function App() {
@@ -12,11 +13,11 @@ export default function App() {
     <div className="min-h-screen">
       <Navigation />
       <Hero />
-      <PipocaShowcase />
-      <ProductGallery />
-      <About />
-      <Brands />
       <Products />
+      <ProductGallery />
+      <Brands />
+      <About />
+      <ProductCatalog />
       <Footer />
     </div>
   );

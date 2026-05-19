@@ -57,18 +57,18 @@ export default function Hero() {
   }, [api, scheduleNext, stopAutoplay]);
 
   return (
-    <section id="home" className="relative h-screen overflow-hidden">
+    <section id="home" className="relative h-[90vh] overflow-hidden">
       {/* Carousel background */}
       <div className="absolute inset-0 z-0">
         <Carousel setApi={setApi} opts={{ loop: true }} className="h-full w-full">
-          <CarouselContent className="ml-0 h-screen">
+          <CarouselContent className="ml-0 h-[90vh]">
             {slides.map((slide, i) =>
               slide.type === 'image' ? (
-                <CarouselItem key={i} className="pl-0 h-screen">
+                <CarouselItem key={i} className="pl-0 h-[90vh]">
                   <img src={slide.src} alt={slide.alt} className="w-full h-full object-cover" />
                 </CarouselItem>
               ) : (
-                <CarouselItem key={i} className="pl-0 h-screen">
+                <CarouselItem key={i} className="pl-0 h-[90vh]">
                   <video
                     autoPlay
                     muted

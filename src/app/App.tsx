@@ -1,6 +1,8 @@
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
 import Novidades from './components/Novidades';
+import QueridinhaPipoca from './components/QueridinhaPipoca';
+import SempreImitada from './components/SempreImitada';
 import PipocaShowcase from './components/PipocaShowcase';
 import ProductGallery from './components/ProductGallery';
 import About from './components/About';
@@ -15,7 +17,8 @@ export default function App() {
       <Navigation />
       <Hero />
       <Novidades />
-      <Products />
+      <QueridinhaPipoca />
+      <SempreImitada />
       <ProductGallery />
       <Brands />
       <About />

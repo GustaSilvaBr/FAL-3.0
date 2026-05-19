@@ -56,8 +56,8 @@ const initialWheelItems: WheelProduct[] = [
   allByCategory['Salgadinho Iaê'][0],
 ];
 
-const RADIUS = 168;
-const CONTAINER = 420;
+const RADIUS = 200;
+const CONTAINER = 500;
 const DURATION = 40;
 
 function ProductWheel() {
@@ -91,8 +91,8 @@ function ProductWheel() {
       />
 
       {/* Center logo */}
-      <div className="absolute z-10 flex items-center justify-center rounded-full bg-white shadow-xl" style={{ width: 140, height: 140 }}>
-        <img src={nordesteLogo} alt="Nordeste Gravatá" className="w-32 h-32 object-contain p-1" />
+      <div className="absolute z-10 flex items-center justify-center rounded-full bg-white shadow-xl" style={{ width: 168, height: 168 }}>
+        <img src={nordesteLogo} alt="Nordeste Gravatá" className="w-36 h-36 object-contain p-1" />
       </div>
 
       {/* Rotating orbit container */}
@@ -124,7 +124,7 @@ function ProductWheel() {
               >
                 {/* Hover-scale wrapper — separate from rotation so overflow-hidden doesn't clip */}
                 <motion.div
-                  style={{ width: 86, height: 86 }}
+                  style={{ width: 103, height: 103 }}
                   whileHover={{ scale: 2.4 }}
                   transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                   onHoverStart={() => setHoveredIdx(i)}
@@ -138,7 +138,7 @@ function ProductWheel() {
                         key={product.name}
                         src={product.image}
                         alt={product.name}
-                        className="w-[72px] h-[72px] object-contain"
+                        className="w-[86px] h-[86px] object-contain"
                         initial={{ opacity: 0, scale: 0.6 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.6 }}
@@ -158,57 +158,42 @@ function ProductWheel() {
 
 export default function Brands() {
   return (
-    <section id="brands" className="py-20 bg-white">
+    <section id="brands" className="py-20 bg-gradient-to-br from-accent/20 to-primary/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl text-foreground mb-6">
-            Nossas Marcas
-          </h2>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-            Uma família de marcas unidas pela qualidade, tradição e o sabor autêntico do Brasil.
-          </p>
-        </motion.div>
+       
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="relative overflow-hidden rounded-2xl shadow-2xl bg-gradient-to-br from-primary/10 to-accent/10"
+          className="grid grid-cols-1 lg:grid-cols-2 gap-8"
         >
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-8 lg:p-16">
-            <div className="flex flex-col justify-center order-1">
-              <div className="flex items-center gap-2 mb-6">
-                <Sparkles className="w-8 h-8 text-accent" />
-                <span className="text-accent text-lg uppercase tracking-wider">Nosso Orgulho</span>
-              </div>
-              <h3 className="text-5xl md:text-6xl lg:text-7xl mb-6 text-foreground">
-                Nordeste Gravatá
-              </h3>
-              <p className="text-2xl md:text-3xl text-primary mb-8">
-                O Sabor Autêntico do Nordeste Brasileiro
-              </p>
-              <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-                Nossa marca principal leva receitas tradicionais e qualidade premium para cada cozinha. Da nossa famosa pipoca a salgadinhos e doces irresistíveis, Nordeste Gravatá é sinônimo de sabor e tradição brasileiros autênticos.
-              </p>
-              <div>
-                <a
-                  href="#products"
-                  className="inline-block px-8 py-4 bg-primary text-white text-lg rounded-lg hover:bg-primary/90 transition-all duration-200 shadow-lg hover:shadow-xl"
-                >
-                  Conheça Nossos Produtos
-                </a>
-              </div>
+          <div className="flex flex-col justify-center order-1">
+            <div className="flex items-center gap-2 mb-6">
+              <Sparkles className="w-8 h-8 text-accent" />
+              <span className="text-accent text-lg uppercase tracking-wider">Nosso Orgulho</span>
             </div>
-            <div className="flex items-center justify-center order-2 py-8 lg:py-0">
-              <ProductWheel />
+            <h3 className="text-5xl md:text-6xl lg:text-7xl mb-6 text-foreground">
+              Nordeste Gravatá
+            </h3>
+            <p className="text-2xl md:text-3xl text-primary mb-8">
+              O Sabor Autêntico do Nordeste Brasileiro
+            </p>
+            <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
+              Nossa marca principal leva receitas tradicionais e qualidade premium para cada cozinha. Da nossa famosa pipoca a salgadinhos e doces irresistíveis, Nordeste Gravatá é sinônimo de sabor e tradição brasileiros autênticos.
+            </p>
+            <div>
+              <a
+                href="#products"
+                className="inline-block px-8 py-4 bg-primary text-white text-lg rounded-lg hover:bg-primary/90 transition-all duration-200 shadow-lg hover:shadow-xl"
+              >
+                Conheça Nossos Produtos
+              </a>
             </div>
+          </div>
+          <div className="flex items-center justify-center order-2 py-8 lg:py-0">
+            <ProductWheel />
           </div>
         </motion.div>
       </div>

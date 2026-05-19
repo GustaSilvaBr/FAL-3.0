@@ -58,7 +58,7 @@ export default function Novidades() {
   const sidebar = products.slice(1);
 
   return (
-    <section className="py-20 bg-muted px-4 sm:px-6 lg:px-8">
+    <section className="py-20 bg-gradient-to-br from-accent/20 to-primary/10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
 
         {/* Header */}
@@ -78,14 +78,13 @@ export default function Novidades() {
           </a>
         </div>
 
-        {/* Card */}
-        <div className="rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-br from-accent/20 to-primary/10 flex">
+        <div className="flex">
 
           {/* ── Featured ─────────────────────────────────── */}
           <div className="flex w-[62%]">
 
             {/* Product image */}
-            <div className="w-[44%] shrink-0 relative overflow-hidden bg-gradient-to-br from-accent/30 to-primary/20 flex items-center justify-center">
+            <div className="w-[44%] shrink-0 relative overflow-hidden flex items-center justify-center">
               <AnimatePresence mode="wait">
                 <motion.img
                   key={featured.image}
@@ -155,7 +154,7 @@ export default function Novidades() {
           </div>
 
           {/* ── Sidebar ──────────────────────────────────── */}
-          <div className="flex flex-col justify-between w-[38%] p-8 border-l border-primary/10">
+          <div className="flex flex-col justify-between w-[38%] p-8 border-l border-primary/20">
 
             <p className="text-xs font-bold uppercase tracking-widest text-primary mb-4">
               Também em destaque

@@ -1,13 +1,8 @@
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
 import Novidades from './components/Novidades';
-import QueridinhaPipoca from './components/QueridinhaPipoca';
-import SempreImitada from './components/SempreImitada';
-import PipocaShowcase from './components/PipocaShowcase';
-import ProductGallery from './components/ProductGallery';
-import About from './components/About';
+import PipocaGravata from './components/PipocaGravata';
 import Brands from './components/Brands';
-import Products from './components/Products';
 import ProductCatalog from './components/ProductCatalog';
 import Footer from './components/Footer';
 
@@ -17,11 +12,8 @@ export default function App() {
       <Navigation />
       <Hero />
       <Novidades />
-      <QueridinhaPipoca />
-      <SempreImitada />
-      <ProductGallery />
+      <PipocaGravata />
       <Brands />
-      <About />
       <ProductCatalog />
       <Footer />
     </div>

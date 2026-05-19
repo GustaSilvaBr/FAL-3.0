@@ -135,7 +135,7 @@ export default function ProductCatalog() {
   };
 
   return (
-    <section id="products" className="py-20 bg-muted">
+    <section id="products" className="py-20 bg-gradient-to-br from-accent/20 to-primary/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

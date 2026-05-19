@@ -1,61 +1,126 @@
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { motion } from 'motion/react';
 import { ChevronDown } from 'lucide-react';
-import heroImage from '../../assets/hero.png';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  type CarouselApi,
+} from './ui/carousel';
+import photo1 from '../../assets/hero/mock_photo_1.jpg';
+import photo2 from '../../assets/hero/mock_photo_2.jpg';
+import heroVideo from '../../assets/hero/pop_video.mp4';
+
+const PHOTO_DURATION = 5000;
+const VIDEO_DURATION = 12000;
+
+const slides = [
+  { type: 'image' as const, src: photo1, alt: 'Petiscos FAL' },
+  { type: 'image' as const, src: photo2, alt: 'Produtos FAL' },
+  { type: 'video' as const, src: heroVideo },
+];
+
+function durationFor(index: number) {
+  return slides[index].type === 'video' ? VIDEO_DURATION : PHOTO_DURATION;
+}
 
 export default function Hero() {
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+
+  const stopAutoplay = useCallback(() => clearTimeout(timerRef.current), []);
+
+  const scheduleNext = useCallback(
+    (index: number) => {
+      stopAutoplay();
+      timerRef.current = setTimeout(() => {
+        api?.scrollNext();
+      }, durationFor(index));
+    },
+    [api, stopAutoplay],
+  );
+
+  useEffect(() => {
+    if (!api) return;
+    const snap = api.selectedScrollSnap();
+    setCurrent(snap);
+    scheduleNext(snap);
+
+    api.on('select', () => {
+      const next = api.selectedScrollSnap();
+      setCurrent(next);
+      scheduleNext(next);
+    });
+
+    return stopAutoplay;
+  }, [api, scheduleNext, stopAutoplay]);
+
   return (
-    <section id="home" className="relative h-screen flex flex-col overflow-hidden">
-      <div
-        className="absolute inset-0 z-0 bg-gradient-to-br from-primary/90 via-accent/80 to-secondary/90"
-      >
-        <div
-          className="absolute inset-0 opacity-20"
-          style={{
-            backgroundImage: `url(${heroImage})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        />
+    <section id="home" className="relative h-screen overflow-hidden">
+      {/* Carousel background */}
+      <div className="absolute inset-0 z-0">
+        <Carousel setApi={setApi} opts={{ loop: true }} className="h-full w-full">
+          <CarouselContent className="ml-0 h-screen">
+            {slides.map((slide, i) =>
+              slide.type === 'image' ? (
+                <CarouselItem key={i} className="pl-0 h-screen">
+                  <img src={slide.src} alt={slide.alt} className="w-full h-full object-cover" />
+                </CarouselItem>
+              ) : (
+                <CarouselItem key={i} className="pl-0 h-screen">
+                  <video
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="auto"
+                    className="w-full h-full object-cover"
+                  >
+                    <source src={slide.src} type="video/mp4" />
+                  </video>
+                </CarouselItem>
+              ),
+            )}
+          </CarouselContent>
+        </Carousel>
+
+        <div className="absolute inset-0 bg-black/35" />
       </div>
 
-      <div className="relative z-10 flex flex-col justify-between h-full text-center px-4 max-w-5xl mx-auto w-full py-24">
+      {/* Title */}
+      <div className="relative z-10 flex items-start justify-center h-full pt-32">
         <motion.h1
-          className="text-5xl md:text-7xl lg:text-8xl text-white"
+          className="text-5xl md:text-7xl lg:text-8xl text-white text-center"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
           Petiscos & Tradição
         </motion.h1>
-
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-        >
-          <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto">
-            Da nossa famosa pipoca à tradicional paçoca e salgadinhos, levamos o sabor autêntico de Gravatá para as famílias de todo o Brasil.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="#brands"
-              className="px-8 py-4 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all duration-200 shadow-lg hover:shadow-xl"
-            >
-              Conheça Nossas Marcas
-            </a>
-            <a
-              href="#about"
-              className="px-8 py-4 bg-white/10 backdrop-blur-sm text-white border-2 border-white rounded-lg hover:bg-white/20 transition-all duration-200"
-            >
-              Nossa História
-            </a>
-          </div>
-        </motion.div>
       </div>
 
+      {/* Dot indicators */}
+      <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-10 flex gap-2 items-center">
+        {slides.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => {
+              api?.scrollTo(i);
+              scheduleNext(i);
+            }}
+            aria-label={`Ir para slide ${i + 1}`}
+            className={`h-2 rounded-full transition-all duration-300 ${
+              i === current ? 'w-6 bg-white' : 'w-2 bg-white/50 hover:bg-white/75'
+            }`}
+          />
+        ))}
+      </div>
+
+      {/* Scroll indicator */}
       <motion.a
         href="#about"
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white cursor-pointer"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white cursor-pointer z-10"
         animate={{ y: [0, 10, 0] }}
         transition={{ duration: 1.5, repeat: Infinity }}
       >

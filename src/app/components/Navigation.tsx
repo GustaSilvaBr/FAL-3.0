@@ -9,7 +9,7 @@ export default function Navigation() {
   const navItems = [
     { label: 'Início', href: 'home' },
     { label: 'Sobre', href: 'about' },
-    { label: 'Marcas', href: 'brands' },
+    { label: 'Nordeste Gravatá', href: 'brands' },
     { label: 'Produtos', href: 'products' },
     { label: 'Contato', href: 'contact' },
   ];

@@ -1,5 +1,6 @@
 import Navigation from './components/Navigation';
 import Hero from './components/Hero';
+import Novidades from './components/Novidades';
 import PipocaShowcase from './components/PipocaShowcase';
 import ProductGallery from './components/ProductGallery';
 import About from './components/About';
@@ -13,6 +14,7 @@ export default function App() {
     <div className="min-h-screen">
       <Navigation />
       <Hero />
+      <Novidades />
       <Products />
       <ProductGallery />
       <Brands />

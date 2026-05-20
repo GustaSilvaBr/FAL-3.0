@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Menu, X, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { Link, useLocation } from 'react-router';
 import falLogo from '../../assets/FAL_LOGO.png';
 
 const mascotUrl = new URL('../../assets/mascot.png', import.meta.url).href;
@@ -10,6 +11,8 @@ export default function Navigation() {
   const [search, setSearch] = useState('');
   const [visible, setVisible] = useState(true);
   const lastScrollY = useRef(0);
+  const location = useLocation();
+  const isHome = location.pathname === '/';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -21,12 +24,11 @@ export default function Navigation() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navItems = [
-    { label: 'Início', href: 'home' },
-    { label: 'Sobre', href: 'about' },
-    { label: 'Nordeste Gravatá', href: 'brands' },
-    { label: 'Produtos', href: 'products' },
-    { label: 'Contato', href: 'contact' },
+  const anchorItems = [
+    { label: 'Início', anchor: 'home' },
+    { label: 'Sobre', anchor: 'about' },
+    { label: 'Nordeste Gravatá', anchor: 'brands' },
+    { label: 'Contato', anchor: 'contact' },
   ];
 
   return (
@@ -49,12 +51,13 @@ export default function Navigation() {
 
           {/* Nav links — center */}
           <div className="hidden md:flex flex-1 justify-center items-center gap-8">
-            {navItems.map((item) => {
-              const isHighlight = item.href === 'brands';
+            {anchorItems.map((item) => {
+              const isHighlight = item.anchor === 'brands';
+              const href = isHome ? `#${item.anchor}` : `/#${item.anchor}`;
               return (
                 <a
-                  key={item.href}
-                  href={`#${item.href}`}
+                  key={item.anchor}
+                  href={href}
                   className={`relative group whitespace-nowrap transition-colors duration-200 ${
                     isHighlight
                       ? 'text-primary font-bold text-lg hover:text-primary/80'
@@ -66,6 +69,17 @@ export default function Navigation() {
                 </a>
               );
             })}
+            <Link
+              to="/produtos"
+              className={`relative group whitespace-nowrap transition-colors duration-200 font-medium ${
+                location.pathname === '/produtos'
+                  ? 'text-primary'
+                  : 'text-foreground hover:text-primary'
+              }`}
+            >
+              Produtos
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-200 group-hover:w-full" />
+            </Link>
           </div>
 
           {/* Search bar — right */}
@@ -102,16 +116,23 @@ export default function Navigation() {
             className="relative md:hidden border-t border-primary/10"
           >
             <div className="px-4 py-4 space-y-3">
-              {navItems.map((item) => (
+              {anchorItems.map((item) => (
                 <a
-                  key={item.href}
-                  href={`#${item.href}`}
+                  key={item.anchor}
+                  href={isHome ? `#${item.anchor}` : `/#${item.anchor}`}
                   className="block py-2 text-foreground hover:text-primary transition-colors"
                   onClick={() => setIsOpen(false)}
                 >
                   {item.label}
                 </a>
               ))}
+              <Link
+                to="/produtos"
+                className="block py-2 text-foreground hover:text-primary transition-colors"
+                onClick={() => setIsOpen(false)}
+              >
+                Produtos
+              </Link>
               <div className="flex items-center gap-2 bg-white/50 rounded-full px-4 py-2 mt-2 border border-primary/10">
                 <Search className="w-4 h-4 text-muted-foreground" />
                 <input

@@ -1,78 +1,164 @@
-import { Facebook, Instagram, Twitter, Mail, Phone, MapPin } from 'lucide-react';
+import { Link } from 'react-router';
+import { Facebook, Instagram, Mail, Phone, MapPin, Clock } from 'lucide-react';
+
+const falLogo = new URL('../../assets/FAL_LOGO.png', import.meta.url).href;
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer id="contact" className="bg-gradient-to-br from-foreground via-foreground to-primary/20 text-white relative overflow-hidden">
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-accent rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary rounded-full blur-3xl"></div>
+    <footer id="contact" className="relative z-0" style={{ backgroundColor: '#FFE800' }}>
+
+      {/* Faixa Gravatá recreada em SVG */}
+      <div className="w-full" style={{ lineHeight: 0 }}>
+        <svg
+          viewBox="0 0 1440 200"
+          preserveAspectRatio="none"
+          xmlns="http://www.w3.org/2000/svg"
+          className="block w-full"
+          style={{ height: '160px' }}
+        >
+          {/* Área branca acima da faixa – afunila no centro onde a onda desce */}
+          <path
+            d="M0,0 H1440 V12 Q720,232 0,12 Z"
+            fill="white"
+          />
+          {/* Listra azul (topo) */}
+          <path
+            d="M0,20 Q720,240 1440,20"
+            fill="none"
+            stroke="#1B3A8F"
+            strokeWidth="16"
+          />
+          {/* Listra branca (meio) */}
+          <path
+            d="M0,33 Q720,253 1440,33"
+            fill="none"
+            stroke="white"
+            strokeWidth="12"
+          />
+          {/* Listra vermelha (base) */}
+          <path
+            d="M0,44 Q720,264 1440,44"
+            fill="none"
+            stroke="#CC1122"
+            strokeWidth="12"
+          />
+        </svg>
       </div>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
+
+      {/* Conteúdo na área amarela */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+
+          {/* Marca + Links */}
           <div>
-            <div className="flex items-center mb-6">
-              <span className="text-3xl font-bold text-primary">Nordeste</span>
-              <span className="ml-1 text-3xl font-bold text-secondary">Food</span>
+            <div className="mb-6">
+              <img src={falLogo} alt="FAL Alimentos" className="h-16 object-contain" />
             </div>
-            <p className="text-white/80 mb-6">
-              Levando o sabor autêntico do Nordeste brasileiro para famílias de todo o país desde 1990.
+            <p className="text-gray-800 mb-6 text-base leading-relaxed">
+              Levando o sabor autêntico do Nordeste brasileiro para famílias de todo o país.
             </p>
-            <div className="flex gap-4">
-              <a href="#" className="w-10 h-10 bg-white/10 hover:bg-primary rounded-full flex items-center justify-center transition-colors">
+            <div className="flex gap-4 mb-8">
+              <a
+                href="#"
+                className="w-10 h-10 bg-black/10 hover:bg-[#1B3A8F] hover:text-white text-gray-900 rounded-full flex items-center justify-center transition-colors"
+              >
                 <Facebook size={20} />
               </a>
-              <a href="#" className="w-10 h-10 bg-white/10 hover:bg-primary rounded-full flex items-center justify-center transition-colors">
+              <a
+                href="#"
+                className="w-10 h-10 bg-black/10 hover:bg-[#1B3A8F] hover:text-white text-gray-900 rounded-full flex items-center justify-center transition-colors"
+              >
                 <Instagram size={20} />
               </a>
-              <a href="#" className="w-10 h-10 bg-white/10 hover:bg-primary rounded-full flex items-center justify-center transition-colors">
-                <Twitter size={20} />
-              </a>
+            </div>
+            <h4 className="text-xs font-bold mb-4 text-[#1B3A8F] uppercase tracking-widest">Links Rápidos</h4>
+            <ul className="space-y-3">
+              <li><a href="#about" className="text-gray-800 hover:text-[#1B3A8F] font-medium transition-colors">Sobre Nós</a></li>
+              <li><a href="#brands" className="text-gray-800 hover:text-[#1B3A8F] font-medium transition-colors">Nossas Marcas</a></li>
+              <li><Link to="/produtos" className="text-gray-800 hover:text-[#1B3A8F] font-medium transition-colors">Produtos</Link></li>
+            </ul>
+          </div>
+
+          {/* Contato */}
+          <div>
+            <h4 className="text-xs font-bold mb-6 text-[#1B3A8F] uppercase tracking-widest">Contato</h4>
+            <ul className="space-y-5">
+              <li className="flex items-start gap-3">
+                <MapPin size={18} className="text-[#CC1122] mt-1 shrink-0" />
+                <span className="text-gray-800 leading-relaxed">
+                  Avenida Brasil, 27/61<br />
+                  Alpes Suíços — Gravatá-PE<br />
+                  CEP: 55.645-220
+                </span>
+              </li>
+              <li className="flex items-center gap-3">
+                <Phone size={18} className="text-[#CC1122] shrink-0" />
+                <span className="text-gray-800">(81) 3533-0595</span>
+              </li>
+              <li className="flex items-center gap-3">
+                <Mail size={18} className="text-[#CC1122] shrink-0" />
+                <span className="text-gray-800">fal@alimentos.ind.br</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Loja de Fábrica */}
+          <div>
+            <h4 className="text-xs font-bold mb-6 text-[#1B3A8F] uppercase tracking-widest">Loja de Fábrica</h4>
+            <ul className="space-y-5">
+              <li className="flex items-center gap-3">
+                <Phone size={18} className="text-[#CC1122] shrink-0" />
+                <span className="text-gray-800">(81) 9 9705-0409</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <Clock size={18} className="text-[#CC1122] mt-1 shrink-0" />
+                <div className="text-gray-800 leading-relaxed">
+                  <p className="text-gray-900 font-bold mb-1">Segunda a Sexta</p>
+                  <p>07h às 11h</p>
+                  <p>13h às 16h45</p>
+                  <p className="text-gray-900 font-bold mt-3 mb-1">Sábados</p>
+                  <p>07h às 10h45</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          {/* Trabalhe Conosco + Setor Comercial */}
+          <div className="space-y-8">
+            <div>
+              <h4 className="text-xs font-bold mb-4 text-[#1B3A8F] uppercase tracking-widest">Trabalhe Conosco</h4>
+              <ul className="space-y-3">
+                <li className="flex items-center gap-3">
+                  <Phone size={18} className="text-[#CC1122] shrink-0" />
+                  <span className="text-gray-800">(81) 9 9515-6083</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Mail size={18} className="text-[#CC1122] shrink-0 mt-0.5" />
+                  <span className="text-gray-800 break-all">dep.pessoal.fal@alimentos.ind.br</span>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-xs font-bold mb-4 text-[#1B3A8F] uppercase tracking-widest">Setor Comercial</h4>
+              <ul className="space-y-3">
+                <li className="flex items-center gap-3">
+                  <Phone size={18} className="text-[#CC1122] shrink-0" />
+                  <span className="text-gray-800">(81) 9 9515-6265</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Mail size={18} className="text-[#CC1122] shrink-0 mt-0.5" />
+                  <span className="text-gray-800 break-all">vendas.fal@alimentos.ind.br</span>
+                </li>
+              </ul>
             </div>
           </div>
 
-          <div>
-            <h4 className="text-xl mb-6">Links Rápidos</h4>
-            <ul className="space-y-3">
-              <li><a href="#about" className="text-white/80 hover:text-primary transition-colors">Sobre Nós</a></li>
-              <li><a href="#brands" className="text-white/80 hover:text-primary transition-colors">Nossas Marcas</a></li>
-              <li><a href="#products" className="text-white/80 hover:text-primary transition-colors">Produtos</a></li>
-              <li><a href="#" className="text-white/80 hover:text-primary transition-colors">Trabalhe Conosco</a></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="text-xl mb-6">Informações</h4>
-            <ul className="space-y-3">
-              <li><a href="#" className="text-white/80 hover:text-primary transition-colors">Sustentabilidade</a></li>
-              <li><a href="#" className="text-white/80 hover:text-primary transition-colors">Padrões de Qualidade</a></li>
-              <li><a href="#" className="text-white/80 hover:text-primary transition-colors">Imprensa</a></li>
-              <li><a href="#" className="text-white/80 hover:text-primary transition-colors">Política de Privacidade</a></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="text-xl mb-6">Fale Conosco</h4>
-            <ul className="space-y-4">
-              <li className="flex items-start gap-3">
-                <MapPin size={20} className="text-primary mt-1 flex-shrink-0" />
-                <span className="text-white/80">Rua Principal, 123<br />Gravatá, PE - Brazil</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Phone size={20} className="text-primary flex-shrink-0" />
-                <span className="text-white/80">+55 (81) 3000-0000</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Mail size={20} className="text-primary flex-shrink-0" />
-                <span className="text-white/80">contact@nordestefood.com</span>
-              </li>
-            </ul>
-          </div>
         </div>
 
-        <div className="border-t border-white/10 mt-12 pt-8 text-center text-white/60">
-          <p>&copy; {currentYear} Nordeste Food. Todos os direitos reservados.</p>
+        <div className="border-t border-black/20 mt-12 pt-8 text-center text-gray-700">
+          <p>&copy; {currentYear} FAL Alimentos. Todos os direitos reservados.</p>
         </div>
       </div>
     </footer>

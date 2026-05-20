@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import { motion } from 'motion/react';
 import { Sparkles, Star, Crown } from 'lucide-react';
 
@@ -130,12 +131,12 @@ export default function PipocaGravata() {
                     {card.subtitle}
                   </div>
                   <h3 className={`font-bold text-foreground ${isCenter ? 'text-lg' : 'text-base'}`}>{card.title}</h3>
-                  <a
-                    href="#products"
+                  <Link
+                    to="/produtos"
                     className={`self-start font-semibold text-primary hover:text-primary/70 transition-colors underline underline-offset-2 ${isCenter ? 'text-xs' : 'text-[10px]'}`}
                   >
                     Ver produtos →
-                  </a>
+                  </Link>
                 </div>
               </motion.div>
             );

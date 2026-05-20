@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import { motion, AnimatePresence } from 'motion/react';
 import { Sparkles } from 'lucide-react';
 import { useState, useEffect } from 'react';
@@ -184,12 +185,12 @@ export default function Brands() {
               Nossa marca principal leva receitas tradicionais e qualidade premium para cada cozinha. Da nossa famosa pipoca a salgadinhos e doces irresistíveis, Nordeste Gravatá é sinônimo de sabor e tradição brasileiros autênticos.
             </p>
             <div>
-              <a
-                href="#products"
+              <Link
+                to="/produtos"
                 className="inline-block px-8 py-4 bg-primary text-white text-lg rounded-lg hover:bg-primary/90 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 Conheça Nossos Produtos
-              </a>
+              </Link>
             </div>
           </div>
           <div className="flex items-center justify-center order-2 py-8 lg:py-0">

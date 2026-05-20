@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowRight, Star } from 'lucide-react';
 
@@ -16,26 +17,14 @@ const initialProducts: Product[] = [
   {
     image: new URL('../../assets/products/Pipoca Gravatá/Premium/pipoca_gravatá_15g_0trans_himalaia_premium.jpeg', import.meta.url).href,
     tag: 'LANÇAMENTO',
-    title: 'PIPOCA HIMALAIA PREMIUM',
+    title: 'PIPOCA HIMALAIA PREMIUM 15G',
     description: 'Sabor único com sal do Himalaia. Crocante, leve e com 0% gordura trans.',
     link: '#products',
   },
   {
     image: new URL('../../assets/products/Pipoca Gravatá/Gourmet/pipoca_gravatá_15g_0trans_sabor_chocolate_gourmet.jpeg', import.meta.url).href,
-    title: 'PIPOCA CHOCOLATE GOURMET',
+    title: 'PIPOCA CHOCOLATE GOURMET 15G',
     description: 'A irresistível combinação de pipoca crocante com chocolate.',
-    link: '#products',
-  },
-  {
-    image: new URL('../../assets/products/Batata Chips/batatachips_churrasco.jpeg', import.meta.url).href,
-    title: 'BATATA CHIPS CHURRASCO',
-    description: 'O autêntico sabor de churrasco em cada fatia crocante.',
-    link: '#products',
-  },
-  {
-    image: new URL('../../assets/products/Salgadinhos/Salgadinhos iaê/iae_requeijão_60g.jpeg', import.meta.url).href,
-    title: 'IAÊ REQUEIJÃO 60G',
-    description: 'Salgadinho cremoso com sabor de requeijão irresistível.',
     link: '#products',
   },
 ];
@@ -70,12 +59,12 @@ export default function Novidades() {
               <h2 className="text-3xl font-black uppercase tracking-wide text-foreground">Novidades</h2>
             </div>
           </div>
-          <a
-            href="#products"
+          <Link
+            to="/produtos"
             className="hidden sm:flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-primary hover:text-primary/70 transition-colors"
           >
             Ver todos os produtos <ArrowRight size={15} />
-          </a>
+          </Link>
         </div>
 
         <div className="flex">
@@ -84,14 +73,13 @@ export default function Novidades() {
           <div className="flex w-[62%]">
 
             {/* Product image */}
-            <div className="w-[44%] shrink-0 relative overflow-hidden flex items-center justify-center">
+            <div className="w-[44%] shrink-0 relative overflow-hidden flex items-center justify-center h-[380px]">
               <AnimatePresence mode="wait">
                 <motion.img
                   key={featured.image}
                   src={featured.image}
                   alt={featured.title}
                   className="w-full h-full object-contain p-8 drop-shadow-2xl"
-                  style={{ minHeight: '380px' }}
                   initial={{ opacity: 0, scale: 0.92, y: 16 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.92, y: -16 }}
@@ -142,12 +130,12 @@ export default function Novidades() {
                     </p>
                   </div>
 
-                  <a
-                    href={featured.link}
+                  <Link
+                    to="/produtos"
                     className="inline-flex items-center gap-2 self-start px-7 py-3.5 rounded-full font-black text-sm uppercase tracking-wider bg-primary text-white shadow-lg hover:bg-primary/90 transition-all hover:scale-105"
                   >
                     Ver Produto <ArrowRight size={15} />
-                  </a>
+                  </Link>
                 </motion.div>
               </AnimatePresence>
             </div>
@@ -162,13 +150,10 @@ export default function Novidades() {
 
             <div className="flex flex-col flex-1 divide-y divide-primary/10">
               {sidebar.map((item, i) => (
-                <motion.a
+                <Link
                   key={item.title}
-                  href={item.link}
-                  layout
-                  transition={{ duration: 0.4, ease: 'easeInOut' }}
+                  to="/produtos"
                   className="flex items-center gap-4 py-4 first:pt-0 group cursor-pointer"
-                  onClick={e => { e.preventDefault(); rotate(); }}
                 >
                   {/* Thumbnail */}
                   <div className="w-20 h-20 shrink-0 rounded-xl overflow-hidden bg-gradient-to-br from-accent/25 to-primary/15 flex items-center justify-center">
@@ -193,16 +178,16 @@ export default function Novidades() {
                   <span className="text-xs font-black text-primary/30 tabular-nums shrink-0">
                     {String(i + 1).padStart(2, '0')}
                   </span>
-                </motion.a>
+                </Link>
               ))}
             </div>
 
-            <a
-              href="#products"
+            <Link
+              to="/produtos"
               className="flex items-center gap-2 font-bold text-sm uppercase tracking-wider text-primary hover:text-primary/70 transition-colors mt-6 underline underline-offset-4"
             >
               Ver todos os produtos <ArrowRight size={14} />
-            </a>
+            </Link>
           </div>
 
         </div>

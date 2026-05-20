@@ -7,7 +7,7 @@ import {
   CarouselItem,
   type CarouselApi,
 } from './ui/carousel';
-import photo1 from '../../assets/hero/mock_photo_1.jpg';
+import photo1 from '../../assets/hero/mock_photo_1.png';
 import photo2 from '../../assets/hero/mock_photo_2.jpg';
 import heroVideo from '../../assets/hero/pop_video.mp4';
 
@@ -96,7 +96,6 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          Petiscos & Tradição
         </motion.h1>
       </div>
 

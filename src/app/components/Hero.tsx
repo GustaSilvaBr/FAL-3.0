@@ -88,15 +88,33 @@ export default function Hero() {
         <div className="absolute inset-0 bg-black/35" />
       </div>
 
-      {/* Title */}
-      <div className="relative z-10 flex items-start justify-center h-full pt-32">
+      {/* Title + CTA */}
+      <div className="relative z-10 flex flex-col items-center justify-center h-full gap-6 px-4 text-center">
         <motion.h1
-          className="text-5xl md:text-7xl lg:text-8xl text-white text-center"
+          className="text-6xl md:text-7xl lg:text-8xl text-white font-black leading-tight drop-shadow-2xl"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
+          Sabor Autêntico<br />do Nordeste
         </motion.h1>
+        <motion.p
+          className="text-xl md:text-2xl text-white/90 drop-shadow-md max-w-xl"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
+          Desde Gravatá-PE, levando sabores únicos para o Brasil todo
+        </motion.p>
+        <motion.a
+          href="#brands"
+          className="mt-2 inline-block px-10 py-4 bg-[#FFE800] text-[#1B3A8F] font-black text-lg rounded-full hover:bg-[#FFD000] hover:scale-105 transition-all duration-300 shadow-2xl"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+        >
+          Conheça Nossos Produtos
+        </motion.a>
       </div>
 
       {/* Dot indicators */}

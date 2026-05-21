@@ -87,7 +87,7 @@ function ProductWheel() {
     <div className="relative flex items-center justify-center" style={{ width: CONTAINER, height: CONTAINER }}>
       {/* Dashed orbit ring */}
       <div
-        className="absolute rounded-full border-2 border-dashed border-primary/20"
+        className="absolute rounded-full border-2 border-dashed border-[#1B3A8F]/25"
         style={{ width: RADIUS * 2, height: RADIUS * 2 }}
       />
 
@@ -159,7 +159,7 @@ function ProductWheel() {
 
 export default function Brands() {
   return (
-    <section id="brands" className="py-20 bg-gradient-to-br from-accent/20 to-primary/10">
+    <section id="brands" className="py-24 bg-[#FFFDE7]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
        
 
@@ -172,22 +172,22 @@ export default function Brands() {
         >
           <div className="flex flex-col justify-center order-1">
             <div className="flex items-center gap-2 mb-6">
-              <Sparkles className="w-8 h-8 text-accent" />
-              <span className="text-accent text-lg uppercase tracking-wider">Nosso Orgulho</span>
+              <Sparkles className="w-8 h-8 text-[#1B3A8F]" />
+              <span className="text-[#1B3A8F] text-lg uppercase tracking-wider">Nosso Orgulho</span>
             </div>
-            <h3 className="text-5xl md:text-6xl lg:text-7xl mb-6 text-foreground">
+            <h3 className="text-6xl md:text-7xl lg:text-8xl mb-6 text-[#1B3A8F] font-black">
               Nordeste Gravatá
             </h3>
-            <p className="text-2xl md:text-3xl text-primary mb-8">
+            <p className="text-2xl md:text-3xl text-[#1B3A8F] mb-8">
               O Sabor Autêntico do Nordeste Brasileiro
             </p>
-            <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
+            <p className="text-xl text-[#1B3A8F]/75 mb-8 leading-relaxed">
               Nossa marca principal leva receitas tradicionais e qualidade premium para cada cozinha. Da nossa famosa pipoca a salgadinhos e doces irresistíveis, Nordeste Gravatá é sinônimo de sabor e tradição brasileiros autênticos.
             </p>
             <div>
               <Link
                 to="/produtos"
-                className="inline-block px-8 py-4 bg-primary text-white text-lg rounded-lg hover:bg-primary/90 transition-all duration-200 shadow-lg hover:shadow-xl"
+                className="inline-block px-8 py-4 bg-[#1B3A8F] text-white font-black text-lg rounded-full hover:bg-[#152e72] hover:scale-105 transition-all duration-300 shadow-xl"
               >
                 Conheça Nossos Produtos
               </Link>

@@ -47,7 +47,7 @@ export default function Novidades() {
   const sidebar = products.slice(1);
 
   return (
-    <section className="py-20 bg-gradient-to-br from-accent/20 to-primary/10 px-4 sm:px-6 lg:px-8">
+    <section className="py-24 bg-[#FFFDE7] px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
 
         {/* Header */}
@@ -55,13 +55,13 @@ export default function Novidades() {
           <div className="flex items-center gap-4">
             <img src={nordesteLogo} alt="Nordeste Gravatá" className="h-14 object-contain" />
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-primary">Nordeste Gravatá</p>
-              <h2 className="text-3xl font-black uppercase tracking-wide text-foreground">Novidades</h2>
+              <p className="text-xs font-bold uppercase tracking-widest text-[#1B3A8F]">Nordeste Gravatá</p>
+              <h2 className="text-3xl font-black uppercase tracking-wide text-[#1B3A8F]">Novidades</h2>
             </div>
           </div>
           <Link
             to="/produtos"
-            className="hidden sm:flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-primary hover:text-primary/70 transition-colors"
+            className="hidden sm:flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-[#1B3A8F] hover:text-[#CC1122] transition-colors"
           >
             Ver todos os produtos <ArrowRight size={15} />
           </Link>
@@ -119,20 +119,20 @@ export default function Novidades() {
                   transition={{ duration: 0.4, ease: 'easeInOut' }}
                 >
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-widest text-primary mb-3">
+                    <p className="text-xs font-bold uppercase tracking-widest text-[#1B3A8F] mb-3">
                       Nordeste Gravatá
                     </p>
-                    <h3 className="font-black uppercase leading-tight text-foreground mb-3" style={{ fontSize: 'clamp(1.5rem, 2.5vw, 2.2rem)' }}>
+                    <h3 className="font-black uppercase leading-tight text-[#1B3A8F] mb-3" style={{ fontSize: 'clamp(1.5rem, 2.5vw, 2.2rem)' }}>
                       {featured.title}
                     </h3>
-                    <p className="text-base text-muted-foreground leading-relaxed">
+                    <p className="text-base text-[#1B3A8F]/65 leading-relaxed">
                       {featured.description}
                     </p>
                   </div>
 
                   <Link
                     to="/produtos"
-                    className="inline-flex items-center gap-2 self-start px-7 py-3.5 rounded-full font-black text-sm uppercase tracking-wider bg-primary text-white shadow-lg hover:bg-primary/90 transition-all hover:scale-105"
+                    className="inline-flex items-center gap-2 self-start px-7 py-3.5 rounded-full font-black text-sm uppercase tracking-wider bg-[#FFE800] text-[#1B3A8F] shadow-lg hover:bg-[#FFD000] transition-all hover:scale-105"
                   >
                     Ver Produto <ArrowRight size={15} />
                   </Link>
@@ -142,13 +142,13 @@ export default function Novidades() {
           </div>
 
           {/* ── Sidebar ──────────────────────────────────── */}
-          <div className="flex flex-col justify-between w-[38%] p-8 border-l border-primary/20">
+          <div className="flex flex-col justify-between w-[38%] p-8 border-l border-[#1B3A8F]/15">
 
-            <p className="text-xs font-bold uppercase tracking-widest text-primary mb-4">
+            <p className="text-xs font-bold uppercase tracking-widest text-[#1B3A8F] mb-4">
               Também em destaque
             </p>
 
-            <div className="flex flex-col flex-1 divide-y divide-primary/10">
+            <div className="flex flex-col flex-1 divide-y divide-[#1B3A8F]/10">
               {sidebar.map((item, i) => (
                 <Link
                   key={item.title}
@@ -156,7 +156,7 @@ export default function Novidades() {
                   className="flex items-center gap-4 py-4 first:pt-0 group cursor-pointer"
                 >
                   {/* Thumbnail */}
-                  <div className="w-20 h-20 shrink-0 rounded-xl overflow-hidden bg-gradient-to-br from-accent/25 to-primary/15 flex items-center justify-center">
+                  <div className="w-20 h-20 shrink-0 rounded-xl overflow-hidden bg-white flex items-center justify-center">
                     <img
                       src={item.image}
                       alt={item.title}
@@ -166,16 +166,16 @@ export default function Novidades() {
 
                   {/* Title */}
                   <div className="flex-1 min-w-0">
-                    <p className="font-bold uppercase text-xs leading-snug text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                    <p className="font-bold uppercase text-xs leading-snug text-[#1B3A8F] group-hover:text-[#CC1122] transition-colors line-clamp-2">
                       {item.title}
                     </p>
-                    <span className="inline-flex items-center gap-1 text-xs mt-1.5 font-semibold text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="inline-flex items-center gap-1 text-xs mt-1.5 font-semibold text-[#CC1122] opacity-0 group-hover:opacity-100 transition-opacity">
                       Ver produto <ArrowRight size={11} />
                     </span>
                   </div>
 
                   {/* Position number */}
-                  <span className="text-xs font-black text-primary/30 tabular-nums shrink-0">
+                  <span className="text-xs font-black text-[#1B3A8F]/30 tabular-nums shrink-0">
                     {String(i + 1).padStart(2, '0')}
                   </span>
                 </Link>
@@ -184,7 +184,7 @@ export default function Novidades() {
 
             <Link
               to="/produtos"
-              className="flex items-center gap-2 font-bold text-sm uppercase tracking-wider text-primary hover:text-primary/70 transition-colors mt-6 underline underline-offset-4"
+              className="flex items-center gap-2 font-bold text-sm uppercase tracking-wider text-[#1B3A8F] hover:text-[#CC1122] transition-colors mt-6 underline underline-offset-4"
             >
               Ver todos os produtos <ArrowRight size={14} />
             </Link>

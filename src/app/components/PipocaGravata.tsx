@@ -60,7 +60,7 @@ const cards = [
 export default function PipocaGravata() {
   return (
     <section
-      className="py-10 bg-white"
+      className="py-24 bg-white"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -75,7 +75,7 @@ export default function PipocaGravata() {
           <span className="inline-block text-primary font-semibold uppercase tracking-widest text-xs mb-2">
             Nordeste Gravatá
           </span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-3">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-3">
             Pipocas Gravatá
           </h2>
           <p className="text-sm text-muted-foreground max-w-xl mx-auto">
@@ -99,14 +99,14 @@ export default function PipocaGravata() {
                   },
                 }
               : {
-                  whileHover: { y: -3 },
+                  whileHover: { y: -6, scale: 1.02 },
                   transition: { duration: 0.5, delay: i * 0.12 },
                 };
 
             return (
               <motion.div
                 key={card.title}
-                className={`relative rounded-2xl bg-gradient-to-br from-accent/20 to-primary/10 overflow-hidden flex flex-col ${isCenter ? 'shadow-xl' : ''}`}
+                className={`relative rounded-3xl bg-white border overflow-hidden flex flex-col transition-all duration-300 ${isCenter ? 'shadow-2xl border-[#FFE800]' : 'shadow-md border-[#1B3A8F]/15 hover:border-[#FFE800] hover:shadow-xl'}`}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}

@@ -33,12 +33,11 @@ export default function Navigation() {
 
   return (
     <motion.nav
-      className="fixed top-0 z-50 shadow-md rounded-b-2xl overflow-hidden"
-      style={{ left: 20, right: 20 }}
+      className="fixed top-0 left-0 right-0 z-50 shadow-md overflow-hidden"
       animate={{ y: visible ? 0 : '-110%' }}
       transition={{ duration: 0.3, ease: 'easeInOut' }}
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-accent/20 to-primary/10 bg-white/90 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-[#FFFACC]" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center h-24 gap-4">
@@ -60,12 +59,12 @@ export default function Navigation() {
                   href={href}
                   className={`relative group whitespace-nowrap transition-colors duration-200 ${
                     isHighlight
-                      ? 'text-primary font-bold text-lg hover:text-primary/80'
-                      : 'text-foreground font-medium hover:text-primary'
+                      ? 'text-[#1B3A8F] font-bold text-lg hover:text-[#CC1122]'
+                      : 'text-[#1B3A8F] font-medium hover:text-[#CC1122]'
                   }`}
                 >
                   {item.label}
-                  <span className={`absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-200 group-hover:w-full ${isHighlight ? 'bg-primary h-[2.5px]' : 'bg-primary'}`} />
+                  <span className={`absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-200 group-hover:w-full ${isHighlight ? 'bg-[#CC1122] h-[2.5px]' : 'bg-[#CC1122]'}`} />
                 </a>
               );
             })}
@@ -73,25 +72,25 @@ export default function Navigation() {
               to="/produtos"
               className={`relative group whitespace-nowrap transition-colors duration-200 font-medium ${
                 location.pathname === '/produtos'
-                  ? 'text-primary'
-                  : 'text-foreground hover:text-primary'
+                  ? 'text-[#CC1122]'
+                  : 'text-[#1B3A8F] hover:text-[#CC1122]'
               }`}
             >
               Produtos
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-200 group-hover:w-full" />
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#CC1122] transition-all duration-200 group-hover:w-full" />
             </Link>
           </div>
 
           {/* Search bar — right */}
           <div className="hidden md:flex items-center shrink-0">
-            <div className="flex items-center gap-2 bg-white/50 hover:bg-white/70 transition-colors rounded-full px-4 py-2 border border-primary/10">
-              <Search className="w-4 h-4 text-muted-foreground" />
+            <div className="flex items-center gap-2 bg-white/50 hover:bg-white/70 transition-colors rounded-full px-4 py-2 border border-[#1B3A8F]/20">
+              <Search className="w-4 h-4 text-[#1B3A8F]/60" />
               <input
                 type="text"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 placeholder="Buscar produtos..."
-                className="bg-transparent text-foreground placeholder-muted-foreground text-sm outline-none w-40 focus:w-52 transition-all duration-300"
+                className="bg-transparent text-[#1B3A8F] placeholder-[#1B3A8F]/50 text-sm outline-none w-40 focus:w-52 transition-all duration-300"
               />
             </div>
           </div>
@@ -99,7 +98,7 @@ export default function Navigation() {
           {/* Mobile menu button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden ml-auto p-2 rounded-md text-foreground hover:bg-white/30 transition-colors"
+            className="md:hidden ml-auto p-2 rounded-md text-[#1B3A8F] hover:bg-black/10 transition-colors"
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -113,14 +112,14 @@ export default function Navigation() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.2 }}
-            className="relative md:hidden border-t border-primary/10"
+            className="relative md:hidden border-t border-[#1B3A8F]/20"
           >
             <div className="px-4 py-4 space-y-3">
               {anchorItems.map((item) => (
                 <a
                   key={item.anchor}
                   href={isHome ? `#${item.anchor}` : `/#${item.anchor}`}
-                  className="block py-2 text-foreground hover:text-primary transition-colors"
+                  className="block py-2 text-[#1B3A8F] hover:text-[#CC1122] transition-colors"
                   onClick={() => setIsOpen(false)}
                 >
                   {item.label}
@@ -128,19 +127,19 @@ export default function Navigation() {
               ))}
               <Link
                 to="/produtos"
-                className="block py-2 text-foreground hover:text-primary transition-colors"
+                className="block py-2 text-[#1B3A8F] hover:text-[#CC1122] transition-colors"
                 onClick={() => setIsOpen(false)}
               >
                 Produtos
               </Link>
-              <div className="flex items-center gap-2 bg-white/50 rounded-full px-4 py-2 mt-2 border border-primary/10">
-                <Search className="w-4 h-4 text-muted-foreground" />
+              <div className="flex items-center gap-2 bg-white/50 rounded-full px-4 py-2 mt-2 border border-[#1B3A8F]/20">
+                <Search className="w-4 h-4 text-[#1B3A8F]/60" />
                 <input
                   type="text"
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                   placeholder="Buscar produtos..."
-                  className="bg-transparent text-foreground placeholder-muted-foreground text-sm outline-none w-full"
+                  className="bg-transparent text-[#1B3A8F] placeholder-[#1B3A8F]/50 text-sm outline-none w-full"
                 />
               </div>
             </div>

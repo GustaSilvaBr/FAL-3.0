@@ -178,7 +178,7 @@ export default function ExploreProducts() {
   };
 
   return (
-    <section id="produtos" ref={sectionRef} className="bg-gradient-to-br from-accent/20 to-primary/10 py-16">
+    <section id="produtos" ref={sectionRef} className="bg-[#FFFDE7] py-24">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
@@ -326,9 +326,9 @@ export default function ExploreProducts() {
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.2, delay: i * 0.04 }}
-                    className="bg-white/70 backdrop-blur-sm rounded-2xl border border-white/60 flex flex-col p-3 gap-3 hover:shadow-md transition-shadow"
+                    className="bg-white rounded-2xl border border-[#1B3A8F]/15 flex flex-col p-3 gap-3 hover:border-[#FFE800] hover:shadow-xl transition-all duration-300"
                   >
-                    <div className="h-52 bg-gradient-to-br from-yellow-50 to-blue-50 rounded-xl p-4 flex items-center justify-center overflow-hidden group cursor-pointer">
+                    <div className="h-52 bg-white rounded-xl p-4 flex items-center justify-center overflow-hidden group cursor-pointer">
                       <img
                         src={product.image}
                         alt={product.name}

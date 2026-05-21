@@ -63,7 +63,7 @@ export default function About() {
               transition={{ duration: 0.6, delay: index * 0.1 }}
               className="bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200"
             >
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+              <div className="w-16 h-16 bg-[#FFE800] rounded-full flex items-center justify-center mb-6">
                 <value.icon className="w-8 h-8 text-primary" />
               </div>
               <h3 className="text-xl mb-3 text-foreground">{value.title}</h3>

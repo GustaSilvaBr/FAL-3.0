@@ -41,7 +41,7 @@ export default function Contact() {
                 value={form.nome}
                 onChange={handleChange}
                 placeholder="Seu nome"
-                className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1B3A8F] focus:border-transparent transition"
+                className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FFE800] focus:border-transparent transition"
               />
             </div>
             <div>
@@ -56,7 +56,7 @@ export default function Contact() {
                 value={form.sobrenome}
                 onChange={handleChange}
                 placeholder="Seu sobrenome"
-                className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1B3A8F] focus:border-transparent transition"
+                className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FFE800] focus:border-transparent transition"
               />
             </div>
           </div>
@@ -73,7 +73,7 @@ export default function Contact() {
               value={form.email}
               onChange={handleChange}
               placeholder="seu@email.com"
-              className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1B3A8F] focus:border-transparent transition"
+              className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FFE800] focus:border-transparent transition"
             />
           </div>
 
@@ -89,14 +89,14 @@ export default function Contact() {
               value={form.mensagem}
               onChange={handleChange}
               placeholder="Escreva sua mensagem..."
-              className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#1B3A8F] focus:border-transparent transition resize-none"
+              className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-[#FFFAEB] text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FFE800] focus:border-transparent transition resize-none"
             />
           </div>
 
           <div className="text-right pb-0">
             <button
               type="submit"
-              className="inline-flex items-center gap-2 bg-[#1B3A8F] hover:bg-[#152e72] text-white font-semibold px-8 py-3 rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 bg-[#CC1122] hover:bg-[#aa0e1c] text-white font-semibold px-8 py-3 rounded-lg transition-colors hover:scale-105 transition-all duration-300"
             >
               Enviar mensagem
               <Send size={18} />

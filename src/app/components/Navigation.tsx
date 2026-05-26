@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Link, useLocation } from 'react-router';
 import falLogo from '../../assets/FAL_LOGO.png';
 
-const mascotUrl = new URL('../../assets/mascot.png', import.meta.url).href;
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -33,8 +32,7 @@ export default function Navigation() {
 
   return (
     <motion.nav
-      className="fixed top-0 z-50 shadow-md rounded-b-2xl overflow-hidden"
-      style={{ left: 20, right: 20 }}
+      className="fixed top-0 left-0 right-0 z-50 shadow-md"
       animate={{ y: visible ? 0 : '-110%' }}
       transition={{ duration: 0.3, ease: 'easeInOut' }}
     >
@@ -45,7 +43,6 @@ export default function Navigation() {
 
           {/* Logo — left */}
           <div className="flex items-center gap-2 shrink-0">
-            <img src={mascotUrl} alt="Mascote FAL" className="h-16 w-auto" />
             <img src={falLogo} alt="FAL Logo" className="h-14 w-auto" />
           </div>
 

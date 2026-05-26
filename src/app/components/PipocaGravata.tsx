@@ -1,81 +1,133 @@
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router';
-import { motion } from 'motion/react';
-import { Sparkles, Star, Crown } from 'lucide-react';
 
-const products = {
-  amanteigadas: [
-    new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipoca_gravatá_10g_0trans_yellow.jpeg', import.meta.url).href,
-    new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipoca_gravatá_10g_0trans_white.jpeg', import.meta.url).href,
-    new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipocao_gravatá_40g_0trans_white.jpeg', import.meta.url).href,
-    new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipocao_gravatá_72g_0trans_white.jpeg', import.meta.url).href,
-  ],
-  doces: [
-    new URL('../../assets/products/Pipoca Gravatá/Doces/pipoca_gravatá_10g_0trans_doce.jpeg', import.meta.url).href,
-    new URL('../../assets/products/Pipoca Gravatá/Doces/pipoca_gravatá_14g_0trans_doce.jpeg', import.meta.url).href,
-    new URL('../../assets/products/Pipoca Gravatá/Doces/pipoca_gravatá_12g_0trans_amendoim_doce.jpeg', import.meta.url).href,
-    new URL('../../assets/products/Pipoca Gravatá/Doces/pipocao_gravatá_30g_0trans_doce.jpeg', import.meta.url).href,
-  ],
-  premium: [
-    new URL('../../assets/products/Pipoca Gravatá/Premium/pipoca_gravatá_15g_0trans_himalaia_premium.jpeg', import.meta.url).href,
-    new URL('../../assets/products/Pipoca Gravatá/Premium/pipoca_gravatá_40g_0trans_himalaia_premium.jpeg', import.meta.url).href,
-  ],
-  gourmet: [
-    new URL('../../assets/products/Pipoca Gravatá/Gourmet/pipoca_gravatá_15g_0trans_sabor_chocolate_gourmet.jpeg', import.meta.url).href,
-    new URL('../../assets/products/Pipoca Gravatá/Gourmet/pipocao_gravatá_45g_0trans_chocolate_gourmet.jpeg', import.meta.url).href,
-  ],
-};
+const SLOT = 260;
+const CARD_W = 210;
+const CARD_H = 270;
+const IMG_W = 135;
+const IMG_H = 185;
 
-const themeUrl = new URL('../../assets/theme_1.png', import.meta.url).href;
-
-const cards = [
+const categories = [
   {
-    title: 'Doces',
-    subtitle: 'Pura delícia',
-    images: products.doces,
-    icon: Star,
-    iconColor: 'text-accent',
-    badge: 'bg-accent/20 text-accent-foreground',
-    center: false,
-  },
-  {
-    title: 'Amanteigadas',
+    label: 'Amanteigadas',
     subtitle: 'A linha clássica',
-    images: products.amanteigadas,
-    icon: Sparkles,
-    iconColor: 'text-primary',
-    badge: 'bg-primary/15 text-primary',
-    center: true,
+    images: [
+      new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipoca_gravatá_10g_0trans_yellow.jpeg', import.meta.url).href,
+      new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipocao_gravatá_40g_0trans_white.jpeg', import.meta.url).href,
+      new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipocao_gravatá_90g_0trans_white.jpeg', import.meta.url).href,
+    ],
   },
   {
-    title: 'Gourmet & Premium',
-    subtitle: 'Experiência única',
-    images: [...products.premium, ...products.gourmet],
-    icon: Crown,
-    iconColor: 'text-secondary',
-    badge: 'bg-secondary/15 text-secondary',
-    center: false,
+    label: 'Doces',
+    subtitle: 'Pura delícia',
+    images: [
+      new URL('../../assets/products/Pipoca Gravatá/Doces/pipoca_gravatá_10g_0trans_doce.jpeg', import.meta.url).href,
+      new URL('../../assets/products/Pipoca Gravatá/Doces/pipocao_gravatá_30g_0trans_doce.jpeg', import.meta.url).href,
+      new URL('../../assets/products/Pipoca Gravatá/Doces/pipocao_gravatá_30g_0trans_amendoim_doce.jpeg', import.meta.url).href,
+    ],
+  },
+  {
+    label: 'Premium',
+    subtitle: 'Sal do Himalaia',
+    images: [
+      new URL('../../assets/products/Pipoca Gravatá/Premium/pipoca_gravatá_15g_0trans_himalaia_premium.jpeg', import.meta.url).href,
+      new URL('../../assets/products/Pipoca Gravatá/Premium/pipoca_gravatá_40g_0trans_himalaia_premium.jpeg', import.meta.url).href,
+    ],
+  },
+  {
+    label: 'Gourmet',
+    subtitle: 'Sabor chocolate',
+    images: [
+      new URL('../../assets/products/Pipoca Gravatá/Gourmet/pipoca_gravatá_15g_0trans_sabor_chocolate_gourmet.jpeg', import.meta.url).href,
+      new URL('../../assets/products/Pipoca Gravatá/Gourmet/pipocao_gravatá_45g_0trans_chocolate_gourmet.jpeg', import.meta.url).href,
+    ],
   },
 ];
 
-export default function PipocaGravata() {
+// Fan offsets per total count: index 0 = front image
+// Large tx so back bags are clearly visible (Cheetos style), minimal rotation
+const FAN: Record<number, { rotate: number; tx: number; ty: number; scale: number }[]> = {
+  1: [{ rotate: 0, tx: 0, ty: 0, scale: 1 }],
+  2: [
+    { rotate:  0, tx: -18, ty: 0, scale: 1    }, // front
+    { rotate:  4, tx:  68, ty: 0, scale: 0.94 }, // back, peeking right
+  ],
+  3: [
+    { rotate:  0, tx:   0, ty: 0, scale: 1    }, // front
+    { rotate:  4, tx:  72, ty: 0, scale: 0.92 }, // middle, peeking right
+    { rotate: -4, tx: -68, ty: 0, scale: 0.87 }, // back, peeking left
+  ],
+};
+
+function ProductStack({ images }: { images: string[] }) {
+  const shown = images.slice(0, 3);
+  const offsets = FAN[shown.length];
+
   return (
-    <section
-      className="py-10 bg-white"
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="relative mx-auto" style={{ width: CARD_W, height: IMG_H + 20 }}>
+      {[...shown].reverse().map((src, ri) => {
+        const frontIdx = shown.length - 1 - ri;
+        const off = offsets[frontIdx];
+        return (
+          <img
+            key={ri}
+            src={src}
+            alt=""
+            draggable={false}
+            style={{
+              position: 'absolute',
+              width: IMG_W,
+              height: IMG_H,
+              top: `calc(50% - ${IMG_H / 2}px + ${off.ty}px)`,
+              left: `calc(50% - ${IMG_W / 2}px + ${off.tx}px)`,
+              transform: `rotate(${off.rotate}deg) scale(${off.scale})`,
+              transformOrigin: 'center center',
+              objectFit: 'contain',
+              filter: 'drop-shadow(0 6px 16px rgba(0,0,0,0.16))',
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+function getSlideProps(index: number, current: number) {
+  const offset = index - current;
+  const abs = Math.abs(offset);
+  return {
+    x: offset * SLOT - CARD_W / 2,
+    y: -CARD_H / 2,
+    scale: Math.max(0.48, 0.82 - abs * 0.20),
+    opacity: abs > 2 ? 0 : Math.max(0.2, 1 - abs * 0.38),
+    zIndex: 10 - abs * 2,
+  };
+}
+
+export default function PipocaGravata() {
+  const [current, setCurrent] = useState(Math.floor((categories.length - 1) / 2));
+
+  const hasPrev = current > 0;
+  const hasNext = current < categories.length - 1;
+
+  const prev = () => { if (hasPrev) setCurrent(i => i - 1); };
+  const next = () => { if (hasNext) setCurrent(i => i + 1); };
+
+  return (
+    <section className="py-12 bg-gray-50" id="brands">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
         <motion.div
-          className="text-center mb-8"
+          className="text-center mb-6"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
         >
-          <span className="inline-block text-primary font-semibold uppercase tracking-widest text-xs mb-2">
-            Nordeste Gravatá
-          </span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-3">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary mb-3">
             Pipocas Gravatá
           </h2>
           <p className="text-sm text-muted-foreground max-w-xl mx-auto">
@@ -83,66 +135,79 @@ export default function PipocaGravata() {
           </p>
         </motion.div>
 
-        {/* Cards */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-center">
-          {cards.map((card, i) => {
-            const Icon = card.icon;
-            const isCenter = card.center;
+        {/* Card */}
+        <div className="bg-white rounded-3xl shadow-xl overflow-hidden px-6 py-8">
 
-            const cardMotionProps = isCenter
-              ? {
-                  animate: { scale: [1, 1.025, 1] },
-                  transition: {
-                    scale: { duration: 3, repeat: Infinity, ease: 'easeInOut' },
-                    opacity: { duration: 0.5, delay: i * 0.12 },
-                    y: { duration: 0.5, delay: i * 0.12 },
-                  },
-                }
-              : {
-                  whileHover: { y: -3 },
-                  transition: { duration: 0.5, delay: i * 0.12 },
-                };
-
+        {/* Carousel */}
+        <div className="relative h-[320px] overflow-hidden">
+          {categories.map((cat, i) => {
+            const p = getSlideProps(i, current);
             return (
               <motion.div
-                key={card.title}
-                className={`relative rounded-2xl bg-gradient-to-br from-accent/20 to-primary/10 overflow-hidden flex flex-col ${isCenter ? 'shadow-xl' : ''}`}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                {...cardMotionProps}
+                key={cat.label}
+                className="absolute left-1/2 cursor-pointer"
+                style={{ top: '50%', zIndex: p.zIndex, width: CARD_W }}
+                animate={{ x: p.x, y: p.y, scale: p.scale, opacity: p.opacity }}
+                transition={{ type: 'spring', stiffness: 280, damping: 30 }}
+                onClick={() => setCurrent(i)}
               >
-                {/* Product images grid */}
-                <div className={`grid grid-cols-2 pb-0 ${isCenter ? 'gap-1.5 p-3' : 'gap-1 p-2'}`}>
-                  {card.images.slice(0, 4).map((src, j) => (
-                    <div
-                      key={j}
-                      className={`aspect-square overflow-hidden bg-white shadow-sm ${isCenter ? 'rounded-xl' : 'rounded-lg'}`}
-                    >
-                      <img src={src} alt="" className="w-full h-full object-cover" />
-                    </div>
-                  ))}
-                </div>
-
-                {/* Text content */}
-                <div className={`flex flex-col ${isCenter ? 'px-4 py-3 gap-2' : 'px-3 py-2 gap-1.5'}`}>
-                  <div className={`self-start flex items-center gap-1 font-semibold uppercase tracking-wider rounded-full ${card.badge} ${isCenter ? 'text-xs px-2.5 py-0.5' : 'text-[10px] px-2 py-0.5'}`}>
-                    <Icon className={`${card.iconColor} ${isCenter ? 'w-3 h-3' : 'w-2.5 h-2.5'}`} strokeWidth={2.5} />
-                    {card.subtitle}
-                  </div>
-                  <h3 className={`font-bold text-foreground ${isCenter ? 'text-lg' : 'text-base'}`}>{card.title}</h3>
-                  <Link
-                    to="/produtos"
-                    className={`self-start font-semibold text-primary hover:text-primary/70 transition-colors underline underline-offset-2 ${isCenter ? 'text-xs' : 'text-[10px]'}`}
-                  >
-                    Ver produtos →
-                  </Link>
+                <ProductStack images={cat.images} />
+                <div className="text-center mt-2">
+                  <p className="font-bold text-foreground text-xl">{cat.label}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{cat.subtitle}</p>
                 </div>
               </motion.div>
             );
           })}
+
+          {/* Left arrow */}
+          {hasPrev && (
+            <button
+              onClick={prev}
+              className="absolute left-2 top-1/2 -translate-y-1/2 z-30 bg-white/80 hover:bg-white shadow-lg rounded-full p-3 border border-primary/10 transition-all hover:scale-110"
+              aria-label="Anterior"
+            >
+              <ChevronLeft className="w-5 h-5 text-foreground" />
+            </button>
+          )}
+
+          {/* Right arrow */}
+          {hasNext && (
+            <button
+              onClick={next}
+              className="absolute right-2 top-1/2 -translate-y-1/2 z-30 bg-white/80 hover:bg-white shadow-lg rounded-full p-3 border border-primary/10 transition-all hover:scale-110"
+              aria-label="Próximo"
+            >
+              <ChevronRight className="w-5 h-5 text-foreground" />
+            </button>
+          )}
         </div>
 
+        {/* Dots */}
+        <div className="flex justify-center gap-2 mt-2">
+          {categories.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrent(i)}
+              aria-label={`Categoria ${i + 1}`}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                i === current ? 'w-6 bg-primary' : 'w-1.5 bg-primary/30 hover:bg-primary/50'
+              }`}
+            />
+          ))}
+        </div>
+
+        {/* CTA */}
+        <div className="text-center mt-5">
+          <Link
+            to="/produtos"
+            className="inline-block bg-primary text-white font-semibold px-8 py-3 rounded-full hover:bg-primary/90 transition-colors"
+          >
+            Ver todos os produtos →
+          </Link>
+        </div>
+
+        </div>{/* end card */}
       </div>
     </section>
   );

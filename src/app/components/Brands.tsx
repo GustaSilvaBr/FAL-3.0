@@ -1,6 +1,5 @@
 import { Link } from 'react-router';
 import { motion, AnimatePresence } from 'motion/react';
-import { Sparkles } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 const nordesteLogo = new URL('../../assets/logo_nordeste_gravata.png', import.meta.url).href;
@@ -126,7 +125,7 @@ function ProductWheel() {
                 {/* Hover-scale wrapper — separate from rotation so overflow-hidden doesn't clip */}
                 <motion.div
                   style={{ width: 103, height: 103 }}
-                  whileHover={{ scale: 2.4 }}
+                  whileHover={{ scale: 1.5 }}
                   transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                   onHoverStart={() => setHoveredIdx(i)}
                   onHoverEnd={() => setHoveredIdx(null)}
@@ -159,7 +158,7 @@ function ProductWheel() {
 
 export default function Brands() {
   return (
-    <section id="brands" className="py-20 bg-gradient-to-br from-accent/20 to-primary/10">
+    <section id="brands" className="min-h-screen flex flex-col justify-center py-20 bg-gradient-to-br from-accent/20 to-primary/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
        
 
@@ -171,10 +170,7 @@ export default function Brands() {
           className="grid grid-cols-1 lg:grid-cols-2 gap-8"
         >
           <div className="flex flex-col justify-center order-1">
-            <div className="flex items-center gap-2 mb-6">
-              <Sparkles className="w-8 h-8 text-accent" />
-              <span className="text-accent text-lg uppercase tracking-wider">Nosso Orgulho</span>
-            </div>
+
             <h3 className="text-5xl md:text-6xl lg:text-7xl mb-6 text-foreground">
               Nordeste Gravatá
             </h3>

@@ -110,14 +110,14 @@ const weightRanges = [
 ];
 
 const typeCategories = [
-  'Pipoca Gravatá',
-  'Amendoim',
-  'Batata Chips',
-  'Bolinhos de Goma',
-  'Paçoca',
-  'Salgadinhos',
-  'Salgadinhos de Trigo',
-  'Torresminho',
+  'Pipoca Gravatá',       // 17
+  'Salgadinhos',          // 44
+  'Salgadinhos de Trigo', // 7
+  'Batata Chips',         // 3
+  'Bolinhos de Goma',     // 2
+  'Torresminho',          // 2
+  'Paçoca',               // 1
+  'Amendoim',             // 1
 ];
 
 const ITEMS_PER_PAGE = 9;
@@ -130,6 +130,30 @@ export default function ExploreProducts() {
   const [currentPage, setCurrentPage] = useState(1);
   const filterRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
+  const tabsRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const updateScrollState = () => {
+    const el = tabsRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 0);
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1);
+  };
+
+  useEffect(() => {
+    const el = tabsRef.current;
+    if (!el) return;
+    updateScrollState();
+    el.addEventListener('scroll', updateScrollState);
+    const ro = new ResizeObserver(updateScrollState);
+    ro.observe(el);
+    return () => { el.removeEventListener('scroll', updateScrollState); ro.disconnect(); };
+  }, []);
+
+  const scrollTabs = (dir: 'left' | 'right') => {
+    tabsRef.current?.scrollBy({ left: dir === 'left' ? -200 : 200, behavior: 'smooth' });
+  };
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -178,7 +202,7 @@ export default function ExploreProducts() {
   };
 
   return (
-    <section id="produtos" ref={sectionRef} className="bg-gradient-to-br from-accent/20 to-primary/10 py-16">
+    <section id="produtos" ref={sectionRef} className="min-h-screen flex flex-col justify-center bg-gradient-to-br from-accent/20 to-primary/10 py-16">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
@@ -260,7 +284,16 @@ export default function ExploreProducts() {
           <div className="w-px h-7 bg-gray-200 shrink-0" />
 
           {/* Category chips */}
-          <div className="flex items-center gap-2 overflow-x-auto flex-1" style={{ scrollbarWidth: 'none' }}>
+          <div className="relative flex items-center flex-1 min-w-0">
+            {canScrollLeft && (
+              <button
+                onClick={() => scrollTabs('left')}
+                className="shrink-0 z-10 bg-white border border-gray-200 rounded-full p-1.5 shadow-sm hover:shadow-md transition-all mr-1"
+              >
+                <ChevronLeft className="w-4 h-4 text-gray-600" />
+              </button>
+            )}
+          <div ref={tabsRef} className="flex items-center gap-2 overflow-x-auto flex-1" style={{ scrollbarWidth: 'none' }}>
             <button
               onClick={() => setSelectedCategory(null)}
               className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wide whitespace-nowrap shrink-0 transition-all ${
@@ -298,6 +331,15 @@ export default function ExploreProducts() {
                 </button>
               );
             })}
+          </div>
+            {canScrollRight && (
+              <button
+                onClick={() => scrollTabs('right')}
+                className="shrink-0 z-10 bg-white border border-gray-200 rounded-full p-1.5 shadow-sm hover:shadow-md transition-all ml-1"
+              >
+                <ChevronRight className="w-4 h-4 text-gray-600" />
+              </button>
+            )}
           </div>
         </div>
 

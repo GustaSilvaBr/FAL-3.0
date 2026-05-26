@@ -7,27 +7,24 @@ import {
   CarouselItem,
   type CarouselApi,
 } from './ui/carousel';
-import photo1 from '../../assets/hero/mock_photo_1.png';
-import photo2 from '../../assets/hero/mock_photo_2.jpg';
-import heroVideo from '../../assets/hero/pop_video.mp4';
+import copa from '../../assets/hero/copa_1200x600px.jpg';
+import saoJoao from '../../assets/hero/sao-joao_1200x600px.jpg.jpg';
 
 const PHOTO_DURATION = 5000;
-const VIDEO_DURATION = 12000;
 
 const slides = [
-  { type: 'image' as const, src: photo1, alt: 'Petiscos FAL' },
-  { type: 'image' as const, src: photo2, alt: 'Produtos FAL' },
-  { type: 'video' as const, src: heroVideo },
+  { type: 'image' as const, src: copa, alt: 'Copa FAL' },
+  { type: 'image' as const, src: saoJoao, alt: 'São João FAL' },
 ];
 
-function durationFor(index: number) {
-  return slides[index].type === 'video' ? VIDEO_DURATION : PHOTO_DURATION;
+function durationFor(_index: number) {
+  return PHOTO_DURATION;
 }
 
 export default function Hero() {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const stopAutoplay = useCallback(() => clearTimeout(timerRef.current), []);
 
@@ -57,18 +54,18 @@ export default function Hero() {
   }, [api, scheduleNext, stopAutoplay]);
 
   return (
-    <section id="home" className="relative h-[90vh] overflow-hidden">
+    <section id="home" className="relative h-screen overflow-hidden">
       {/* Carousel background */}
       <div className="absolute inset-0 z-0">
         <Carousel setApi={setApi} opts={{ loop: true }} className="h-full w-full">
-          <CarouselContent className="ml-0 h-[90vh]">
+          <CarouselContent className="ml-0 h-screen">
             {slides.map((slide, i) =>
               slide.type === 'image' ? (
-                <CarouselItem key={i} className="pl-0 h-[90vh]">
+                <CarouselItem key={i} className="pl-0 h-screen">
                   <img src={slide.src} alt={slide.alt} className="w-full h-full object-cover" />
                 </CarouselItem>
               ) : (
-                <CarouselItem key={i} className="pl-0 h-[90vh]">
+                <CarouselItem key={i} className="pl-0 h-screen">
                   <video
                     autoPlay
                     muted
@@ -85,7 +82,6 @@ export default function Hero() {
           </CarouselContent>
         </Carousel>
 
-        <div className="absolute inset-0 bg-black/35" />
       </div>
 
       {/* Title */}

@@ -3,7 +3,6 @@ import { Link } from 'react-router';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowRight, Star } from 'lucide-react';
 
-const nordesteLogo = new URL('../../assets/logo_nordeste_gravata.png', import.meta.url).href;
 
 type Product = {
   image: string;
@@ -15,14 +14,14 @@ type Product = {
 
 const initialProducts: Product[] = [
   {
-    image: new URL('../../assets/products/Pipoca Gravatá/Premium/pipoca_gravatá_15g_0trans_himalaia_premium.jpeg', import.meta.url).href,
+    image: new URL('../../assets/products/Pipoca Gravatá/Premium/pipoca_gravatá_15g_0trans_himalaia_premium.png', import.meta.url).href,
     tag: 'LANÇAMENTO',
     title: 'PIPOCA HIMALAIA PREMIUM 15G',
     description: 'Sabor único com sal do Himalaia. Crocante, leve e com 0% gordura trans.',
     link: '#products',
   },
   {
-    image: new URL('../../assets/products/Pipoca Gravatá/Gourmet/pipoca_gravatá_15g_0trans_sabor_chocolate_gourmet.jpeg', import.meta.url).href,
+    image: new URL('../../assets/products/Pipoca Gravatá/Gourmet/pipoca_gravatá_15g_0trans_sabor_chocolate_gourmet.png', import.meta.url).href,
     title: 'PIPOCA CHOCOLATE GOURMET 15G',
     description: 'A irresistível combinação de pipoca crocante com chocolate.',
     link: '#products',
@@ -47,33 +46,30 @@ export default function Novidades() {
   const sidebar = products.slice(1);
 
   return (
-    <section className="py-20 bg-gradient-to-br from-accent/20 to-primary/10 px-4 sm:px-6 lg:px-8">
+    <section className="min-h-screen flex flex-col justify-center py-20 bg-gradient-to-br from-accent/20 to-primary/10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
 
-        {/* Header */}
-        <div className="flex items-center justify-between mb-10">
-          <div className="flex items-center gap-4">
-            <img src={nordesteLogo} alt="Nordeste Gravatá" className="h-14 object-contain" />
-            <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-primary">Nordeste Gravatá</p>
-              <h2 className="text-3xl font-black uppercase tracking-wide text-foreground">Novidades</h2>
-            </div>
-          </div>
-          <Link
-            to="/produtos"
-            className="hidden sm:flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-primary hover:text-primary/70 transition-colors"
-          >
-            Ver todos os produtos <ArrowRight size={15} />
-          </Link>
-        </div>
+        {/* Title above card */}
+        <motion.h2
+          className="text-5xl md:text-6xl lg:text-7xl font-black text-center mb-8 text-primary"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          Novidades
+        </motion.h2>
 
+        {/* Large card */}
+        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
         <div className="flex">
 
           {/* ── Featured ─────────────────────────────────── */}
-          <div className="flex w-[62%]">
+          <div className="flex w-[62%] p-[25px]">
+            <div className="flex w-full">
 
             {/* Product image */}
-            <div className="w-[44%] shrink-0 relative overflow-hidden flex items-center justify-center h-[380px]">
+            <div className="w-[44%] shrink-0 relative overflow-hidden flex items-center justify-center h-[380px] bg-gradient-to-br from-accent/20 to-primary/10 rounded-2xl m-4">
               <AnimatePresence mode="wait">
                 <motion.img
                   key={featured.image}
@@ -139,6 +135,7 @@ export default function Novidades() {
                 </motion.div>
               </AnimatePresence>
             </div>
+            </div>{/* end inner bg div */}
           </div>
 
           {/* ── Sidebar ──────────────────────────────────── */}
@@ -191,6 +188,7 @@ export default function Novidades() {
           </div>
 
         </div>
+        </div>{/* end card */}
       </div>
     </section>
   );

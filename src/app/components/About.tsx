@@ -27,7 +27,7 @@ export default function About() {
   ];
 
   return (
-    <section id="about" className="relative py-20 overflow-hidden">
+    <section id="about" className="min-h-screen flex flex-col justify-center relative py-20 overflow-hidden">
       <img
         src={falCompany}
         alt=""

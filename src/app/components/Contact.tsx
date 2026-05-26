@@ -14,7 +14,7 @@ export default function Contact() {
   }
 
   return (
-    <section id="contato" className="-mb-10 relative z-10 flex justify-center">
+    <section id="contato" className="min-h-screen -mb-10 relative z-10 flex flex-col justify-center items-center">
       <div className="bg-white w-full max-w-3xl px-4 sm:px-6 lg:px-8 pt-10 pb-0">
 
         <div className="text-center mb-8">

@@ -46,7 +46,7 @@ export default function Novidades() {
   const sidebar = products.slice(1);
 
   return (
-    <section className="min-h-screen flex flex-col justify-center py-20 bg-gradient-to-br from-accent/20 to-primary/10 px-4 sm:px-6 lg:px-8">
+    <section id="novidades" className="min-h-screen flex flex-col justify-center py-20 bg-gradient-to-br from-accent/20 to-primary/10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
 
         {/* Title above card */}

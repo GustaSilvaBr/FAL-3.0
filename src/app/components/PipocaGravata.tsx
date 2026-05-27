@@ -116,7 +116,7 @@ export default function PipocaGravata() {
   const next = () => { if (hasNext) setCurrent(i => i + 1); };
 
   return (
-    <section className="py-12 bg-gray-50" id="brands">
+    <section className="py-12 bg-gray-50" id="pipoca-gravata">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Header */}
@@ -130,7 +130,7 @@ export default function PipocaGravata() {
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary mb-3">
             Pipocas Gravatá
           </h2>
-          <p className="text-sm text-muted-foreground max-w-xl mx-auto">
+          <p className="text-sm max-w-xl mx-auto" style={{ color: '#666' }}>
             Quatro linhas, um só sabor autêntico. Encontre a sua preferida.
           </p>
         </motion.div>

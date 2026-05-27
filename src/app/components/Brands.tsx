@@ -171,10 +171,10 @@ export default function Brands() {
         >
           <div className="flex flex-col justify-center order-1">
 
-            <h3 className="text-5xl md:text-6xl lg:text-7xl mb-6 text-foreground">
+            <h3 className="text-5xl md:text-6xl lg:text-7xl mb-6 text-primary">
               Nordeste Gravatá
             </h3>
-            <p className="text-2xl md:text-3xl text-primary mb-8">
+            <p className="text-2xl md:text-3xl mb-8" style={{ color: '#666' }}>
               O Sabor Autêntico do Nordeste Brasileiro
             </p>
             <p className="text-xl text-muted-foreground mb-8 leading-relaxed">

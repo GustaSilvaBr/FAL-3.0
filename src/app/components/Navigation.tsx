@@ -1,13 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { Menu, X, Search } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Link, useLocation } from 'react-router';
+import { useLocation } from 'react-router';
 import falLogo from '../../assets/FAL_LOGO.png';
-
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
-  const [search, setSearch] = useState('');
   const [visible, setVisible] = useState(true);
   const lastScrollY = useRef(0);
   const location = useLocation();
@@ -25,9 +23,12 @@ export default function Navigation() {
 
   const anchorItems = [
     { label: 'Início', anchor: 'home' },
-    { label: 'Sobre', anchor: 'about' },
+    { label: 'Novidades', anchor: 'novidades' },
+    { label: 'Pipoca Gravatá', anchor: 'pipoca-gravata' },
     { label: 'Nordeste Gravatá', anchor: 'brands' },
-    { label: 'Contato', anchor: 'contact' },
+    { label: 'Sobre', anchor: 'about' },
+    { label: 'Produtos', anchor: 'produtos' },
+    { label: 'Contato', anchor: 'contato' },
   ];
 
   return (
@@ -66,31 +67,6 @@ export default function Navigation() {
                 </a>
               );
             })}
-            <Link
-              to="/produtos"
-              className={`relative group whitespace-nowrap transition-colors duration-200 font-medium ${
-                location.pathname === '/produtos'
-                  ? 'text-primary'
-                  : 'text-foreground hover:text-primary'
-              }`}
-            >
-              Produtos
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-200 group-hover:w-full" />
-            </Link>
-          </div>
-
-          {/* Search bar — right */}
-          <div className="hidden md:flex items-center shrink-0">
-            <div className="flex items-center gap-2 bg-white/50 hover:bg-white/70 transition-colors rounded-full px-4 py-2 border border-primary/10">
-              <Search className="w-4 h-4 text-muted-foreground" />
-              <input
-                type="text"
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                placeholder="Buscar produtos..."
-                className="bg-transparent text-foreground placeholder-muted-foreground text-sm outline-none w-40 focus:w-52 transition-all duration-300"
-              />
-            </div>
           </div>
 
           {/* Mobile menu button */}
@@ -123,23 +99,6 @@ export default function Navigation() {
                   {item.label}
                 </a>
               ))}
-              <Link
-                to="/produtos"
-                className="block py-2 text-foreground hover:text-primary transition-colors"
-                onClick={() => setIsOpen(false)}
-              >
-                Produtos
-              </Link>
-              <div className="flex items-center gap-2 bg-white/50 rounded-full px-4 py-2 mt-2 border border-primary/10">
-                <Search className="w-4 h-4 text-muted-foreground" />
-                <input
-                  type="text"
-                  value={search}
-                  onChange={e => setSearch(e.target.value)}
-                  placeholder="Buscar produtos..."
-                  className="bg-transparent text-foreground placeholder-muted-foreground text-sm outline-none w-full"
-                />
-              </div>
             </div>
           </motion.div>
         )}

@@ -18,10 +18,10 @@ export default function Contact() {
       <div className="bg-white w-full max-w-3xl px-4 sm:px-6 lg:px-8 pt-10 pb-0">
 
         <div className="text-center mb-8">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+          <h2 className="text-2xl sm:text-3xl font-bold text-primary mb-2">
             Fale Conosco
           </h2>
-          <p className="text-gray-500">
+          <p style={{ color: '#666' }}>
             Envie sua mensagem e retornaremos em breve.
           </p>
         </div>

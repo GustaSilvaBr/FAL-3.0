@@ -43,10 +43,10 @@ export default function About() {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl text-foreground mb-6">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl text-primary mb-6">
             Nossa História
           </h2>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-lg md:text-xl max-w-3xl mx-auto" style={{ color: '#666' }}>
             Há mais de três décadas fabricamos petiscos brasileiros autênticos em Gravatá. Da nossa famosa pipoca à tradicional
             paçoca, amendoim e salgadinhos, levamos o verdadeiro sabor do Nordeste brasileiro para famílias de todo o país.
             Nosso compromisso com a qualidade, a tradição e os sabores autênticos permanece inabalável.
@@ -66,7 +66,7 @@ export default function About() {
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
                 <value.icon className="w-8 h-8 text-primary" />
               </div>
-              <h3 className="text-xl mb-3 text-foreground">{value.title}</h3>
+              <h3 className="text-xl mb-3 text-primary">{value.title}</h3>
               <p className="text-muted-foreground">{value.description}</p>
             </motion.div>
           ))}

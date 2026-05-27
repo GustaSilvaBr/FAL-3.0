@@ -18,37 +18,37 @@ const categories = [
 
 const products = [
   // Amendoim
-  { name: 'Amendoim', category: 'Amendoim', description: 'Torrado e salgado sem pele', image: new URL('../../assets/products/Amendoim/amendoim.jpeg', import.meta.url).href },
+  { name: 'Amendoim', category: 'Amendoim', description: 'Torrado e salgado sem pele', image: new URL('../../assets/products/Amendoim/amendoim.png', import.meta.url).href },
   // Batata Chips
-  { name: 'Batata Chips Original', category: 'Batata Chips', description: 'Sabor original crocante', image: new URL('../../assets/products/Batata Chips/batatachips_original.jpeg', import.meta.url).href },
-  { name: 'Batata Chips Cebola & Salsa', category: 'Batata Chips', description: 'Sabor cebola e salsa', image: new URL('../../assets/products/Batata Chips/batatachips_cebola_salsa.jpeg', import.meta.url).href },
-  { name: 'Batata Chips Churrasco', category: 'Batata Chips', description: 'Sabor churrasco', image: new URL('../../assets/products/Batata Chips/batatachips_churrasco.jpeg', import.meta.url).href },
+  { name: 'Batata Chips Original', category: 'Batata Chips', description: 'Sabor original crocante', image: new URL('../../assets/products/Batata Chips/batatachips_original.png', import.meta.url).href },
+  { name: 'Batata Chips Cebola & Salsa', category: 'Batata Chips', description: 'Sabor cebola e salsa', image: new URL('../../assets/products/Batata Chips/batatachips_cebola_salsa.png', import.meta.url).href },
+  { name: 'Batata Chips Churrasco', category: 'Batata Chips', description: 'Sabor churrasco', image: new URL('../../assets/products/Batata Chips/batatachips_churrasco.png', import.meta.url).href },
   // Bolinhos de Goma
   { name: 'Bolinhos de Goma 50g', category: 'Bolinhos de Goma', description: 'Tradicional', image: new URL('../../assets/products/Bolinhos de Goma/bolinhos_De_goma_50g.png', import.meta.url).href },
   { name: 'Bolinhos de Goma 90g', category: 'Bolinhos de Goma', description: 'Tradicional', image: new URL('../../assets/products/Bolinhos de Goma/bolinhos_de_goma_90g.png', import.meta.url).href },
   // Paçoca
-  { name: 'Paçoca', category: 'Paçoca', description: 'Doce de amendoim tradicional', image: new URL('../../assets/products/Paçoca/paçoca.jpeg', import.meta.url).href },
+  { name: 'Paçoca', category: 'Paçoca', description: 'Doce de amendoim tradicional', image: new URL('../../assets/products/Paçoca/paçoca.png', import.meta.url).href },
   // Pipoca Gravatá - Amanteigadas
-  { name: 'Pipoca Gravatá 10g', category: 'Pipoca Gravatá', description: 'Amanteigada 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipoca_gravatá_10g_0trans_yellow.jpeg', import.meta.url).href },
-  { name: 'Pipoca Gravatá 10g', category: 'Pipoca Gravatá', description: 'Amanteigada 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipoca_gravatá_10g_0trans_white.jpeg', import.meta.url).href },
-  { name: 'Pipocão Gravatá 14g', category: 'Pipoca Gravatá', description: 'Amanteigada 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipoca_gravatá_14g_0trans_white.jpeg', import.meta.url).href },
-  { name: 'Pipoca Gravatá Sem Sal 10g', category: 'Pipoca Gravatá', description: 'Amanteigada sem sal 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipoca_gravatá_10g_0trans_sem_sal.jpeg', import.meta.url).href },
-  { name: 'Pipocão Gravatá 30g', category: 'Pipoca Gravatá', description: 'Amanteigada 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipocao_gravatá_30g_0trans_white.jpeg', import.meta.url).href },
-  { name: 'Pipocão Gravatá 40g', category: 'Pipoca Gravatá', description: 'Amanteigada 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipocao_gravatá_40g_0trans_white.jpeg', import.meta.url).href },
-  { name: 'Pipocão Gravatá 72g', category: 'Pipoca Gravatá', description: 'Amanteigada 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipocao_gravatá_72g_0trans_white.jpeg', import.meta.url).href },
-  { name: 'Pipocão Gravatá 90g', category: 'Pipoca Gravatá', description: 'Amanteigada 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipocao_gravatá_90g_0trans_white.jpeg', import.meta.url).href },
+  { name: 'Pipoca Gravatá 10g', category: 'Pipoca Gravatá', description: 'Amanteigada 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipoca_gravatá_10g_0trans_yellow.png', import.meta.url).href },
+  { name: 'Pipoca Gravatá 10g', category: 'Pipoca Gravatá', description: 'Amanteigada 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipoca_gravatá_10g_0trans_white.png', import.meta.url).href },
+  { name: 'Pipocão Gravatá 14g', category: 'Pipoca Gravatá', description: 'Amanteigada 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipoca_gravatá_14g_0trans_white.png', import.meta.url).href },
+  { name: 'Pipoca Gravatá Sem Sal 10g', category: 'Pipoca Gravatá', description: 'Amanteigada sem sal 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipoca_gravatá_10g_0trans_sem_sal.png', import.meta.url).href },
+  { name: 'Pipocão Gravatá 30g', category: 'Pipoca Gravatá', description: 'Amanteigada 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipocao_gravatá_30g_0trans_white.png', import.meta.url).href },
+  { name: 'Pipocão Gravatá 40g', category: 'Pipoca Gravatá', description: 'Amanteigada 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipocao_gravatá_40g_0trans_white.png', import.meta.url).href },
+  { name: 'Pipocão Gravatá 72g', category: 'Pipoca Gravatá', description: 'Amanteigada 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipocao_gravatá_72g_0trans_white.png', import.meta.url).href },
+  { name: 'Pipocão Gravatá 90g', category: 'Pipoca Gravatá', description: 'Amanteigada 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipocao_gravatá_90g_0trans_white.png', import.meta.url).href },
   // Pipoca Gravatá - Doces
-  { name: 'Pipoca Gravatá Doce 10g', category: 'Pipoca Gravatá', description: 'Doce 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Doces/pipoca_gravatá_10g_0trans_doce.jpeg', import.meta.url).href },
-  { name: 'Pipoca Gravatá Doce 14g', category: 'Pipoca Gravatá', description: 'Doce 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Doces/pipoca_gravatá_14g_0trans_doce.jpeg', import.meta.url).href },
-  { name: 'Pipoca Gravatá Amendoim Doce 12g', category: 'Pipoca Gravatá', description: 'Amendoim doce 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Doces/pipoca_gravatá_12g_0trans_amendoim_doce.jpeg', import.meta.url).href },
-  { name: 'Pipocão Gravatá Doce 30g', category: 'Pipoca Gravatá', description: 'Doce 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Doces/pipocao_gravatá_30g_0trans_doce.jpeg', import.meta.url).href },
-  { name: 'Pipocão Gravatá Amendoim Doce 30g', category: 'Pipoca Gravatá', description: 'Amendoim doce 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Doces/pipocao_gravatá_30g_0trans_amendoim_doce.jpeg', import.meta.url).href },
+  { name: 'Pipoca Gravatá Doce 10g', category: 'Pipoca Gravatá', description: 'Doce 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Doces/pipoca_gravatá_10g_0trans_doce.png', import.meta.url).href },
+  { name: 'Pipoca Gravatá Doce 14g', category: 'Pipoca Gravatá', description: 'Doce 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Doces/pipoca_gravatá_14g_0trans_doce.png', import.meta.url).href },
+  { name: 'Pipoca Gravatá Amendoim Doce 12g', category: 'Pipoca Gravatá', description: 'Amendoim doce 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Doces/pipoca_gravatá_12g_0trans_amendoim_doce.png', import.meta.url).href },
+  { name: 'Pipocão Gravatá Doce 30g', category: 'Pipoca Gravatá', description: 'Doce 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Doces/pipocao_gravatá_30g_0trans_doce.png', import.meta.url).href },
+  { name: 'Pipocão Gravatá Amendoim Doce 30g', category: 'Pipoca Gravatá', description: 'Amendoim doce 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Doces/pipocao_gravatá_30g_0trans_amendoim_doce.png', import.meta.url).href },
   // Pipoca Gravatá - Gourmet
-  { name: 'Pipoca Gravatá Chocolate Gourmet 15g', category: 'Pipoca Gravatá', description: 'Sabor chocolate gourmet 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Gourmet/pipoca_gravatá_15g_0trans_sabor_chocolate_gourmet.jpeg', import.meta.url).href },
-  { name: 'Pipocão Gravatá Chocolate Gourmet 45g', category: 'Pipoca Gravatá', description: 'Sabor chocolate gourmet 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Gourmet/pipocao_gravatá_45g_0trans_chocolate_gourmet.jpeg', import.meta.url).href },
+  { name: 'Pipoca Gravatá Chocolate Gourmet 15g', category: 'Pipoca Gravatá', description: 'Sabor chocolate gourmet 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Gourmet/pipoca_gravatá_15g_0trans_sabor_chocolate_gourmet.png', import.meta.url).href },
+  { name: 'Pipocão Gravatá Chocolate Gourmet 45g', category: 'Pipoca Gravatá', description: 'Sabor chocolate gourmet 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Gourmet/pipocao_gravatá_45g_0trans_chocolate_gourmet.png', import.meta.url).href },
   // Pipoca Gravatá - Premium
-  { name: 'Pipoca Gravatá Himalaia Premium 15g', category: 'Pipoca Gravatá', description: 'Sal do Himalaia premium 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Premium/pipoca_gravatá_15g_0trans_himalaia_premium.jpeg', import.meta.url).href },
-  { name: 'Pipoca Gravatá Himalaia Premium 40g', category: 'Pipoca Gravatá', description: 'Sal do Himalaia premium 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Premium/pipoca_gravatá_40g_0trans_himalaia_premium.jpeg', import.meta.url).href },
+  { name: 'Pipoca Gravatá Himalaia Premium 15g', category: 'Pipoca Gravatá', description: 'Sal do Himalaia premium 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Premium/pipoca_gravatá_15g_0trans_himalaia_premium.png', import.meta.url).href },
+  { name: 'Pipoca Gravatá Himalaia Premium 40g', category: 'Pipoca Gravatá', description: 'Sal do Himalaia premium 0% Trans', image: new URL('../../assets/products/Pipoca Gravatá/Premium/pipoca_gravatá_40g_0trans_himalaia_premium.png', import.meta.url).href },
   // Salgadinhos - Pipofloc's
   { name: "Pipofloc's Churrasco 13g", category: 'Salgadinhos', description: 'Sabor churrasco', image: new URL("../../assets/products/Salgadinhos/Pipofloc's/pipo_flocs_churrasco_13g.jpeg", import.meta.url).href },
   { name: "Pipofloc's Milho 13g", category: 'Salgadinhos', description: 'Sabor milho', image: new URL("../../assets/products/Salgadinhos/Pipofloc's/pipo_flocs_milho_13g.jpeg", import.meta.url).href },

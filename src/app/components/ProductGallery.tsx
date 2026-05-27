@@ -4,11 +4,11 @@ export default function ProductGallery() {
   const productImages = [
     {
       name: 'Amendoim',
-      image: new URL('../../assets/products/Amendoim/amendoim.jpeg', import.meta.url).href,
+      image: new URL('../../assets/products/Amendoim/amendoim.png', import.meta.url).href,
     },
     {
       name: 'Batata Chips',
-      image: new URL('../../assets/products/Batata Chips/batatachips_original.jpeg', import.meta.url).href,
+      image: new URL('../../assets/products/Batata Chips/batatachips_original.png', import.meta.url).href,
     },
     {
       name: 'Bolinhos de Goma',
@@ -16,11 +16,11 @@ export default function ProductGallery() {
     },
     {
       name: 'Paçoca',
-      image: new URL('../../assets/products/Paçoca/paçoca.jpeg', import.meta.url).href,
+      image: new URL('../../assets/products/Paçoca/paçoca.png', import.meta.url).href,
     },
     {
       name: 'Pipoca Gravatá',
-      image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipoca_gravatá_10g_0trans_yellow.jpeg', import.meta.url).href,
+      image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipoca_gravatá_10g_0trans_yellow.png', import.meta.url).href,
     },
     {
       name: 'Salgadinhos',

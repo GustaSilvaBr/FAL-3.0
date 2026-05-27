@@ -8,37 +8,37 @@ const heroUrl = new URL('../../assets/hero.png', import.meta.url).href;
 
 const products = [
   // Amendoim
-  { name: 'Amendoim', category: 'Amendoim', image: new URL('../../assets/products/Amendoim/amendoim.jpeg', import.meta.url).href },
+  { name: 'Amendoim', category: 'Amendoim', image: new URL('../../assets/products/Amendoim/amendoim.png', import.meta.url).href },
   // Batata Chips
-  { name: 'Batata Chips Original', category: 'Batata Chips', image: new URL('../../assets/products/Batata Chips/batatachips_original.jpeg', import.meta.url).href },
-  { name: 'Batata Chips Cebola & Salsa', category: 'Batata Chips', image: new URL('../../assets/products/Batata Chips/batatachips_cebola_salsa.jpeg', import.meta.url).href },
-  { name: 'Batata Chips Churrasco', category: 'Batata Chips', image: new URL('../../assets/products/Batata Chips/batatachips_churrasco.jpeg', import.meta.url).href },
+  { name: 'Batata Chips Original', category: 'Batata Chips', image: new URL('../../assets/products/Batata Chips/batatachips_original.png', import.meta.url).href },
+  { name: 'Batata Chips Cebola & Salsa', category: 'Batata Chips', image: new URL('../../assets/products/Batata Chips/batatachips_cebola_salsa.png', import.meta.url).href },
+  { name: 'Batata Chips Churrasco', category: 'Batata Chips', image: new URL('../../assets/products/Batata Chips/batatachips_churrasco.png', import.meta.url).href },
   // Bolinhos de Goma
   { name: 'Bolinhos de Goma 50g', category: 'Bolinhos de Goma', image: new URL('../../assets/products/Bolinhos de Goma/bolinhos_De_goma_50g.png', import.meta.url).href },
   { name: 'Bolinhos de Goma 90g', category: 'Bolinhos de Goma', image: new URL('../../assets/products/Bolinhos de Goma/bolinhos_de_goma_90g.png', import.meta.url).href },
   // Paçoca
-  { name: 'Paçoca', category: 'Paçoca', image: new URL('../../assets/products/Paçoca/paçoca.jpeg', import.meta.url).href },
+  { name: 'Paçoca', category: 'Paçoca', image: new URL('../../assets/products/Paçoca/paçoca.png', import.meta.url).href },
   // Pipoca Gravatá — Amanteigadas
-  { name: 'Pipoca Gravatá 10g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipoca_gravatá_10g_0trans_yellow.jpeg', import.meta.url).href },
-  { name: 'Pipoca Gravatá 10g Branca', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipoca_gravatá_10g_0trans_white.jpeg', import.meta.url).href },
-  { name: 'Pipocão Gravatá 14g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipoca_gravatá_14g_0trans_white.jpeg', import.meta.url).href },
-  { name: 'Pipoca Gravatá Sem Sal 10g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipoca_gravatá_10g_0trans_sem_sal.jpeg', import.meta.url).href },
-  { name: 'Pipocão Gravatá 30g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipocao_gravatá_30g_0trans_white.jpeg', import.meta.url).href },
-  { name: 'Pipocão Gravatá 40g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipocao_gravatá_40g_0trans_white.jpeg', import.meta.url).href },
-  { name: 'Pipocão Gravatá 72g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipocao_gravatá_72g_0trans_white.jpeg', import.meta.url).href },
-  { name: 'Pipocão Gravatá 90g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipocao_gravatá_90g_0trans_white.jpeg', import.meta.url).href },
+  { name: 'Pipoca Gravatá 10g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipoca_gravatá_10g_0trans_yellow.png', import.meta.url).href },
+  { name: 'Pipoca Gravatá 10g Branca', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipoca_gravatá_10g_0trans_white.png', import.meta.url).href },
+  { name: 'Pipocão Gravatá 14g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipoca_gravatá_14g_0trans_white.png', import.meta.url).href },
+  { name: 'Pipoca Gravatá Sem Sal 10g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipoca_gravatá_10g_0trans_sem_sal.png', import.meta.url).href },
+  { name: 'Pipocão Gravatá 30g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipocao_gravatá_30g_0trans_white.png', import.meta.url).href },
+  { name: 'Pipocão Gravatá 40g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipocao_gravatá_40g_0trans_white.png', import.meta.url).href },
+  { name: 'Pipocão Gravatá 72g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipocao_gravatá_72g_0trans_white.png', import.meta.url).href },
+  { name: 'Pipocão Gravatá 90g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipocao_gravatá_90g_0trans_white.png', import.meta.url).href },
   // Pipoca Gravatá — Doces
-  { name: 'Pipoca Gravatá Doce 10g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Doces/pipoca_gravatá_10g_0trans_doce.jpeg', import.meta.url).href },
-  { name: 'Pipoca Gravatá Doce 14g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Doces/pipoca_gravatá_14g_0trans_doce.jpeg', import.meta.url).href },
-  { name: 'Pipoca Gravatá Amendoim Doce 12g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Doces/pipoca_gravatá_12g_0trans_amendoim_doce.jpeg', import.meta.url).href },
-  { name: 'Pipocão Gravatá Doce 30g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Doces/pipocao_gravatá_30g_0trans_doce.jpeg', import.meta.url).href },
-  { name: 'Pipocão Gravatá Amendoim Doce 30g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Doces/pipocao_gravatá_30g_0trans_amendoim_doce.jpeg', import.meta.url).href },
+  { name: 'Pipoca Gravatá Doce 10g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Doces/pipoca_gravatá_10g_0trans_doce.png', import.meta.url).href },
+  { name: 'Pipoca Gravatá Doce 14g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Doces/pipoca_gravatá_14g_0trans_doce.png', import.meta.url).href },
+  { name: 'Pipoca Gravatá Amendoim Doce 12g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Doces/pipoca_gravatá_12g_0trans_amendoim_doce.png', import.meta.url).href },
+  { name: 'Pipocão Gravatá Doce 30g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Doces/pipocao_gravatá_30g_0trans_doce.png', import.meta.url).href },
+  { name: 'Pipocão Gravatá Amendoim Doce 30g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Doces/pipocao_gravatá_30g_0trans_amendoim_doce.png', import.meta.url).href },
   // Pipoca Gravatá — Gourmet
-  { name: 'Pipoca Gravatá Chocolate Gourmet 15g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Gourmet/pipoca_gravatá_15g_0trans_sabor_chocolate_gourmet.jpeg', import.meta.url).href },
-  { name: 'Pipocão Gravatá Chocolate Gourmet 45g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Gourmet/pipocao_gravatá_45g_0trans_chocolate_gourmet.jpeg', import.meta.url).href },
+  { name: 'Pipoca Gravatá Chocolate Gourmet 15g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Gourmet/pipoca_gravatá_15g_0trans_sabor_chocolate_gourmet.png', import.meta.url).href },
+  { name: 'Pipocão Gravatá Chocolate Gourmet 45g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Gourmet/pipocao_gravatá_45g_0trans_chocolate_gourmet.png', import.meta.url).href },
   // Pipoca Gravatá — Premium
-  { name: 'Pipoca Gravatá Himalaia Premium 15g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Premium/pipoca_gravatá_15g_0trans_himalaia_premium.jpeg', import.meta.url).href },
-  { name: 'Pipoca Gravatá Himalaia Premium 40g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Premium/pipoca_gravatá_40g_0trans_himalaia_premium.jpeg', import.meta.url).href },
+  { name: 'Pipoca Gravatá Himalaia Premium 15g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Premium/pipoca_gravatá_15g_0trans_himalaia_premium.png', import.meta.url).href },
+  { name: 'Pipoca Gravatá Himalaia Premium 40g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Premium/pipoca_gravatá_40g_0trans_himalaia_premium.png', import.meta.url).href },
   // Salgadinhos — Pipofloc's
   { name: "Pipofloc's Churrasco 13g", category: 'Salgadinhos', image: new URL("../../assets/products/Salgadinhos/Pipofloc's/pipo_flocs_churrasco_13g.jpeg", import.meta.url).href },
   { name: "Pipofloc's Milho 13g", category: 'Salgadinhos', image: new URL("../../assets/products/Salgadinhos/Pipofloc's/pipo_flocs_milho_13g.jpeg", import.meta.url).href },
@@ -100,6 +100,8 @@ const products = [
   { name: "Piggy's Picanha 30g", category: 'Torresminho', image: new URL('../../assets/products/Torresminho/piggys_picanha_30g.jpeg', import.meta.url).href },
 ];
 
+type Product = (typeof products)[0];
+
 function parseWeight(name: string): number | null {
   const m = name.match(/(\d+)g/);
   return m ? parseInt(m[1]) : null;
@@ -123,6 +125,19 @@ const typeCategories = [
   'Torresminho',
 ];
 
+const nutritionRows = [
+  { label: 'Valor energético (kcal)', per100g: '333', per10g: '33', vd: '2', indent: false },
+  { label: 'Carboidratos (g)', per100g: '69', per10g: '7', vd: '2', indent: false },
+  { label: 'Açúcares totais (g)', per100g: '0', per10g: '0', vd: '—', indent: false },
+  { label: 'Açúcares adicionados (g)', per100g: '0', per10g: '0', vd: '—', indent: true },
+  { label: 'Proteínas (g)', per100g: '0', per10g: '0', vd: '0', indent: false },
+  { label: 'Gorduras totais (g)', per100g: '9', per10g: '1', vd: '2', indent: false },
+  { label: 'Gorduras saturadas (g)', per100g: '8', per10g: '1', vd: '1', indent: true },
+  { label: 'Gorduras trans (g)', per100g: '6', per10g: '1', vd: '5', indent: true },
+  { label: 'Fibras alimentares (g)', per100g: '0', per10g: '0', vd: '0', indent: false },
+  { label: 'Sódio (mg)', per100g: '2', per10g: '0', vd: '0', indent: false },
+];
+
 const ITEMS_PER_PAGE = 9;
 
 export default function ProductsPage() {
@@ -131,6 +146,7 @@ export default function ProductsPage() {
   const [selectedWeight, setSelectedWeight] = useState<string | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const filterRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
 
@@ -144,7 +160,22 @@ export default function ProductsPage() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Fixed counts per category (independent of current filters)
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSelectedProduct(null);
+    };
+    if (selectedProduct) {
+      window.addEventListener('keydown', handleKey);
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      window.removeEventListener('keydown', handleKey);
+      document.body.style.overflow = '';
+    };
+  }, [selectedProduct]);
+
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     typeCategories.forEach((cat) => {
@@ -365,10 +396,11 @@ export default function ProductsPage() {
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.2, delay: i * 0.04 }}
-                      className="bg-white rounded-2xl transition-shadow duration-300 flex flex-col p-3 gap-3"
+                      onClick={() => setSelectedProduct(product)}
+                      className="bg-white rounded-2xl transition-shadow duration-300 flex flex-col p-3 gap-3 cursor-pointer hover:shadow-lg"
                     >
                       {/* Image row */}
-                      <div className="h-80 bg-gradient-to-br from-accent/20 to-primary/10 rounded-2xl p-6 flex items-center justify-center overflow-hidden group cursor-pointer">
+                      <div className="h-80 bg-gradient-to-br from-accent/20 to-primary/10 rounded-2xl p-6 flex items-center justify-center overflow-hidden group">
                         <img
                           src={product.image}
                           alt={product.name}
@@ -431,6 +463,115 @@ export default function ProductsPage() {
 
         <Footer />
       </div>
+
+      {/* ── Product detail modal ── */}
+      <AnimatePresence>
+        {selectedProduct && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+            onClick={() => setSelectedProduct(null)}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <motion.div
+              className="bg-white rounded-3xl overflow-hidden w-full max-w-5xl max-h-[90vh] flex"
+              onClick={(e) => e.stopPropagation()}
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              transition={{ duration: 0.25 }}
+            >
+              {/* Left — large product image */}
+              <div className="w-2/5 shrink-0 bg-gradient-to-br from-accent/30 to-primary/15 flex items-center justify-center p-10">
+                <img
+                  src={selectedProduct.image}
+                  alt={selectedProduct.name}
+                  className="max-h-[65vh] w-full object-contain drop-shadow-xl"
+                />
+              </div>
+
+              {/* Right — info + nutritional table */}
+              <div className="flex-1 overflow-y-auto p-8 flex flex-col gap-6">
+
+                {/* Header */}
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <span className="inline-block text-xs font-bold text-primary uppercase tracking-widest bg-primary/10 px-3 py-1.5 rounded-full mb-3">
+                      {selectedProduct.category}
+                    </span>
+                    <h2 className="text-2xl font-bold text-foreground leading-tight">
+                      {selectedProduct.name}
+                    </h2>
+                  </div>
+                  <button
+                    onClick={() => setSelectedProduct(null)}
+                    className="shrink-0 p-2 rounded-full hover:bg-muted transition-colors"
+                    aria-label="Fechar"
+                  >
+                    <X className="w-5 h-5 text-muted-foreground" />
+                  </button>
+                </div>
+
+                {/* Nutritional table */}
+                <div className="border border-border rounded-xl overflow-hidden text-xs">
+
+                  {/* Title */}
+                  <div className="bg-foreground text-background px-4 py-2.5 text-center font-bold text-sm uppercase tracking-wider">
+                    Informação Nutricional
+                  </div>
+
+                  {/* Serving info */}
+                  <div className="px-4 py-2.5 border-b border-border bg-muted/30 space-y-0.5">
+                    <p className="text-muted-foreground">Porção por embalagem: cerca de 4 porções</p>
+                    <p className="font-semibold text-foreground">Porção: 10 g (1 xícara)</p>
+                  </div>
+
+                  {/* Column headers */}
+                  <div className="grid grid-cols-[1fr_3rem_3rem_3rem] border-b-2 border-foreground/20 bg-muted/20">
+                    <div className="px-4 py-2" />
+                    <div className="py-2 text-center font-bold text-foreground">100g</div>
+                    <div className="py-2 text-center font-bold text-foreground">10g</div>
+                    <div className="py-2 text-center font-bold text-foreground">%VD*</div>
+                  </div>
+
+                  {/* Data rows */}
+                  {nutritionRows.map((row, i) => (
+                    <div
+                      key={row.label}
+                      className={`grid grid-cols-[1fr_3rem_3rem_3rem] border-b border-border last:border-b-0 ${
+                        i % 2 === 0 ? 'bg-white' : 'bg-muted/15'
+                      }`}
+                    >
+                      <div className={`px-4 py-2 font-medium text-foreground ${row.indent ? 'pl-8 text-muted-foreground' : ''}`}>
+                        {row.label}
+                      </div>
+                      <div className="py-2 text-center text-muted-foreground">{row.per100g}</div>
+                      <div className="py-2 text-center font-semibold text-foreground">{row.per10g}</div>
+                      <div className="py-2 text-center text-muted-foreground">{row.vd}</div>
+                    </div>
+                  ))}
+
+                  {/* kJ row */}
+                  <div className="grid grid-cols-[1fr_3rem_3rem_3rem] border-t-2 border-foreground/20 bg-muted/30">
+                    <div className="px-4 py-2 font-medium text-foreground">Valor energético (kJ)</div>
+                    <div className="py-2 text-center text-muted-foreground">1050</div>
+                    <div className="py-2 text-center font-semibold text-foreground">105</div>
+                    <div className="py-2 text-center text-muted-foreground">5</div>
+                  </div>
+
+                  {/* Footnote */}
+                  <div className="px-4 py-2.5 bg-muted/10 border-t border-border text-muted-foreground italic">
+                    *Percentual de valores diários fornecidos pela porção
+                  </div>
+                </div>
+
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

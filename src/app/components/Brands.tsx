@@ -1,9 +1,11 @@
 import { Link } from 'react-router';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence, useMotionValue, useTransform, useAnimationFrame } from 'motion/react';
+import type { Variants } from 'motion/react';
 import { useState, useEffect } from 'react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import type { Product, SectionBrands } from '../../lib/types';
+import { preloadImages } from '../../lib/imageCache';
 
 const nordesteLogo = new URL('../../assets/logo_nordeste_gravata.png', import.meta.url).href;
 
@@ -11,7 +13,77 @@ const RADIUS    = 200;
 const CONTAINER = 500;
 const DURATION  = 40;
 
+const MAX_VISIBLE = 7;
+const ROTATION_MS = 5000;
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function useRotatingProducts(pool: Product[]): Product[] {
+  const key = pool.map((p) => p.id).join(',');
+  const [visible, setVisible] = useState<Product[]>(() => pool.slice(0, MAX_VISIBLE));
+
+  useEffect(() => {
+    setVisible(pool.slice(0, MAX_VISIBLE));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
+
+  useEffect(() => {
+    if (pool.length <= MAX_VISIBLE) return;
+    const timer = setInterval(() => {
+      setVisible((prev) => {
+        const prevIds = new Set(prev.map((p) => p.id));
+        const hidden = pool.filter((p) => !prevIds.has(p.id));
+        if (!hidden.length) return prev;
+        const swapN = Math.min(3 + (Math.random() < 0.5 ? 0 : 1), hidden.length, prev.length);
+        const outPositions = shuffle(prev.map((_, i) => i)).slice(0, swapN);
+        const incoming = shuffle(hidden).slice(0, swapN);
+        const next = [...prev];
+        outPositions.forEach((pos, i) => { next[pos] = incoming[i]; });
+        return next;
+      });
+    }, ROTATION_MS);
+    return () => clearInterval(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key]);
+
+  return visible;
+}
+
+// ─── Product variants ─────────────────────────────────────────────────────────
+
+const productVariants: Variants = {
+  initial: { scale: 0 },
+  animate: {
+    scale: 1,
+    transition: { duration: 1.0, ease: [0.34, 1.56, 0.64, 1] },
+  },
+  exit: {
+    scale: 0,
+    transition: { duration: 0.6, ease: 'easeIn' },
+  },
+};
+
+// ─── Product wheel ────────────────────────────────────────────────────────────
+
 function ProductWheel({ products }: { products: Product[] }) {
+  // Single MotionValue drives orbit; counter-rotation is derived so it is
+  // always perfectly in sync — new products mount already upright.
+  const orbitAngle   = useMotionValue(0);
+  const counterAngle = useTransform(orbitAngle, (v) => -v);
+
+  useAnimationFrame((t) => {
+    orbitAngle.set(((t / 1000) / DURATION * 360) % 360);
+  });
+
   if (products.length === 0) return null;
 
   return (
@@ -28,11 +100,7 @@ function ProductWheel({ products }: { products: Product[] }) {
       </div>
 
       {/* Rotating orbit */}
-      <motion.div
-        className="absolute inset-0 overflow-visible"
-        animate={{ rotate: 360 }}
-        transition={{ duration: DURATION, repeat: Infinity, ease: 'linear' }}
-      >
+      <motion.div className="absolute inset-0 overflow-visible" style={{ rotate: orbitAngle }}>
         {products.map((product, i) => {
           const angle = (i * 360) / products.length - 90;
           const rad   = (angle * Math.PI) / 180;
@@ -40,8 +108,9 @@ function ProductWheel({ products }: { products: Product[] }) {
           const y     = Math.sin(rad) * RADIUS;
 
           return (
+            // key=i keeps the slot stable; only the product inside changes
             <div
-              key={product.id}
+              key={i}
               className="absolute"
               style={{
                 left: '50%',
@@ -49,10 +118,8 @@ function ProductWheel({ products }: { products: Product[] }) {
                 transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
               }}
             >
-              <motion.div
-                animate={{ rotate: -360 }}
-                transition={{ duration: DURATION, repeat: Infinity, ease: 'linear' }}
-              >
+              {/* Shared counter-rotation — always synced with the orbit */}
+              <motion.div style={{ rotate: counterAngle }}>
                 <motion.div
                   style={{ width: 103, height: 103 }}
                   whileHover={{ scale: 1.5 }}
@@ -60,16 +127,33 @@ function ProductWheel({ products }: { products: Product[] }) {
                   className="cursor-pointer"
                   title={product.name}
                 >
+                  {/* Circle stays visible always; only the image scales in/out */}
                   <div className="w-full h-full rounded-full bg-white shadow-lg overflow-hidden flex items-center justify-center">
-                    {product.imageUrl ? (
-                      <img
-                        src={product.imageUrl}
-                        alt={product.name}
-                        className="w-[86px] h-[86px] object-contain"
-                      />
-                    ) : (
-                      <span className="text-2xl">📦</span>
-                    )}
+                    <AnimatePresence mode="wait">
+                      {product.imageUrl ? (
+                        <motion.img
+                          key={product.id}
+                          src={product.imageUrl}
+                          alt={product.name}
+                          variants={productVariants}
+                          initial="initial"
+                          animate="animate"
+                          exit="exit"
+                          className="w-[86px] h-[86px] object-contain"
+                        />
+                      ) : (
+                        <motion.span
+                          key={product.id}
+                          variants={productVariants}
+                          initial="initial"
+                          animate="animate"
+                          exit="exit"
+                          className="text-2xl"
+                        >
+                          📦
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
                   </div>
                 </motion.div>
               </motion.div>
@@ -81,13 +165,15 @@ function ProductWheel({ products }: { products: Product[] }) {
   );
 }
 
-export default function Brands() {
-  const [products, setProducts] = useState<Product[]>([]);
+// ─── Component ────────────────────────────────────────────────────────────────
+
+export default function Brands({ onLoad }: { onLoad?: () => void }) {
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     async function load() {
       const snap = await getDoc(doc(db, 'sections', 'brands'));
-      if (!snap.exists()) return;
+      if (!snap.exists()) { onLoad?.(); return; }
 
       const data = snap.data() as SectionBrands;
       const ids  = data.productIds ?? [];
@@ -99,11 +185,16 @@ export default function Brands() {
         }),
       );
 
-      setProducts(loaded.filter(Boolean) as Product[]);
+      const all = loaded.filter(Boolean) as Product[];
+      await preloadImages(all.map((p) => p.imageUrl));
+      setAllProducts(all);
+      onLoad?.();
     }
 
     load();
-  }, []);
+  }, [onLoad]);
+
+  const products = useRotatingProducts(allProducts);
 
   return (
     <section id="brands" className="min-h-screen flex flex-col justify-center py-20 bg-gradient-to-br from-accent/20 to-primary/10">

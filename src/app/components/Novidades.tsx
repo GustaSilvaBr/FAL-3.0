@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { preloadImages } from '../../lib/imageCache';
 import { Link } from 'react-router';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowRight, Star } from 'lucide-react';
@@ -22,17 +23,17 @@ function toDisplayItem(item: NovidadesItem, product: Product | undefined): Displ
   };
 }
 
-export default function Novidades() {
+export default function Novidades({ onLoad }: { onLoad?: () => void }) {
   const [items, setItems] = useState<DisplayItem[]>([]);
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
     async function load() {
       const sectionSnap = await getDoc(doc(db, 'sections', 'novidades'));
-      if (!sectionSnap.exists()) return;
+      if (!sectionSnap.exists()) { onLoad?.(); return; }
 
       const section = sectionSnap.data() as SectionNovidades;
-      if (!section.items?.length) return;
+      if (!section.items?.length) { onLoad?.(); return; }
 
       const productIds = [...new Set(section.items.map((i) => i.productId))];
       const productMap: Record<string, Product> = {};
@@ -44,11 +45,14 @@ export default function Novidades() {
         }),
       );
 
-      setItems(section.items.map((item) => toDisplayItem(item, productMap[item.productId])));
+      const displayItems = section.items.map((item) => toDisplayItem(item, productMap[item.productId]));
+      await preloadImages(displayItems.map((i) => i.image));
+      setItems(displayItems);
+      onLoad?.();
     }
 
     load();
-  }, []);
+  }, [onLoad]);
 
   useEffect(() => {
     if (items.length < 2) return;

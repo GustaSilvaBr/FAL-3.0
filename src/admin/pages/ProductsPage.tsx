@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router';
 import SeedButton from '../seed/SeedButton';
 import {
@@ -205,6 +205,37 @@ export default function ProductsPage() {
 
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
+  const [sidebarWidth, setSidebarWidth] = useState(224);
+  const dragState = useRef<{ startX: number; startWidth: number } | null>(null);
+
+  const handleDividerMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    dragState.current = { startX: e.clientX, startWidth: sidebarWidth };
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+  };
+
+  useEffect(() => {
+    const onMouseMove = (e: MouseEvent) => {
+      if (!dragState.current) return;
+      const delta = e.clientX - dragState.current.startX;
+      const clamped = Math.min(480, Math.max(160, dragState.current.startWidth + delta));
+      setSidebarWidth(clamped);
+    };
+    const onMouseUp = () => {
+      if (!dragState.current) return;
+      dragState.current = null;
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+    return () => {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+  }, []);
+
   useEffect(() => {
     const unsub = onSnapshot(
       query(collection(db, 'folders'), orderBy('name')),
@@ -322,7 +353,7 @@ export default function ProductsPage() {
   return (
     <div className="flex h-full">
       {/* Folder sidebar */}
-      <aside className="w-56 bg-white border-r border-gray-200 flex flex-col shrink-0">
+      <aside style={{ width: sidebarWidth }} className="bg-white flex flex-col shrink-0 overflow-hidden">
         <div className="p-4 border-b border-gray-100">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
@@ -379,6 +410,12 @@ export default function ProductsPage() {
           ))}
         </div>
       </aside>
+
+      {/* Resize divider */}
+      <div
+        onMouseDown={handleDividerMouseDown}
+        className="w-1 shrink-0 bg-gray-200 hover:bg-primary/50 active:bg-primary cursor-col-resize transition-colors"
+      />
 
       {/* Products grid */}
       <div className="flex-1 overflow-auto p-8">

@@ -5,6 +5,7 @@ import { Link } from 'react-router';
 import { collection, query, onSnapshot, orderBy } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { NUTRITION_FIELDS, type Product, type Folder } from '../../lib/types';
+import { preloadImages } from '../../lib/imageCache';
 
 const weightRanges = [
   { label: 'Até 15g',    min: 0,  max: 15 },
@@ -20,7 +21,7 @@ function parseWeight(weight: string): number | null {
 
 const ITEMS_PER_PAGE = 9;
 
-export default function ExploreProducts() {
+export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
   const [products, setProducts]             = useState<Product[]>([]);
   const [folders, setFolders]               = useState<Folder[]>([]);
   const [search, setSearch]                 = useState('');
@@ -45,13 +46,22 @@ export default function ExploreProducts() {
     return unsub;
   }, []);
 
+  const loadReported = useRef(false);
   useEffect(() => {
     const unsub = onSnapshot(
       query(collection(db, 'products'), orderBy('name')),
-      (snap) => setProducts(snap.docs.map((d) => ({ id: d.id, ...d.data() } as Product))),
+      (snap) => {
+        const prods = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Product));
+        setProducts(prods);
+        if (!loadReported.current) {
+          loadReported.current = true;
+          preloadImages(prods.map((p) => p.imageUrl));
+          onLoad?.();
+        }
+      },
     );
     return unsub;
-  }, []);
+  }, [onLoad]);
 
   // ── Tab scroll state ─────────────────────────────────────────────────────
   const updateScrollState = () => {

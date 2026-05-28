@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { doc, getDoc, setDoc, collection, query, onSnapshot, orderBy } from 'firebase/firestore';
-import { Plus, X, Search, Loader2, GripVertical, ChevronDown, ChevronUp } from 'lucide-react';
+import { Plus, X, Search, Loader2, GripVertical } from 'lucide-react';
 import { db } from '../../lib/firebase';
+import { ProductWheel } from '../../app/components/Brands';
 import type {
   Product,
   SectionNovidades,
@@ -78,6 +79,123 @@ function ProductPicker({
             ))
           )}
         </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Previews ──────────────────────────────────────────────────────────────────
+
+function NovidadesPreview({ items, products }: { items: NovidadesItem[]; products: Product[] }) {
+  const [index, setIndex] = useState(0);
+  const get = (id: string) => products.find((p) => p.id === id);
+
+  useEffect(() => {
+    if (items.length < 2) return;
+    const t = setInterval(() => setIndex((i) => (i + 1) % items.length), 4000);
+    return () => clearInterval(t);
+  }, [items.length]);
+
+  if (items.length === 0) return null;
+
+  const featured = items[index];
+  const fp = get(featured.productId);
+  const sidebar = items.filter((_, i) => i !== index);
+
+  return (
+    <div className="rounded-2xl overflow-hidden border border-gray-200 bg-white shadow-sm">
+      <div className="flex min-h-[170px]">
+        <div className="flex flex-1 p-4 gap-4">
+          <div className="w-28 shrink-0 bg-gradient-to-br from-accent/20 to-primary/10 rounded-xl overflow-hidden flex items-center justify-center">
+            {fp?.imageUrl && <img src={fp.imageUrl} alt={fp.name} className="w-full h-full object-contain p-3" />}
+          </div>
+          <div className="flex flex-col justify-center gap-1.5">
+            {featured.tag && (
+              <span className="text-xs font-black uppercase tracking-widest bg-accent text-foreground px-2 py-0.5 rounded-full w-fit">
+                {featured.tag}
+              </span>
+            )}
+            <p className="font-black text-sm text-foreground uppercase leading-tight">{fp?.name}</p>
+            {featured.description && (
+              <p className="text-xs text-muted-foreground line-clamp-2">{featured.description}</p>
+            )}
+          </div>
+        </div>
+        {sidebar.length > 0 && (
+          <div className="w-44 shrink-0 border-l border-primary/10 p-4 flex flex-col gap-3 justify-center">
+            <p className="text-xs font-bold uppercase tracking-widest text-primary">Também em destaque</p>
+            {sidebar.slice(0, 3).map((item, i) => {
+              const p = get(item.productId);
+              return (
+                <div key={i} className="flex items-center gap-2">
+                  <div className="w-9 h-9 shrink-0 rounded-lg overflow-hidden bg-gradient-to-br from-accent/20 to-primary/10 flex items-center justify-center">
+                    {p?.imageUrl && <img src={p.imageUrl} alt={p.name} className="w-full h-full object-contain p-0.5" />}
+                  </div>
+                  <p className="text-xs font-semibold text-foreground leading-tight line-clamp-2">{p?.name}</p>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+      {items.length > 1 && (
+        <div className="flex justify-center gap-1.5 py-2 border-t border-gray-100">
+          {items.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setIndex(i)}
+              className={`h-1.5 rounded-full transition-all ${i === index ? 'w-5 bg-primary' : 'w-1.5 bg-primary/30'}`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PipocaPreview({ categories, products }: { categories: PipocaCategory[]; products: Product[] }) {
+  const [current, setCurrent] = useState(0);
+  const get = (id: string) => products.find((p) => p.id === id);
+
+  if (categories.length === 0) return null;
+
+  return (
+    <div className="rounded-2xl border border-gray-200 bg-white shadow-sm p-4">
+      <div className="flex gap-2 overflow-x-auto pb-1">
+        {categories.map((cat, i) => {
+          const imgs = cat.productIds.map((id) => get(id)?.imageUrl).filter(Boolean) as string[];
+          return (
+            <button
+              key={cat.id}
+              onClick={() => setCurrent(i)}
+              className={`flex-none flex flex-col items-center gap-2 p-3 rounded-xl transition-all min-w-[90px] ${
+                i === current ? 'bg-primary/10 ring-1 ring-primary/30' : 'hover:bg-gray-50'
+              }`}
+            >
+              <div className="relative h-14 w-16 flex items-end justify-center">
+                {imgs.slice(0, 3).map((src, ri) => (
+                  <img
+                    key={ri}
+                    src={src}
+                    alt=""
+                    className="absolute object-contain"
+                    style={{
+                      width: 34,
+                      height: 46,
+                      left: `${ri * 13}px`,
+                      bottom: 0,
+                      transform: `rotate(${(ri - 1) * 6}deg)`,
+                      zIndex: 3 - ri,
+                      filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.15))',
+                    }}
+                  />
+                ))}
+              </div>
+              <p className="text-xs font-bold text-foreground text-center leading-tight">{cat.label}</p>
+              {cat.subtitle && <p className="text-xs text-muted-foreground text-center leading-tight">{cat.subtitle}</p>}
+            </button>
+          );
+        })}
       </div>
     </div>
   );
@@ -182,6 +300,13 @@ function NovidadesTab({ products }: { products: Product[] }) {
 
       {picker && (
         <ProductPicker products={products} onSelect={addItem} onClose={() => setPicker(false)} />
+      )}
+
+      {items.length > 0 && (
+        <div className="pt-6 border-t border-gray-100 space-y-3">
+          <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Pré-visualização</p>
+          <NovidadesPreview items={items} products={products} />
+        </div>
       )}
     </div>
   );
@@ -332,6 +457,13 @@ function PipocaTab({ products }: { products: Product[] }) {
           onClose={() => setPicker(null)}
         />
       )}
+
+      {categories.length > 0 && (
+        <div className="pt-6 border-t border-gray-100 space-y-3">
+          <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Pré-visualização</p>
+          <PipocaPreview categories={categories} products={products} />
+        </div>
+      )}
     </div>
   );
 }
@@ -419,13 +551,30 @@ function BrandsTab({ products }: { products: Product[] }) {
           onClose={() => setPicker(false)}
         />
       )}
+
+      {productIds.length > 0 && (() => {
+        const wheelProducts = productIds
+          .map((id) => products.find((p) => p.id === id))
+          .filter((p): p is Product => p !== undefined)
+          .slice(0, 7);
+        return (
+          <div className="pt-6 border-t border-gray-100 space-y-3">
+            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Pré-visualização</p>
+            <div style={{ width: 350, height: 350, overflow: 'hidden', margin: '0 auto', position: 'relative' }}>
+              <div style={{ transform: 'scale(0.7)', transformOrigin: 'top left', width: 500, height: 500, position: 'absolute' }}>
+                <ProductWheel products={wheelProducts} />
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
 
 // ── Main page ─────────────────────────────────────────────────────────────────
 
-const TABS = ['Novidades', 'Pipoca Gravatá', 'Brands'] as const;
+const TABS = ['Novidades', 'Pipocas Gravatá', 'Nordeste Gravatá'] as const;
 type Tab = typeof TABS[number];
 
 export default function SectionsPage() {
@@ -465,8 +614,8 @@ export default function SectionsPage() {
       </div>
 
       {activeTab === 'Novidades'      && <NovidadesTab products={products} />}
-      {activeTab === 'Pipoca Gravatá' && <PipocaTab    products={products} />}
-      {activeTab === 'Brands'         && <BrandsTab    products={products} />}
+      {activeTab === 'Pipocas Gravatá' && <PipocaTab    products={products} />}
+      {activeTab === 'Nordeste Gravatá'         && <BrandsTab    products={products} />}
     </div>
   );
 }

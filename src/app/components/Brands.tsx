@@ -74,7 +74,7 @@ const productVariants: Variants = {
 
 // ─── Product wheel ────────────────────────────────────────────────────────────
 
-function ProductWheel({ products }: { products: Product[] }) {
+export function ProductWheel({ products }: { products: Product[] }) {
   // Single MotionValue drives orbit; counter-rotation is derived so it is
   // always perfectly in sync — new products mount already upright.
   const orbitAngle   = useMotionValue(0);

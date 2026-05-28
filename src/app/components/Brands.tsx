@@ -1,86 +1,18 @@
 import { Link } from 'react-router';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { useState, useEffect } from 'react';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../lib/firebase';
+import type { Product, SectionBrands } from '../../lib/types';
 
 const nordesteLogo = new URL('../../assets/logo_nordeste_gravata.png', import.meta.url).href;
 
-type WheelProduct = { name: string; image: string; category: string };
-
-const allByCategory: Record<string, WheelProduct[]> = {
-  'Amendoim': [
-    { name: 'Amendoim', category: 'Amendoim', image: new URL('../../assets/products/Amendoim/amendoim.png', import.meta.url).href },
-  ],
-  'Batata Chips': [
-    { name: 'Batata Chips Original', category: 'Batata Chips', image: new URL('../../assets/products/Batata Chips/batatachips_original.png', import.meta.url).href },
-    { name: 'Batata Chips Cebola & Salsa', category: 'Batata Chips', image: new URL('../../assets/products/Batata Chips/batatachips_cebola_salsa.png', import.meta.url).href },
-    { name: 'Batata Chips Churrasco', category: 'Batata Chips', image: new URL('../../assets/products/Batata Chips/batatachips_churrasco.png', import.meta.url).href },
-  ],
-  'Bolinho de Goma': [
-    { name: 'Bolinho de Goma 50g', category: 'Bolinho de Goma', image: new URL('../../assets/products/Bolinhos de Goma/bolinhos_De_goma_50g.png', import.meta.url).href },
-    { name: 'Bolinho de Goma 90g', category: 'Bolinho de Goma', image: new URL('../../assets/products/Bolinhos de Goma/bolinhos_de_goma_90g.png', import.meta.url).href },
-  ],
-  'Paçoca': [
-    { name: 'Paçoca', category: 'Paçoca', image: new URL('../../assets/products/Paçoca/paçoca.png', import.meta.url).href },
-  ],
-  'Pipoca Gravatá': [
-    { name: 'Pipoca Gravatá 10g Amarela', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipoca_gravatá_10g_0trans_yellow.png', import.meta.url).href },
-    { name: 'Pipoca Gravatá 10g Branca', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipoca_gravatá_10g_0trans_white.png', import.meta.url).href },
-    { name: 'Pipocão Gravatá 40g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipocao_gravatá_40g_0trans_white.png', import.meta.url).href },
-    { name: 'Pipocão Gravatá 72g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Amanteigadas/pipocao_gravatá_72g_0trans_white.png', import.meta.url).href },
-    { name: 'Pipoca Himalaia Premium 15g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Premium/pipoca_gravatá_15g_0trans_himalaia_premium.png', import.meta.url).href },
-    { name: 'Pipoca Chocolate Gourmet 15g', category: 'Pipoca Gravatá', image: new URL('../../assets/products/Pipoca Gravatá/Gourmet/pipoca_gravatá_15g_0trans_sabor_chocolate_gourmet.png', import.meta.url).href },
-  ],
-  'Pipoca Gravatá Doce': [
-    { name: 'Pipoca Gravatá Doce 10g', category: 'Pipoca Gravatá Doce', image: new URL('../../assets/products/Pipoca Gravatá/Doces/pipoca_gravatá_10g_0trans_doce.png', import.meta.url).href },
-    { name: 'Pipoca Gravatá Doce 14g', category: 'Pipoca Gravatá Doce', image: new URL('../../assets/products/Pipoca Gravatá/Doces/pipoca_gravatá_14g_0trans_doce.png', import.meta.url).href },
-    { name: 'Pipoca Amendoim Doce 12g', category: 'Pipoca Gravatá Doce', image: new URL('../../assets/products/Pipoca Gravatá/Doces/pipoca_gravatá_12g_0trans_amendoim_doce.png', import.meta.url).href },
-    { name: 'Pipocão Gravatá Doce 30g', category: 'Pipoca Gravatá Doce', image: new URL('../../assets/products/Pipoca Gravatá/Doces/pipocao_gravatá_30g_0trans_doce.png', import.meta.url).href },
-  ],
-  'Salgadinho Iaê': [
-    { name: 'Iaê Acebolado 30g', category: 'Salgadinho Iaê', image: new URL('../../assets/products/Salgadinhos/Salgadinhos iaê/iae_acebolado_30g.jpeg', import.meta.url).href },
-    { name: 'Iaê Churrasco 30g', category: 'Salgadinho Iaê', image: new URL('../../assets/products/Salgadinhos/Salgadinhos iaê/iae_churrasco_30g.jpeg', import.meta.url).href },
-    { name: 'Iaê Galinha 30g', category: 'Salgadinho Iaê', image: new URL('../../assets/products/Salgadinhos/Salgadinhos iaê/iae_galinha_30g.jpeg', import.meta.url).href },
-    { name: 'Iaê Milho 30g', category: 'Salgadinho Iaê', image: new URL('../../assets/products/Salgadinhos/Salgadinhos iaê/iae_milho_30g.jpeg', import.meta.url).href },
-    { name: 'Iaê Queijo Suíço 60g', category: 'Salgadinho Iaê', image: new URL('../../assets/products/Salgadinhos/Salgadinhos iaê/iae_queijo_suiço_60g.jpeg', import.meta.url).href },
-    { name: 'Iaê Requeijão 60g', category: 'Salgadinho Iaê', image: new URL('../../assets/products/Salgadinhos/Salgadinhos iaê/iae_requeijão_60g.jpeg', import.meta.url).href },
-  ],
-};
-
-const initialWheelItems: WheelProduct[] = [
-  allByCategory['Amendoim'][0],
-  allByCategory['Batata Chips'][0],
-  allByCategory['Bolinho de Goma'][0],
-  allByCategory['Paçoca'][0],
-  allByCategory['Pipoca Gravatá'][0],
-  allByCategory['Pipoca Gravatá Doce'][0],
-  allByCategory['Salgadinho Iaê'][0],
-];
-
-const RADIUS = 200;
+const RADIUS    = 200;
 const CONTAINER = 500;
-const DURATION = 40;
+const DURATION  = 40;
 
-function ProductWheel() {
-  const [wheelItems, setWheelItems] = useState<WheelProduct[]>(initialWheelItems);
-  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setWheelItems(prev => {
-        const next = [...prev];
-        const shuffled = Array.from({ length: next.length }, (_, i) => i).sort(() => Math.random() - 0.5);
-        for (const idx of shuffled.slice(0, 2)) {
-          const current = next[idx];
-          const options = allByCategory[current.category].filter(p => p.name !== current.name);
-          if (options.length > 0) {
-            next[idx] = options[Math.floor(Math.random() * options.length)];
-          }
-        }
-        return next;
-      });
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
+function ProductWheel({ products }: { products: Product[] }) {
+  if (products.length === 0) return null;
 
   return (
     <div className="relative flex items-center justify-center" style={{ width: CONTAINER, height: CONTAINER }}>
@@ -95,56 +27,49 @@ function ProductWheel() {
         <img src={nordesteLogo} alt="Nordeste Gravatá" className="w-36 h-36 object-contain p-1" />
       </div>
 
-      {/* Rotating orbit container */}
+      {/* Rotating orbit */}
       <motion.div
         className="absolute inset-0 overflow-visible"
         animate={{ rotate: 360 }}
         transition={{ duration: DURATION, repeat: Infinity, ease: 'linear' }}
       >
-        {wheelItems.map((product, i) => {
-          const angle = (i * 360) / wheelItems.length - 90;
-          const rad = (angle * Math.PI) / 180;
-          const x = Math.cos(rad) * RADIUS;
-          const y = Math.sin(rad) * RADIUS;
+        {products.map((product, i) => {
+          const angle = (i * 360) / products.length - 90;
+          const rad   = (angle * Math.PI) / 180;
+          const x     = Math.cos(rad) * RADIUS;
+          const y     = Math.sin(rad) * RADIUS;
+
           return (
             <div
-              key={i}
+              key={product.id}
               className="absolute"
               style={{
                 left: '50%',
                 top: '50%',
                 transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
-                zIndex: hoveredIdx === i ? 30 : 1,
               }}
             >
-              {/* Counter-rotation wrapper */}
               <motion.div
                 animate={{ rotate: -360 }}
                 transition={{ duration: DURATION, repeat: Infinity, ease: 'linear' }}
               >
-                {/* Hover-scale wrapper — separate from rotation so overflow-hidden doesn't clip */}
                 <motion.div
                   style={{ width: 103, height: 103 }}
                   whileHover={{ scale: 1.5 }}
                   transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                  onHoverStart={() => setHoveredIdx(i)}
-                  onHoverEnd={() => setHoveredIdx(null)}
                   className="cursor-pointer"
                   title={product.name}
                 >
                   <div className="w-full h-full rounded-full bg-white shadow-lg overflow-hidden flex items-center justify-center">
-                    <AnimatePresence mode="wait">
-                      <motion.img
-                        key={product.name}
-                        src={product.image}
+                    {product.imageUrl ? (
+                      <img
+                        src={product.imageUrl}
                         alt={product.name}
                         className="w-[86px] h-[86px] object-contain"
-                        initial={{ opacity: 0, scale: 0.6 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.6 }}
-                        transition={{ duration: 0.35 }}
                       />
-                    </AnimatePresence>
+                    ) : (
+                      <span className="text-2xl">📦</span>
+                    )}
                   </div>
                 </motion.div>
               </motion.div>
@@ -157,11 +82,32 @@ function ProductWheel() {
 }
 
 export default function Brands() {
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    async function load() {
+      const snap = await getDoc(doc(db, 'sections', 'brands'));
+      if (!snap.exists()) return;
+
+      const data = snap.data() as SectionBrands;
+      const ids  = data.productIds ?? [];
+
+      const loaded = await Promise.all(
+        ids.map(async (id) => {
+          const pSnap = await getDoc(doc(db, 'products', id));
+          return pSnap.exists() ? ({ id: pSnap.id, ...pSnap.data() } as Product) : null;
+        }),
+      );
+
+      setProducts(loaded.filter(Boolean) as Product[]);
+    }
+
+    load();
+  }, []);
+
   return (
     <section id="brands" className="min-h-screen flex flex-col justify-center py-20 bg-gradient-to-br from-accent/20 to-primary/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-       
-
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -170,7 +116,6 @@ export default function Brands() {
           className="grid grid-cols-1 lg:grid-cols-2 gap-8"
         >
           <div className="flex flex-col justify-center order-1">
-
             <h3 className="text-5xl md:text-6xl lg:text-7xl mb-6 text-primary">
               Nordeste Gravatá
             </h3>
@@ -189,8 +134,9 @@ export default function Brands() {
               </Link>
             </div>
           </div>
+
           <div className="flex items-center justify-center order-2 py-8 lg:py-0">
-            <ProductWheel />
+            <ProductWheel products={products} />
           </div>
         </motion.div>
       </div>

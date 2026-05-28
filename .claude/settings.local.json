@@ -21,7 +21,25 @@
       "Bash(cat vite.config.ts)",
       "Bash(cat vite.config.js)",
       "Bash(npm run *)",
-      "Bash(xargs -I{} python3 -c \"import sys; name=sys.argv[1]; print\\(name.encode\\('utf-8'\\).hex\\(\\), repr\\(name\\)\\)\" {})"
+      "Bash(xargs -I{} python3 -c \"import sys; name=sys.argv[1]; print\\(name.encode\\('utf-8'\\).hex\\(\\), repr\\(name\\)\\)\" {})",
+      "Bash(ls src/assets/)",
+      "Bash(dir src\\\\assets /b)",
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(node_modules\\\\.bin\\\\tsc --noEmit)",
+      "Bash(./node_modules/.bin/tsc --noEmit)",
+      "Bash(xargs grep -l \"createBrowserRouter\\\\|Router\\\\|Route\")",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\anjog\\\\projects\\\\FAL 3.0\\\\src\\\\app\" -Recurse -Filter \"*.ts*\")",
+      "Bash(Select-Object -First 50 FullName)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\anjog\\\\projects\\\\FAL 3.0\\\\src\\\\app\\\\components\\\\\" -Recurse | Where-Object {$_.Extension -in '.tsx', '.ts'} | Select-Object -ExpandProperty FullName | Head -30)",
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\anjog\\\\projects\\\\FAL 3.0\\\\src\\\\app\\\\components\\\\\" -Recurse | Where-Object {$_.Extension -in '.tsx', '.ts'} | Select-Object -ExpandProperty FullName | Select-Object -First 30)"
+    ],
+    "deny": [
+      "Read(c:\\Users\\anjog\\projects\\FAL 3.0\\.env)",
+      "Edit(c:\\Users\\anjog\\projects\\FAL 3.0\\.env)",
+      "Write(c:\\Users\\anjog\\projects\\FAL 3.0\\.env)",
+      "Bash(* .env *)",
+      "Bash(* .env)"
     ]
   }
 }

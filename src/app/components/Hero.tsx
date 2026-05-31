@@ -9,12 +9,14 @@ import {
 } from './ui/carousel';
 import copa from '../../assets/hero/copa_1200x600px.jpg';
 import saoJoao from '../../assets/hero/sao-joao_1200x600px.jpg.jpg';
+import sempreImitada from '../../assets/hero/Sempre_imitada.jpg';
 
 const PHOTO_DURATION = 5000;
 
 const slides = [
   { type: 'image' as const, src: copa, alt: 'Copa FAL' },
   { type: 'image' as const, src: saoJoao, alt: 'São João FAL' },
+  { type: 'image' as const, src: sempreImitada, alt: 'Sempre Imitada FAL' },
 ];
 
 function durationFor(_index: number) {

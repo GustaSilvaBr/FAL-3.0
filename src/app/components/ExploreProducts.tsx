@@ -1,11 +1,11 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Search, Star, X, SlidersHorizontal, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Link } from 'react-router';
 import { collection, query, onSnapshot, orderBy } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import { NUTRITION_FIELDS, type Product, type Folder } from '../../lib/types';
 import { preloadImages } from '../../lib/imageCache';
+import { useProductNavigation } from '../../lib/productNavigation';
 
 const weightRanges = [
   { label: 'Até 15g',    min: 0,  max: 15 },
@@ -30,6 +30,10 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
   const [filtersOpen, setFiltersOpen]       = useState(false);
   const [currentPage, setCurrentPage]       = useState(1);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [freshFolder, setFreshFolder]         = useState<string | null>(null);
+  const [highlightedProductId, setHighlightedProductId] = useState<string | null>(null);
+
+  const { pendingProduct, clearPendingProduct } = useProductNavigation();
 
   const filterRef  = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
@@ -111,25 +115,105 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
     };
   }, [selectedProduct]);
 
+  // ── Step-by-step product navigation ─────────────────────────────────────
+  useEffect(() => {
+    if (!pendingProduct || !products.length || !folders.length) return;
+
+    const folder     = folders.find((f) => f.id === pendingProduct.folderId);
+    const topFolderId = folder?.parentId ?? folder?.id ?? null;
+    const visibleIds  = topFolderId ? [topFolderId, ...(childFolderIds[topFolderId] ?? [])] : null;
+    const newFiltered = products.filter((p) => !visibleIds || visibleIds.includes(p.folderId));
+    const productIdx  = newFiltered.findIndex((p) => p.id === pendingProduct.id);
+    const targetPage  = productIdx !== -1 ? Math.floor(productIdx / ITEMS_PER_PAGE) + 1 : 1;
+
+    let cancelled = false;
+    const timeouts: ReturnType<typeof setTimeout>[] = [];
+
+    // Step 1 — scroll to section
+    sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    // Step 2 — activate category filter
+    timeouts.push(setTimeout(() => {
+      if (cancelled) return;
+      setSelectedFolder(topFolderId);
+      setFreshFolder(topFolderId);
+      setSearch('');
+      setSelectedWeight(null);
+
+      // Step 3 — navigate to correct page
+      timeouts.push(setTimeout(() => {
+        if (cancelled) return;
+        setCurrentPage(targetPage);
+        setHighlightedProductId(pendingProduct.id);
+
+        // Step 4 — open product modal
+        timeouts.push(setTimeout(() => {
+          if (cancelled) return;
+          setSelectedProduct(pendingProduct);
+          clearPendingProduct();
+          timeouts.push(setTimeout(() => {
+            setFreshFolder(null);
+            setHighlightedProductId(null);
+          }, 600));
+        }, 420));
+      }, 520));
+    }, 900));
+
+    return () => {
+      cancelled = true;
+      timeouts.forEach(clearTimeout);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingProduct]);
+
   // ── Derived data ─────────────────────────────────────────────────────────
   const folderMap = useMemo<Record<string, string>>(
     () => Object.fromEntries(folders.map((f) => [f.id, f.name])),
     [folders],
   );
 
+  // child folder IDs grouped by parent id
+  const childFolderIds = useMemo(() => {
+    const map: Record<string, string[]> = {};
+    folders.forEach((f) => {
+      if (f.parentId) {
+        (map[f.parentId] ??= []).push(f.id);
+      }
+    });
+    return map;
+  }, [folders]);
+
+  const topLevelFolders = useMemo(
+    () => folders.filter((f) => !f.parentId),
+    [folders],
+  );
+
   const folderCounts = useMemo(() => {
     const counts: Record<string, number> = {};
-    folders.forEach((f) => {
-      counts[f.id] = products.filter((p) => p.folderId === f.id).length;
+    topLevelFolders.forEach((f) => {
+      const allIds = [f.id, ...(childFolderIds[f.id] ?? [])];
+      counts[f.id] = products.filter((p) => allIds.includes(p.folderId)).length;
     });
     return counts;
-  }, [folders, products]);
+  }, [topLevelFolders, childFolderIds, products]);
+
+  const sortedTopLevelFolders = useMemo(() => {
+    return [...topLevelFolders].sort((a, b) => {
+      const aIsPipoca = a.name.toLowerCase().includes('pipoca');
+      const bIsPipoca = b.name.toLowerCase().includes('pipoca');
+      if (aIsPipoca !== bIsPipoca) return aIsPipoca ? -1 : 1;
+      return (folderCounts[b.id] ?? 0) - (folderCounts[a.id] ?? 0);
+    });
+  }, [topLevelFolders, folderCounts]);
 
   const filtered = useMemo(() => {
     setCurrentPage(1);
     return products.filter((p) => {
       if (search && !p.name.toLowerCase().includes(search.toLowerCase())) return false;
-      if (selectedFolder && p.folderId !== selectedFolder) return false;
+      if (selectedFolder) {
+        const allIds = [selectedFolder, ...(childFolderIds[selectedFolder] ?? [])];
+        if (!allIds.includes(p.folderId)) return false;
+      }
       if (selectedWeight) {
         const w = parseWeight(p.weight);
         const range = weightRanges.find((r) => r.label === selectedWeight);
@@ -137,7 +221,7 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
       }
       return true;
     });
-  }, [search, selectedFolder, selectedWeight, products]);
+  }, [search, selectedFolder, selectedWeight, products, childFolderIds]);
 
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
   const paginated  = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
@@ -267,20 +351,23 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
                   </span>
                 </button>
 
-                {folders.map((folder) => {
+                {sortedTopLevelFolders.map((folder) => {
                   const isPipoca = folder.name.toLowerCase().includes('pipoca gravatá') || folder.name.toLowerCase().includes('pipoca gravata');
                   const isActive = selectedFolder === folder.id;
+                  const isFresh  = freshFolder === folder.id;
                   return (
-                    <button
+                    <motion.button
                       key={folder.id}
                       onClick={() => setSelectedFolder(isActive ? null : folder.id)}
+                      animate={isFresh ? { scale: [1, 1.12, 1.06, 1] } : { scale: 1 }}
+                      transition={{ duration: 0.45 }}
                       className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wide whitespace-nowrap shrink-0 transition-all ${
                         isActive
                           ? 'bg-primary text-white shadow-sm'
                           : isPipoca
                           ? 'bg-yellow-50 border border-yellow-300 text-foreground hover:bg-yellow-100'
                           : 'bg-white border border-border text-foreground hover:border-primary/40'
-                      }`}
+                      } ${isFresh ? 'ring-2 ring-accent shadow-lg shadow-accent/30' : ''}`}
                     >
                       {isPipoca && (
                         <Star className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'fill-white text-white' : 'fill-yellow-400 text-yellow-400'}`} />
@@ -289,7 +376,7 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
                       <span className={`text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[1.4rem] text-center ${isActive ? 'bg-white/25 text-white' : 'bg-foreground/10 text-foreground/70'}`}>
                         {folderCounts[folder.id] ?? 0}
                       </span>
-                    </button>
+                    </motion.button>
                   );
                 })}
               </div>
@@ -327,14 +414,20 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
                   transition={{ duration: 0.2 }}
                   className="grid grid-cols-3 gap-6 max-w-4xl mx-auto"
                 >
-                  {paginated.map((product, i) => (
+                  {paginated.map((product, i) => {
+                    const isHighlighted = highlightedProductId === product.id;
+                    return (
                     <motion.div
                       key={product.id}
                       initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.2, delay: i * 0.04 }}
+                      animate={isHighlighted
+                        ? { opacity: 1, scale: [1, 1.06, 1.03, 1] }
+                        : { opacity: 1, scale: 1 }}
+                      transition={{ duration: isHighlighted ? 0.5 : 0.2, delay: isHighlighted ? 0 : i * 0.04 }}
                       onClick={() => setSelectedProduct(product)}
-                      className="bg-white rounded-2xl transition-shadow duration-300 flex flex-col p-3 gap-3 cursor-pointer hover:shadow-lg"
+                      className={`bg-white rounded-2xl transition-all duration-300 flex flex-col p-3 gap-3 cursor-pointer hover:shadow-lg ${
+                        isHighlighted ? 'ring-4 ring-accent shadow-xl shadow-accent/20' : ''
+                      }`}
                     >
                       <div className="h-72 bg-gradient-to-br from-accent/20 to-primary/10 rounded-2xl p-4 flex items-center justify-center overflow-hidden group">
                         {product.imageUrl ? (
@@ -356,7 +449,8 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
                         </button>
                       </div>
                     </motion.div>
-                  ))}
+                  );
+                  })}
                 </motion.div>
               </AnimatePresence>
 
@@ -393,15 +487,6 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
             </>
           )}
 
-          {/* CTA */}
-          <div className="text-center mt-10">
-            <Link
-              to="/produtos"
-              className="inline-flex items-center gap-2 border-2 border-primary text-primary hover:bg-primary hover:text-white font-semibold px-8 py-3 rounded-lg transition-colors"
-            >
-              Ver catálogo completo
-            </Link>
-          </div>
 
         </div>
       </section>

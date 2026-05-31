@@ -32,7 +32,12 @@
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\anjog\\\\projects\\\\FAL 3.0\\\\src\\\\app\" -Recurse -Filter \"*.ts*\")",
       "Bash(Select-Object -First 50 FullName)",
       "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\anjog\\\\projects\\\\FAL 3.0\\\\src\\\\app\\\\components\\\\\" -Recurse | Where-Object {$_.Extension -in '.tsx', '.ts'} | Select-Object -ExpandProperty FullName | Head -30)",
-      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\anjog\\\\projects\\\\FAL 3.0\\\\src\\\\app\\\\components\\\\\" -Recurse | Where-Object {$_.Extension -in '.tsx', '.ts'} | Select-Object -ExpandProperty FullName | Select-Object -First 30)"
+      "PowerShell(Get-ChildItem -Path \"C:\\\\Users\\\\anjog\\\\projects\\\\FAL 3.0\\\\src\\\\app\\\\components\\\\\" -Recurse | Where-Object {$_.Extension -in '.tsx', '.ts'} | Select-Object -ExpandProperty FullName | Select-Object -First 30)",
+      "Bash(Remove-Item \"c:\\\\Users\\\\anjog\\\\projects\\\\FAL 3.0\\\\src\\\\app\\\\components\\\\figma\\\\ImageWithFallback.tsx\" -Force)",
+      "Bash(Remove-Item \"c:\\\\Users\\\\anjog\\\\projects\\\\FAL 3.0\\\\src\\\\app\\\\components\\\\ui\\\\accordion.tsx\" -Force)",
+      "Bash(Remove-Item \"c:\\\\Users\\\\anjog\\\\projects\\\\FAL 3.0\\\\src\\\\app\\\\components\\\\ui\\\\alert.tsx\" -Force)",
+      "Bash(Remove-Item \"c:\\\\Users\\\\anjog\\\\projects\\\\FAL 3.0\\\\src\\\\app\\\\components\\\\ui\\\\alert-dialog.tsx\" -Force)",
+      "Bash(Remove-Item \"c:\\\\Users\\\\anjog\\\\projects\\\\FAL 3.0\\\\src\\\\app\\\\components\\\\ui\\\\aspect-ratio.tsx\" -Force)"
     ],
     "deny": [
       "Read(c:\\Users\\anjog\\projects\\FAL 3.0\\.env)",

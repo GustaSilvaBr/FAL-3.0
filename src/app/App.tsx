@@ -10,6 +10,7 @@ import Brands from './components/Brands';
 import ExploreProducts from './components/ExploreProducts';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
+import { ProductNavigationProvider } from '../lib/productNavigation';
 
 // Sections that report when they finish loading: Novidades, PipocaGravata, Brands, ExploreProducts
 const TOTAL_ASYNC = 4;
@@ -22,7 +23,7 @@ export default function App() {
   const progress  = (readyCount / TOTAL_ASYNC) * 100;
 
   return (
-    <>
+    <ProductNavigationProvider>
       <AnimatePresence>
         {!allReady && <LoadingScreen key="loading" progress={progress} />}
       </AnimatePresence>
@@ -38,6 +39,6 @@ export default function App() {
         <Contact />
         <Footer />
       </div>
-    </>
+    </ProductNavigationProvider>
   );
 }

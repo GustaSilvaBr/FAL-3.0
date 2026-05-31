@@ -1,4 +1,3 @@
-import { Link } from 'react-router';
 import { motion, AnimatePresence, useMotionValue, useTransform, useAnimationFrame } from 'motion/react';
 import type { Variants } from 'motion/react';
 import { useState, useEffect } from 'react';
@@ -6,6 +5,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import type { Product, SectionBrands } from '../../lib/types';
 import { preloadImages } from '../../lib/imageCache';
+import { useProductNavigation } from '../../lib/productNavigation';
 
 const nordesteLogo = new URL('../../assets/logo_nordeste_gravata.png', import.meta.url).href;
 
@@ -74,7 +74,7 @@ const productVariants: Variants = {
 
 // ─── Product wheel ────────────────────────────────────────────────────────────
 
-export function ProductWheel({ products }: { products: Product[] }) {
+export function ProductWheel({ products, onProductClick }: { products: Product[]; onProductClick?: (p: Product) => void }) {
   // Single MotionValue drives orbit; counter-rotation is derived so it is
   // always perfectly in sync — new products mount already upright.
   const orbitAngle   = useMotionValue(0);
@@ -126,6 +126,7 @@ export function ProductWheel({ products }: { products: Product[] }) {
                   transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                   className="cursor-pointer"
                   title={product.name}
+                  onClick={() => onProductClick?.(product)}
                 >
                   {/* Circle stays visible always; only the image scales in/out */}
                   <div className="w-full h-full rounded-full bg-white shadow-lg overflow-hidden flex items-center justify-center">
@@ -169,6 +170,7 @@ export function ProductWheel({ products }: { products: Product[] }) {
 
 export default function Brands({ onLoad }: { onLoad?: () => void }) {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const { navigateToProduct } = useProductNavigation();
 
   useEffect(() => {
     async function load() {
@@ -217,17 +219,17 @@ export default function Brands({ onLoad }: { onLoad?: () => void }) {
               Nossa marca principal leva receitas tradicionais e qualidade premium para cada cozinha. Da nossa famosa pipoca a salgadinhos e doces irresistíveis, Nordeste Gravatá é sinônimo de sabor e tradição brasileiros autênticos.
             </p>
             <div>
-              <Link
-                to="/produtos"
+              <a
+                href="#produtos"
                 className="inline-block px-8 py-4 bg-primary text-white text-lg rounded-lg hover:bg-primary/90 transition-all duration-200 shadow-lg hover:shadow-xl"
               >
                 Conheça Nossos Produtos
-              </Link>
+              </a>
             </div>
           </div>
 
           <div className="flex items-center justify-center order-2 py-8 lg:py-0">
-            <ProductWheel products={products} />
+            <ProductWheel products={products} onProductClick={navigateToProduct} />
           </div>
         </motion.div>
       </div>

@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router';
-import { Package, LayoutGrid, LogOut } from 'lucide-react';
+import { Package, LayoutGrid, LogOut, House } from 'lucide-react';
 import { useAuth } from '../lib/useAuth';
 import falLogo from '../assets/FAL_LOGO.png';
 
@@ -15,6 +15,13 @@ export default function AdminLayout() {
           <p className="text-xs text-muted-foreground mt-1.5 font-bold uppercase tracking-widest">
             Painel Admin
           </p>
+          <a
+            href="/"
+            className="flex items-center gap-2 mt-3 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <House className="w-4 h-4" />
+            Página principal
+          </a>
         </div>
 
         <nav className="flex-1 p-3 space-y-0.5 overflow-auto">

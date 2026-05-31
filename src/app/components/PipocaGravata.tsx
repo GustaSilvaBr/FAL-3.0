@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { preloadImages } from '../../lib/imageCache';
 import { motion } from 'motion/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Link } from 'react-router';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import type { Product, SectionPipoca, PipocaCategory } from '../../lib/types';
+import { useProductNavigation } from '../../lib/productNavigation';
 
 const SLOT  = 260;
 const CARD_W = 210;
@@ -26,21 +26,25 @@ const FAN: Record<number, { rotate: number; tx: number; ty: number; scale: numbe
   ],
 };
 
-function ProductStack({ images }: { images: string[] }) {
-  const shown   = images.slice(0, 3);
+function ProductStack({ products: stackProducts, onProductClick }: {
+  products: Product[];
+  onProductClick: (p: Product) => void;
+}) {
+  const shown   = stackProducts.slice(0, 3);
   const offsets = FAN[shown.length] ?? FAN[1];
 
   return (
     <div className="relative mx-auto" style={{ width: CARD_W, height: IMG_H + 20 }}>
-      {[...shown].reverse().map((src, ri) => {
+      {[...shown].reverse().map((product, ri) => {
         const frontIdx = shown.length - 1 - ri;
         const off = offsets[frontIdx];
         return (
           <img
             key={ri}
-            src={src}
-            alt=""
+            src={product.imageUrl}
+            alt={product.name}
             draggable={false}
+            onClick={(e) => { e.stopPropagation(); onProductClick(product); }}
             style={{
               position: 'absolute',
               width: IMG_W,
@@ -51,6 +55,7 @@ function ProductStack({ images }: { images: string[] }) {
               transformOrigin: 'center center',
               objectFit: 'contain',
               filter: 'drop-shadow(0 6px 16px rgba(0,0,0,0.16))',
+              cursor: 'pointer',
             }}
           />
         );
@@ -75,6 +80,7 @@ export default function PipocaGravata({ onLoad }: { onLoad?: () => void }) {
   const [categories, setCategories] = useState<PipocaCategory[]>([]);
   const [productMap, setProductMap] = useState<Record<string, Product>>({});
   const [current, setCurrent]       = useState(0);
+  const { navigateToProduct } = useProductNavigation();
 
   useEffect(() => {
     async function load() {
@@ -132,9 +138,6 @@ export default function PipocaGravata({ onLoad }: { onLoad?: () => void }) {
           <div className="relative h-[320px] overflow-hidden">
             {categories.map((cat, i) => {
               const p = getSlideProps(i, current);
-              const images = cat.productIds
-                .map((id) => productMap[id]?.imageUrl)
-                .filter(Boolean) as string[];
               return (
                 <motion.div
                   key={cat.id}
@@ -144,7 +147,10 @@ export default function PipocaGravata({ onLoad }: { onLoad?: () => void }) {
                   transition={{ type: 'spring', stiffness: 280, damping: 30 }}
                   onClick={() => setCurrent(i)}
                 >
-                  <ProductStack images={images} />
+                  <ProductStack
+                    products={cat.productIds.map((id) => productMap[id]).filter(Boolean) as Product[]}
+                    onProductClick={navigateToProduct}
+                  />
                   <div className="text-center mt-2">
                     <p className="font-bold text-foreground text-xl">{cat.label}</p>
                     <p className="text-xs text-muted-foreground mt-0.5">{cat.subtitle}</p>
@@ -189,12 +195,12 @@ export default function PipocaGravata({ onLoad }: { onLoad?: () => void }) {
 
           {/* CTA */}
           <div className="text-center mt-5">
-            <Link
-              to="/produtos"
+            <a
+              href="#produtos"
               className="inline-block bg-primary text-white font-semibold px-8 py-3 rounded-full hover:bg-primary/90 transition-colors"
             >
               Ver todos os produtos →
-            </Link>
+            </a>
           </div>
         </div>
       </div>

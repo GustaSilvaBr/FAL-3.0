@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react';
 import { preloadImages } from '../../lib/imageCache';
-import { Link } from 'react-router';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowRight, Star } from 'lucide-react';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
 import type { Product, SectionNovidades, NovidadesItem } from '../../lib/types';
+import { useProductNavigation } from '../../lib/productNavigation';
 
 type DisplayItem = {
   image: string;
   tag?: string;
   title: string;
   description: string;
+  product?: Product;
 };
 
 function toDisplayItem(item: NovidadesItem, product: Product | undefined): DisplayItem {
@@ -20,12 +21,14 @@ function toDisplayItem(item: NovidadesItem, product: Product | undefined): Displ
     tag: item.tag || undefined,
     title: product?.name ?? '',
     description: item.description,
+    product,
   };
 }
 
 export default function Novidades({ onLoad }: { onLoad?: () => void }) {
   const [items, setItems] = useState<DisplayItem[]>([]);
   const [index, setIndex] = useState(0);
+  const { navigateToProduct } = useProductNavigation();
 
   useEffect(() => {
     async function load() {
@@ -147,12 +150,12 @@ export default function Novidades({ onLoad }: { onLoad?: () => void }) {
                           {featured.description}
                         </p>
                       </div>
-                      <Link
-                        to="/produtos"
+                      <button
+                        onClick={() => featured.product ? navigateToProduct(featured.product) : undefined}
                         className="inline-flex items-center gap-2 self-start px-7 py-3.5 rounded-full font-black text-sm uppercase tracking-wider bg-primary text-white shadow-lg hover:bg-primary/90 transition-all hover:scale-105"
                       >
                         Ver Produto <ArrowRight size={15} />
-                      </Link>
+                      </button>
                     </motion.div>
                   </AnimatePresence>
                 </div>
@@ -166,10 +169,10 @@ export default function Novidades({ onLoad }: { onLoad?: () => void }) {
               </p>
               <div className="flex flex-col flex-1 divide-y divide-primary/10">
                 {sidebar.map((item, i) => (
-                  <Link
+                  <button
                     key={item.title + i}
-                    to="/produtos"
-                    className="flex items-center gap-4 py-4 first:pt-0 group cursor-pointer"
+                    onClick={() => item.product ? navigateToProduct(item.product) : undefined}
+                    className="flex items-center gap-4 py-4 first:pt-0 group cursor-pointer w-full text-left"
                   >
                     <div className="w-20 h-20 shrink-0 rounded-xl overflow-hidden bg-gradient-to-br from-accent/25 to-primary/15 flex items-center justify-center">
                       {item.image && (
@@ -187,15 +190,15 @@ export default function Novidades({ onLoad }: { onLoad?: () => void }) {
                     <span className="text-xs font-black text-primary/30 tabular-nums shrink-0">
                       {String(i + 1).padStart(2, '0')}
                     </span>
-                  </Link>
+                  </button>
                 ))}
               </div>
-              <Link
-                to="/produtos"
+              <a
+                href="#produtos"
                 className="flex items-center gap-2 font-bold text-sm uppercase tracking-wider text-primary hover:text-primary/70 transition-colors mt-6 underline underline-offset-4"
               >
                 Ver todos os produtos <ArrowRight size={14} />
-              </Link>
+              </a>
             </div>
           </div>
         </div>

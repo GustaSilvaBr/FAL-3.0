@@ -1,4 +1,3 @@
-import { Link } from 'react-router';
 import { Facebook, Instagram, Mail, Phone, MapPin, Clock } from 'lucide-react';
 
 const falLogo = new URL('../../assets/FAL_LOGO.png', import.meta.url).href;
@@ -77,7 +76,7 @@ export default function Footer() {
             <ul className="space-y-3">
               <li><a href="#about" className="text-gray-800 hover:text-[#1B3A8F] font-medium transition-colors">Sobre Nós</a></li>
               <li><a href="#brands" className="text-gray-800 hover:text-[#1B3A8F] font-medium transition-colors">Nossas Marcas</a></li>
-              <li><Link to="/produtos" className="text-gray-800 hover:text-[#1B3A8F] font-medium transition-colors">Produtos</Link></li>
+              <li><a href="#produtos" className="text-gray-800 hover:text-[#1B3A8F] font-medium transition-colors">Produtos</a></li>
             </ul>
           </div>
 

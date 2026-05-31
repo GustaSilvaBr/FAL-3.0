@@ -167,6 +167,11 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
     [folders],
   );
 
+  const folderById = useMemo<Record<string, { keywords?: string[]; parentId?: string }>>(
+    () => Object.fromEntries(folders.map((f) => [f.id, { keywords: f.keywords, parentId: f.parentId }])),
+    [folders],
+  );
+
   // child folder IDs grouped by parent id
   const childFolderIds = useMemo(() => {
     const map: Record<string, string[]> = {};
@@ -207,7 +212,15 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
   const filtered = useMemo(() => {
     setCurrentPage(1);
     const base = products.filter((p) => {
-      if (search && !p.name.toLowerCase().includes(search.toLowerCase())) return false;
+      if (search) {
+        const term   = search.toLowerCase();
+        const folder = folderById[p.folderId];
+        const parent = folder?.parentId ? folderById[folder.parentId] : undefined;
+        const keywords = [...(folder?.keywords ?? []), ...(parent?.keywords ?? [])];
+        const matches  = p.name.toLowerCase().includes(term) ||
+                         keywords.some((k) => k.includes(term));
+        if (!matches) return false;
+      }
       if (selectedFolder) {
         const allIds = [selectedFolder, ...(childFolderIds[selectedFolder] ?? [])];
         if (!allIds.includes(p.folderId)) return false;
@@ -228,7 +241,7 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
       }
     }
     return base;
-  }, [search, selectedFolder, selectedWeight, products, childFolderIds, highlightedProductId]);
+  }, [search, selectedFolder, selectedWeight, products, childFolderIds, folderById, highlightedProductId]);
 
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
   const paginated  = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);

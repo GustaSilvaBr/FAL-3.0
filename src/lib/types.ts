@@ -58,6 +58,7 @@ export type Folder = {
   name: string;
   order: number;
   parentId?: string;
+  keywords?: string[];
 };
 
 export type Product = {

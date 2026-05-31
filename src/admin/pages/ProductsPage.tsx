@@ -10,6 +10,7 @@ import {
   Package,
   Check,
   X,
+  Tag,
 } from 'lucide-react';
 import {
   collection,
@@ -205,6 +206,9 @@ export default function ProductsPage() {
 
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
+  const [keywordInput, setKeywordInput] = useState('');
+  const keywordInputRef = useRef<HTMLInputElement>(null);
+
   const [sidebarWidth, setSidebarWidth] = useState(224);
   const dragState = useRef<{ startX: number; startWidth: number } | null>(null);
 
@@ -319,6 +323,24 @@ export default function ProductsPage() {
     } finally {
       setDeletingId(null);
     }
+  };
+
+  const selectedFolderData = folders.find((f) => f.id === selectedFolder);
+  const currentKeywords = selectedFolderData?.keywords ?? [];
+
+  const handleAddKeyword = async () => {
+    const kw = keywordInput.trim().toLowerCase();
+    if (!kw || !selectedFolder || currentKeywords.includes(kw)) { setKeywordInput(''); return; }
+    await updateDoc(doc(db, 'folders', selectedFolder), { keywords: [...currentKeywords, kw] });
+    setKeywordInput('');
+    keywordInputRef.current?.focus();
+  };
+
+  const handleRemoveKeyword = async (kw: string) => {
+    if (!selectedFolder) return;
+    await updateDoc(doc(db, 'folders', selectedFolder), {
+      keywords: currentKeywords.filter((k) => k !== kw),
+    });
   };
 
   const rootFolders = sortedChildren(folders);
@@ -442,6 +464,61 @@ export default function ProductsPage() {
             </Link>
           </div>
         </div>
+
+        {/* Keywords editor — only when a folder is selected */}
+        {selectedFolder && (
+          <div className="mb-8 bg-white border border-gray-100 rounded-2xl p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <Tag className="w-4 h-4 text-primary/70 shrink-0" />
+              <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                Palavras-chave
+              </span>
+              <span className="text-xs text-muted-foreground font-normal normal-case tracking-normal">
+                — ajudam usuários a encontrar esta categoria na busca
+              </span>
+            </div>
+
+            <div className="flex flex-wrap gap-2 items-center">
+              {currentKeywords.map((kw) => (
+                <span
+                  key={kw}
+                  className="inline-flex items-center gap-1.5 px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full"
+                >
+                  {kw}
+                  <button
+                    onClick={() => handleRemoveKeyword(kw)}
+                    className="text-primary/60 hover:text-primary transition-colors"
+                    aria-label={`Remover "${kw}"`}
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              ))}
+
+              <div className="flex items-center gap-1.5">
+                <input
+                  ref={keywordInputRef}
+                  value={keywordInput}
+                  onChange={(e) => setKeywordInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleAddKeyword();
+                    if (e.key === 'Escape') setKeywordInput('');
+                  }}
+                  placeholder="Adicionar palavra-chave…"
+                  className="px-3 py-1 text-xs border border-dashed border-border rounded-full outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/10 w-44 transition-all"
+                />
+                {keywordInput.trim() && (
+                  <button
+                    onClick={handleAddKeyword}
+                    className="px-3 py-1 text-xs bg-primary text-white rounded-full font-semibold hover:bg-primary/90 transition-colors"
+                  >
+                    Adicionar
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         {subfolders.length === 0 && displayed.length === 0 ? (
           <div className="text-center py-24 text-muted-foreground">

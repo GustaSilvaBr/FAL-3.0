@@ -119,12 +119,8 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
   useEffect(() => {
     if (!pendingProduct || !products.length || !folders.length) return;
 
-    const folder     = folders.find((f) => f.id === pendingProduct.folderId);
+    const folder      = folders.find((f) => f.id === pendingProduct.folderId);
     const topFolderId = folder?.parentId ?? folder?.id ?? null;
-    const visibleIds  = topFolderId ? [topFolderId, ...(childFolderIds[topFolderId] ?? [])] : null;
-    const newFiltered = products.filter((p) => !visibleIds || visibleIds.includes(p.folderId));
-    const productIdx  = newFiltered.findIndex((p) => p.id === pendingProduct.id);
-    const targetPage  = productIdx !== -1 ? Math.floor(productIdx / ITEMS_PER_PAGE) + 1 : 1;
 
     let cancelled = false;
     const timeouts: ReturnType<typeof setTimeout>[] = [];
@@ -140,10 +136,9 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
       setSearch('');
       setSelectedWeight(null);
 
-      // Step 3 — navigate to correct page
+      // Step 3 — highlight product (filtered useMemo moves it to index 0, page resets to 1)
       timeouts.push(setTimeout(() => {
         if (cancelled) return;
-        setCurrentPage(targetPage);
         setHighlightedProductId(pendingProduct.id);
 
         // Step 4 — open product modal
@@ -199,16 +194,19 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
 
   const sortedTopLevelFolders = useMemo(() => {
     return [...topLevelFolders].sort((a, b) => {
-      const aIsPipoca = a.name.toLowerCase().includes('pipoca');
-      const bIsPipoca = b.name.toLowerCase().includes('pipoca');
+      const aIsPipoca   = a.name.toLowerCase().includes('pipoca');
+      const bIsPipoca   = b.name.toLowerCase().includes('pipoca');
+      const aIsSelected = a.id === selectedFolder;
+      const bIsSelected = b.id === selectedFolder;
       if (aIsPipoca !== bIsPipoca) return aIsPipoca ? -1 : 1;
+      if (!aIsPipoca && !bIsPipoca && aIsSelected !== bIsSelected) return aIsSelected ? -1 : 1;
       return (folderCounts[b.id] ?? 0) - (folderCounts[a.id] ?? 0);
     });
-  }, [topLevelFolders, folderCounts]);
+  }, [topLevelFolders, folderCounts, selectedFolder]);
 
   const filtered = useMemo(() => {
     setCurrentPage(1);
-    return products.filter((p) => {
+    const base = products.filter((p) => {
       if (search && !p.name.toLowerCase().includes(search.toLowerCase())) return false;
       if (selectedFolder) {
         const allIds = [selectedFolder, ...(childFolderIds[selectedFolder] ?? [])];
@@ -221,7 +219,16 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
       }
       return true;
     });
-  }, [search, selectedFolder, selectedWeight, products, childFolderIds]);
+    if (highlightedProductId) {
+      const idx = base.findIndex((p) => p.id === highlightedProductId);
+      if (idx > 0) {
+        const reordered = [...base];
+        reordered.unshift(...reordered.splice(idx, 1));
+        return reordered;
+      }
+    }
+    return base;
+  }, [search, selectedFolder, selectedWeight, products, childFolderIds, highlightedProductId]);
 
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
   const paginated  = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);

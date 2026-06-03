@@ -98,3 +98,12 @@ export type SectionNovidades = { items: NovidadesItem[] };
 export type SectionPipoca    = { categories: PipocaCategory[] };
 export type SectionBrands    = { productIds: string[] };
 export type SectionBanners   = { items: BannerItem[] };
+
+export type InstagramPost = {
+  id: string;
+  shortcode: string;
+  url: string;
+  type: 'post' | 'reel';
+};
+
+export type SectionInstagram = { posts: InstagramPost[] };

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { doc, getDoc, setDoc, collection, query, onSnapshot, orderBy } from 'firebase/firestore';
 import { ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
-import { Plus, X, Search, Loader2, GripVertical, ImagePlus, Trash2 } from 'lucide-react';
+import { Plus, X, Search, Loader2, GripVertical, ImagePlus, Trash2, Instagram } from 'lucide-react';
 import { db, storage } from '../../lib/firebase';
 import { ProductWheel } from '../../app/components/Brands';
 import type {
@@ -13,6 +13,8 @@ import type {
   BannerItem,
   NovidadesItem,
   PipocaCategory,
+  InstagramPost,
+  SectionInstagram,
 } from '../../lib/types';
 
 // ── Product picker dialog ─────────────────────────────────────────────────────
@@ -760,9 +762,160 @@ function BannersTab() {
   );
 }
 
+// ── Instagram helpers ─────────────────────────────────────────────────────────
+
+function extractShortcode(input: string): { shortcode: string; type: 'post' | 'reel' } | null {
+  const trimmed = input.trim();
+  const postMatch = trimmed.match(/instagram\.com\/p\/([A-Za-z0-9_-]+)/);
+  if (postMatch) return { shortcode: postMatch[1], type: 'post' };
+  const reelMatch = trimmed.match(/instagram\.com\/reels?\/([A-Za-z0-9_-]+)/);
+  if (reelMatch) return { shortcode: reelMatch[1], type: 'reel' };
+  if (/^[A-Za-z0-9_-]+$/.test(trimmed)) return { shortcode: trimmed, type: 'post' };
+  return null;
+}
+
+// ── Instagram tab ─────────────────────────────────────────────────────────────
+
+function InstagramTab() {
+  const [posts, setPosts]     = useState<InstagramPost[]>([]);
+  const [input, setInput]     = useState('');
+  const [error, setError]     = useState('');
+  const [saving, setSaving]   = useState(false);
+  const [saved, setSaved]     = useState(false);
+
+  useEffect(() => {
+    getDoc(doc(db, 'sections', 'instagram')).then((snap) => {
+      if (snap.exists()) setPosts((snap.data() as SectionInstagram).posts ?? []);
+    });
+  }, []);
+
+  const handleAdd = () => {
+    const result = extractShortcode(input);
+    if (!result) {
+      setError('URL inválida. Cole o link completo do post ou reel do Instagram.');
+      return;
+    }
+    const { shortcode, type } = result;
+    if (posts.some((p) => p.shortcode === shortcode)) {
+      setError('Este post já foi adicionado.');
+      return;
+    }
+    const path = type === 'reel' ? 'reel' : 'p';
+    const url = `https://www.instagram.com/${path}/${shortcode}/`;
+    setPosts((prev) => [...prev, { id: crypto.randomUUID(), shortcode, url, type }]);
+    setInput('');
+    setError('');
+  };
+
+  const handleRemove = (id: string) =>
+    setPosts((prev) => prev.filter((p) => p.id !== id));
+
+  const handleSave = async () => {
+    setSaving(true);
+    await setDoc(doc(db, 'sections', 'instagram'), { posts });
+    setSaving(false);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
+
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-muted-foreground">
+        Posts do Instagram exibidos na seção da página inicial. Cole o link do post para adicionar.
+      </p>
+
+      {/* Input */}
+      <div className="flex gap-2">
+        <input
+          value={input}
+          onChange={(e) => { setInput(e.target.value); setError(''); }}
+          onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
+          placeholder="https://www.instagram.com/p/ABC123/"
+          className="flex-1 px-3 py-2 border border-border rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20"
+        />
+        <button
+          onClick={handleAdd}
+          className="flex items-center gap-1.5 px-4 py-2 bg-primary text-white rounded-xl text-sm font-semibold hover:bg-primary/90 transition-colors"
+        >
+          <Plus className="w-4 h-4" />
+          Adicionar
+        </button>
+      </div>
+      {error && <p className="text-xs text-red-600">{error}</p>}
+
+      {/* Post list */}
+      {posts.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-10 border-2 border-dashed border-border rounded-2xl text-muted-foreground text-sm gap-2">
+          <Instagram className="w-6 h-6" />
+          <p>Nenhum post adicionado ainda.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-3 gap-4">
+          {posts.map((post, index) => (
+            <div
+              key={post.id}
+              className="bg-white border border-gray-100 rounded-xl overflow-hidden"
+            >
+              {/* URL row */}
+              <div className="flex items-center gap-3 px-4 py-3">
+                <span className="text-xs font-bold text-muted-foreground w-5 text-center shrink-0">{index + 1}</span>
+                <span className={`text-xs font-bold px-2 py-0.5 rounded-full shrink-0 ${
+                  post.type === 'reel'
+                    ? 'bg-purple-100 text-purple-700'
+                    : 'bg-primary/10 text-primary'
+                }`}>
+                  {post.type === 'reel' ? 'Reel' : 'Post'}
+                </span>
+                <a
+                  href={post.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 text-sm text-primary hover:underline font-mono truncate"
+                >
+                  {post.url}
+                </a>
+                <button
+                  onClick={() => handleRemove(post.id)}
+                  className="p-1.5 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors shrink-0"
+                  title="Remover post"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Inline embed preview */}
+              <div className="border-t border-gray-100 overflow-hidden" style={{ height: 360 }}>
+                <iframe
+                  src={`https://www.instagram.com/${post.type === 'reel' ? 'reel' : 'p'}/${post.shortcode}/embed/`}
+                  style={{ width: '100%', height: '600px', border: 'none', display: 'block' }}
+                  scrolling="no"
+                  allowTransparency
+                  loading="lazy"
+                  title={`Preview ${post.type} ${post.shortcode}`}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Save */}
+      <button
+        onClick={handleSave}
+        disabled={saving}
+        className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-60"
+      >
+        {saving && <Loader2 className="w-4 h-4 animate-spin" />}
+        {saved ? 'Salvo!' : saving ? 'Salvando…' : 'Salvar'}
+      </button>
+
+    </div>
+  );
+}
+
 // ── Main page ─────────────────────────────────────────────────────────────────
 
-const TABS = ['Novidades', 'Pipocas Gravatá', 'Nordeste Gravatá', 'Banners'] as const;
+const TABS = ['Novidades', 'Pipocas Gravatá', 'Nordeste Gravatá', 'Banners', 'Instagram'] as const;
 type Tab = typeof TABS[number];
 
 export default function SectionsPage() {
@@ -805,6 +958,7 @@ export default function SectionsPage() {
       {activeTab === 'Pipocas Gravatá' && <PipocaTab    products={products} />}
       {activeTab === 'Nordeste Gravatá'&& <BrandsTab    products={products} />}
       {activeTab === 'Banners'         && <BannersTab />}
+      {activeTab === 'Instagram'       && <InstagramTab />}
     </div>
   );
 }

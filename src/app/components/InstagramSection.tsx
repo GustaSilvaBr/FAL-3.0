@@ -1,18 +1,23 @@
+import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { Instagram } from 'lucide-react';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../../lib/firebase';
+import type { InstagramPost, SectionInstagram } from '../../lib/types';
 
 const INSTAGRAM_PROFILE = 'https://www.instagram.com/pipocasgravata_oficial';
 
-const shortcodes = [
-  'DTvFGEwDRRJ',
-  'DTvFGEwDRRJ',
-  'DTvFGEwDRRJ',
-  'DTvFGEwDRRJ',
-  'DTvFGEwDRRJ',
-  'DTvFGEwDRRJ',
-];
-
 export default function InstagramSection() {
+  const [posts, setPosts] = useState<InstagramPost[]>([]);
+
+  useEffect(() => {
+    getDoc(doc(db, 'sections', 'instagram')).then((snap) => {
+      if (snap.exists()) setPosts((snap.data() as SectionInstagram).posts ?? []);
+    });
+  }, []);
+
+  if (posts.length === 0) return null;
+
   return (
     <section
       id="instagram"
@@ -37,9 +42,9 @@ export default function InstagramSection() {
         </motion.div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-          {shortcodes.map((code, index) => (
+          {posts.map((post, index) => (
             <motion.div
-              key={index}
+              key={post.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -48,13 +53,12 @@ export default function InstagramSection() {
               style={{ aspectRatio: '1 / 1' }}
             >
               <iframe
-                src={`https://www.instagram.com/p/${code}/embed/`}
+                src={`https://www.instagram.com/${post.type === 'reel' ? 'reel' : 'p'}/${post.shortcode}/embed/`}
                 style={{
                   width: '100%',
                   height: '540px',
                   border: 'none',
                   display: 'block',
-                  marginTop: '-2px',
                 }}
                 scrolling="no"
                 allowTransparency

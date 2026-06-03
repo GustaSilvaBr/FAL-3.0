@@ -74,6 +74,13 @@ export type Product = {
 
 // ── Section types ──────────────────────────────────────────────────────────────
 
+export type BannerItem = {
+  id: string;
+  imageUrl: string;
+  imagePath: string;
+  alt: string;
+};
+
 export type NovidadesItem = {
   productId: string;
   tag?: string;
@@ -90,3 +97,4 @@ export type PipocaCategory = {
 export type SectionNovidades = { items: NovidadesItem[] };
 export type SectionPipoca    = { categories: PipocaCategory[] };
 export type SectionBrands    = { productIds: string[] };
+export type SectionBanners   = { items: BannerItem[] };

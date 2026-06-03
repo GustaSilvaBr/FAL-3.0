@@ -1,13 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { doc, getDoc, setDoc, collection, query, onSnapshot, orderBy } from 'firebase/firestore';
-import { Plus, X, Search, Loader2, GripVertical } from 'lucide-react';
-import { db } from '../../lib/firebase';
+import { ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+import { Plus, X, Search, Loader2, GripVertical, ImagePlus, Trash2 } from 'lucide-react';
+import { db, storage } from '../../lib/firebase';
 import { ProductWheel } from '../../app/components/Brands';
 import type {
   Product,
   SectionNovidades,
   SectionPipoca,
   SectionBrands,
+  SectionBanners,
+  BannerItem,
   NovidadesItem,
   PipocaCategory,
 } from '../../lib/types';
@@ -572,9 +575,194 @@ function BrandsTab({ products }: { products: Product[] }) {
   );
 }
 
+// ── Banner preview ────────────────────────────────────────────────────────────
+
+function BannerPreview({ items }: { items: BannerItem[] }) {
+  const [index, setIndex]   = useState(0);
+  const timerRef            = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  useEffect(() => {
+    if (items.length < 2) return;
+    const tick = () => {
+      setIndex((i) => (i + 1) % items.length);
+      timerRef.current = setTimeout(tick, 3500);
+    };
+    timerRef.current = setTimeout(tick, 3500);
+    return () => clearTimeout(timerRef.current);
+  }, [items.length]);
+
+  useEffect(() => { setIndex(0); }, [items.length]);
+
+  if (items.length === 0) return null;
+
+  return (
+    <div className="rounded-2xl overflow-hidden border border-gray-200 shadow-sm bg-black relative select-none" style={{ aspectRatio: '2/1' }}>
+      {items.map((item, i) => (
+        <img
+          key={item.id}
+          src={item.imageUrl}
+          alt={item.alt || 'Banner'}
+          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
+          style={{ opacity: i === index ? 1 : 0 }}
+        />
+      ))}
+
+      {/* overlay gradient */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none" />
+
+      {/* dots */}
+      {items.length > 1 && (
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+          {items.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => { setIndex(i); clearTimeout(timerRef.current); }}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                i === index ? 'w-5 bg-white' : 'w-1.5 bg-white/50 hover:bg-white/80'
+              }`}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* slide counter */}
+      <span className="absolute top-3 right-3 text-xs text-white/80 font-semibold bg-black/30 px-2 py-0.5 rounded-full">
+        {index + 1} / {items.length}
+      </span>
+    </div>
+  );
+}
+
+// ── Banners tab ───────────────────────────────────────────────────────────────
+
+function BannersTab() {
+  const [items, setItems]     = useState<BannerItem[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [saving, setSaving]   = useState(false);
+  const [saved, setSaved]     = useState(false);
+  const fileInputRef          = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    getDoc(doc(db, 'sections', 'banners')).then((snap) => {
+      if (snap.exists()) setItems((snap.data() as SectionBanners).items ?? []);
+    });
+  }, []);
+
+  const handleFiles = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    setUploading(true);
+    const newItems: BannerItem[] = [];
+    for (const file of Array.from(files)) {
+      const id  = crypto.randomUUID();
+      const ext = file.name.split('.').pop() ?? 'jpg';
+      const path = `banners/${id}/image.${ext}`;
+      const sRef = storageRef(storage, path);
+      await uploadBytes(sRef, file);
+      const url = await getDownloadURL(sRef);
+      newItems.push({ id, imageUrl: url, imagePath: path, alt: '' });
+    }
+    setItems((prev) => [...prev, ...newItems]);
+    setUploading(false);
+  };
+
+  const handleRemove = async (item: BannerItem) => {
+    if (!confirm(`Remover este banner?`)) return;
+    await deleteObject(storageRef(storage, item.imagePath)).catch(() => {});
+    setItems((prev) => prev.filter((b) => b.id !== item.id));
+  };
+
+  const updateAlt = (id: string, alt: string) =>
+    setItems((prev) => prev.map((b) => (b.id === id ? { ...b, alt } : b)));
+
+  const handleSave = async () => {
+    setSaving(true);
+    await setDoc(doc(db, 'sections', 'banners'), { items });
+    setSaving(false);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
+
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-muted-foreground">
+        Imagens exibidas no carrossel da seção principal (Hero). A ordem de upload determina a ordem de exibição.
+      </p>
+
+      {/* Banner list */}
+      {items.map((item) => (
+        <div key={item.id} className="flex gap-4 bg-white border border-gray-100 rounded-2xl p-4 items-center">
+          <div
+            className="w-36 h-20 shrink-0 rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center"
+            style={{ aspectRatio: '2/1' }}
+          >
+            <img src={item.imageUrl} alt={item.alt} className="w-full h-full object-cover" />
+          </div>
+
+          <div className="flex-1 space-y-1.5">
+            <p className="text-xs text-muted-foreground font-mono truncate">{item.imagePath}</p>
+            <input
+              value={item.alt}
+              onChange={(e) => updateAlt(item.id, e.target.value)}
+              placeholder="Texto alternativo (ex: São João FAL)"
+              className="w-full px-3 py-1.5 border border-border rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary/20"
+            />
+          </div>
+
+          <button
+            onClick={() => handleRemove(item)}
+            className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors shrink-0"
+            title="Remover banner"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+      ))}
+
+      {/* Upload button */}
+      <button
+        onClick={() => fileInputRef.current?.click()}
+        disabled={uploading}
+        className="flex items-center gap-2 px-4 py-2.5 border-2 border-dashed border-border hover:border-primary/40 rounded-2xl text-sm text-muted-foreground hover:text-primary transition-colors w-full justify-center disabled:opacity-50"
+      >
+        {uploading ? (
+          <><Loader2 className="w-4 h-4 animate-spin" /> Enviando…</>
+        ) : (
+          <><ImagePlus className="w-4 h-4" /> Adicionar imagem</>
+        )}
+      </button>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        multiple
+        className="hidden"
+        onChange={(e) => handleFiles(e.target.files)}
+      />
+
+      {/* Save */}
+      <button
+        onClick={handleSave}
+        disabled={saving || uploading}
+        className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-60"
+      >
+        {saving && <Loader2 className="w-4 h-4 animate-spin" />}
+        {saved ? 'Salvo!' : saving ? 'Salvando…' : 'Salvar'}
+      </button>
+
+      {/* Preview */}
+      {items.length > 0 && (
+        <div className="pt-6 border-t border-gray-100 space-y-3">
+          <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Pré-visualização</p>
+          <BannerPreview items={items} />
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Main page ─────────────────────────────────────────────────────────────────
 
-const TABS = ['Novidades', 'Pipocas Gravatá', 'Nordeste Gravatá'] as const;
+const TABS = ['Novidades', 'Pipocas Gravatá', 'Nordeste Gravatá', 'Banners'] as const;
 type Tab = typeof TABS[number];
 
 export default function SectionsPage() {
@@ -613,9 +801,10 @@ export default function SectionsPage() {
         ))}
       </div>
 
-      {activeTab === 'Novidades'      && <NovidadesTab products={products} />}
+      {activeTab === 'Novidades'       && <NovidadesTab products={products} />}
       {activeTab === 'Pipocas Gravatá' && <PipocaTab    products={products} />}
-      {activeTab === 'Nordeste Gravatá'         && <BrandsTab    products={products} />}
+      {activeTab === 'Nordeste Gravatá'&& <BrandsTab    products={products} />}
+      {activeTab === 'Banners'         && <BannersTab />}
     </div>
   );
 }

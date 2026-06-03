@@ -37,7 +37,10 @@
       "Bash(Remove-Item \"c:\\\\Users\\\\anjog\\\\projects\\\\FAL 3.0\\\\src\\\\app\\\\components\\\\ui\\\\accordion.tsx\" -Force)",
       "Bash(Remove-Item \"c:\\\\Users\\\\anjog\\\\projects\\\\FAL 3.0\\\\src\\\\app\\\\components\\\\ui\\\\alert.tsx\" -Force)",
       "Bash(Remove-Item \"c:\\\\Users\\\\anjog\\\\projects\\\\FAL 3.0\\\\src\\\\app\\\\components\\\\ui\\\\alert-dialog.tsx\" -Force)",
-      "Bash(Remove-Item \"c:\\\\Users\\\\anjog\\\\projects\\\\FAL 3.0\\\\src\\\\app\\\\components\\\\ui\\\\aspect-ratio.tsx\" -Force)"
+      "Bash(Remove-Item \"c:\\\\Users\\\\anjog\\\\projects\\\\FAL 3.0\\\\src\\\\app\\\\components\\\\ui\\\\aspect-ratio.tsx\" -Force)",
+      "WebFetch(domain:www.instagram.com)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5173)",
+      "Bash(node_modules/.bin/tsc --noEmit)"
     ],
     "deny": [
       "Read(c:\\Users\\anjog\\projects\\FAL 3.0\\.env)",

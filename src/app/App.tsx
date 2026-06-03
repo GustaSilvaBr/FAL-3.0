@@ -9,6 +9,7 @@ import PipocaGravata from './components/PipocaGravata';
 import Brands from './components/Brands';
 import ExploreProducts from './components/ExploreProducts';
 import Contact from './components/Contact';
+import InstagramSection from './components/InstagramSection';
 import Footer from './components/Footer';
 import { ProductNavigationProvider } from '../lib/productNavigation';
 
@@ -37,6 +38,7 @@ export default function App() {
         <About />
         <ExploreProducts onLoad={onSectionLoad} />
         <Contact />
+        <InstagramSection />
         <Footer />
       </div>
     </ProductNavigationProvider>

@@ -1,9 +1,10 @@
-import { Outlet } from 'react-router';
+'use client';
+import type { ReactNode } from 'react';
 import { useAuth } from '../lib/useAuth';
 import AdminLoginPage from './AdminLoginPage';
 import AdminLayout from './AdminLayout';
 
-export default function AdminGuard() {
+export default function AdminGuard({ children }: { children: ReactNode }) {
   const { user, isAdmin, loading } = useAuth();
 
   if (loading) {
@@ -18,5 +19,5 @@ export default function AdminGuard() {
     return <AdminLoginPage />;
   }
 
-  return <AdminLayout />;
+  return <AdminLayout>{children}</AdminLayout>;
 }

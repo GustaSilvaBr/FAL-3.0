@@ -1,6 +1,9 @@
+'use client';
 import { motion } from 'motion/react';
 import { Heart, Award, Users, Leaf } from 'lucide-react';
-import falCompany from '@/assets/FAL_COMPANY.png';
+import falCompanyImg from '@/assets/FAL_COMPANY.png';
+
+const falCompany = (falCompanyImg as unknown as { src: string }).src ?? falCompanyImg as unknown as string;
 
 export default function About() {
   const values = [

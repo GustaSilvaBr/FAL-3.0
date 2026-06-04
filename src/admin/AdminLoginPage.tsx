@@ -1,6 +1,9 @@
+'use client';
 import { useState } from 'react';
 import { useAuth } from '../lib/useAuth';
-import falLogo from '../assets/FAL_LOGO.png';
+import falLogoImg from '../assets/FAL_LOGO.png';
+
+const falLogo = (falLogoImg as unknown as { src: string }).src ?? falLogoImg as unknown as string;
 
 export default function AdminLoginPage() {
   const { user, signIn, signOut } = useAuth();

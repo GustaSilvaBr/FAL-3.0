@@ -1,5 +1,6 @@
+'use client';
 import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router';
+import Link from 'next/link';
 import SeedButton from '../seed/SeedButton';
 import {
   Plus,
@@ -456,7 +457,7 @@ export default function ProductsPage() {
           <div className="flex items-center gap-2">
             <SeedButton />
             <Link
-              to={`/admin/products/new${selectedFolder ? `?folder=${selectedFolder}` : ''}`}
+              href={`/admin/products/new${selectedFolder ? `?folder=${selectedFolder}` : ''}`}
               className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl text-sm font-semibold hover:bg-primary/90 transition-colors shadow-sm"
             >
               <Plus className="w-4 h-4" />
@@ -589,7 +590,7 @@ export default function ProductsPage() {
 
                         <div className="flex items-center gap-1 mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
                           <Link
-                            to={`/admin/products/${product.id}/edit`}
+                            href={`/admin/products/${product.id}/edit`}
                             className="flex-1 flex items-center justify-center gap-1 py-1.5 text-xs font-medium bg-gray-100 hover:bg-primary/10 hover:text-primary rounded-lg transition-colors"
                           >
                             <Pencil className="w-3 h-3" />

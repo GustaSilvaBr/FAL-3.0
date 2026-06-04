@@ -1,13 +1,12 @@
+'use client';
 import { motion, AnimatePresence, useMotionValue, useTransform, useAnimationFrame } from 'motion/react';
 import type { Variants } from 'motion/react';
 import { useState, useEffect } from 'react';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../lib/firebase';
-import type { Product, SectionBrands } from '../../lib/types';
-import { preloadImages } from '../../lib/imageCache';
+import nordesteLogoImg from '../../assets/logo_nordeste_gravata.png';
+import type { Product } from '../../lib/types';
 import { useProductNavigation } from '../../lib/productNavigation';
 
-const nordesteLogo = new URL('../../assets/logo_nordeste_gravata.png', import.meta.url).href;
+const nordesteLogo = (nordesteLogoImg as unknown as { src: string }).src ?? nordesteLogoImg as unknown as string;
 
 const RADIUS    = 200;
 const CONTAINER = 500;
@@ -15,8 +14,6 @@ const DURATION  = 40;
 
 const MAX_VISIBLE = 7;
 const ROTATION_MS = 5000;
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -58,8 +55,6 @@ function useRotatingProducts(pool: Product[]): Product[] {
   return visible;
 }
 
-// ─── Product variants ─────────────────────────────────────────────────────────
-
 const productVariants: Variants = {
   initial: { scale: 0 },
   animate: {
@@ -72,11 +67,7 @@ const productVariants: Variants = {
   },
 };
 
-// ─── Product wheel ────────────────────────────────────────────────────────────
-
 export function ProductWheel({ products, onProductClick }: { products: Product[]; onProductClick?: (p: Product) => void }) {
-  // Single MotionValue drives orbit; counter-rotation is derived so it is
-  // always perfectly in sync — new products mount already upright.
   const orbitAngle   = useMotionValue(0);
   const counterAngle = useTransform(orbitAngle, (v) => -v);
 
@@ -88,18 +79,15 @@ export function ProductWheel({ products, onProductClick }: { products: Product[]
 
   return (
     <div className="relative flex items-center justify-center" style={{ width: CONTAINER, height: CONTAINER }}>
-      {/* Dashed orbit ring */}
       <div
         className="absolute rounded-full border-2 border-dashed border-primary/20"
         style={{ width: RADIUS * 2, height: RADIUS * 2 }}
       />
 
-      {/* Center logo */}
       <div className="absolute z-10 flex items-center justify-center rounded-full bg-white shadow-xl" style={{ width: 168, height: 168 }}>
         <img src={nordesteLogo} alt="Nordeste Gravatá" className="w-36 h-36 object-contain p-1" />
       </div>
 
-      {/* Rotating orbit */}
       <motion.div className="absolute inset-0 overflow-visible" style={{ rotate: orbitAngle }}>
         {products.map((product, i) => {
           const angle = (i * 360) / products.length - 90;
@@ -108,7 +96,6 @@ export function ProductWheel({ products, onProductClick }: { products: Product[]
           const y     = Math.sin(rad) * RADIUS;
 
           return (
-            // key=i keeps the slot stable; only the product inside changes
             <div
               key={i}
               className="absolute"
@@ -118,7 +105,6 @@ export function ProductWheel({ products, onProductClick }: { products: Product[]
                 transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
               }}
             >
-              {/* Shared counter-rotation — always synced with the orbit */}
               <motion.div style={{ rotate: counterAngle }}>
                 <motion.div
                   style={{ width: 103, height: 103 }}
@@ -128,7 +114,6 @@ export function ProductWheel({ products, onProductClick }: { products: Product[]
                   title={product.name}
                   onClick={() => onProductClick?.(product)}
                 >
-                  {/* Circle stays visible always; only the image scales in/out */}
                   <div className="w-full h-full rounded-full bg-white shadow-lg overflow-hidden flex items-center justify-center">
                     <AnimatePresence mode="wait">
                       {product.imageUrl ? (
@@ -166,36 +151,8 @@ export function ProductWheel({ products, onProductClick }: { products: Product[]
   );
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
-export default function Brands({ onLoad }: { onLoad?: () => void }) {
-  const [allProducts, setAllProducts] = useState<Product[]>([]);
+export default function Brands({ allProducts }: { allProducts: Product[] }) {
   const { navigateToProduct } = useProductNavigation();
-
-  useEffect(() => {
-    async function load() {
-      const snap = await getDoc(doc(db, 'sections', 'brands'));
-      if (!snap.exists()) { onLoad?.(); return; }
-
-      const data = snap.data() as SectionBrands;
-      const ids  = data.productIds ?? [];
-
-      const loaded = await Promise.all(
-        ids.map(async (id) => {
-          const pSnap = await getDoc(doc(db, 'products', id));
-          return pSnap.exists() ? ({ id: pSnap.id, ...pSnap.data() } as Product) : null;
-        }),
-      );
-
-      const all = loaded.filter(Boolean) as Product[];
-      await preloadImages(all.map((p) => p.imageUrl));
-      setAllProducts(all);
-      onLoad?.();
-    }
-
-    load();
-  }, [onLoad]);
-
   const products = useRotatingProducts(allProducts);
 
   return (

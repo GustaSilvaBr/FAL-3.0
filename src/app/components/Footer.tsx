@@ -1,6 +1,8 @@
+'use client';
 import { Facebook, Instagram, Mail, Phone, MapPin, Clock } from 'lucide-react';
+import falLogoImg from '../../assets/FAL_LOGO.png';
 
-const falLogo = new URL('../../assets/FAL_LOGO.png', import.meta.url).href;
+const falLogo = (falLogoImg as unknown as { src: string }).src ?? falLogoImg as unknown as string;
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();

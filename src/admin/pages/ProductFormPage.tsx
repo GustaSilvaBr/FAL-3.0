@@ -1,5 +1,7 @@
+'use client';
 import { useState, useEffect, useRef } from 'react';
-import { useParams, useSearchParams, useNavigate, Link } from 'react-router';
+import { useParams, useSearchParams, useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { ChevronLeft, Upload, X, Loader2, FolderPlus } from 'lucide-react';
 import {
   doc,
@@ -37,9 +39,10 @@ const EMPTY_FORM: FormState = {
 };
 
 export default function ProductFormPage() {
-  const { id } = useParams<{ id: string }>();
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
+  const params = useParams();
+  const id = params?.id as string | undefined;
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const isEditing = Boolean(id);
 
   const [form, setForm] = useState<FormState>({
@@ -184,7 +187,7 @@ export default function ProductFormPage() {
         { merge: true },
       );
 
-      navigate('/admin/products');
+      router.push('/admin/products');
     } catch (e) {
       console.error(e);
       setError('Erro ao salvar. Tente novamente.');
@@ -198,7 +201,7 @@ export default function ProductFormPage() {
       {/* Header */}
       <div className="flex items-center gap-3 mb-8">
         <Link
-          to="/admin/products"
+          href="/admin/products"
           className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-muted-foreground"
         >
           <ChevronLeft className="w-5 h-5" />
@@ -423,7 +426,7 @@ export default function ProductFormPage() {
             {saving ? 'Salvando…' : isEditing ? 'Salvar alterações' : 'Criar produto'}
           </button>
           <Link
-            to="/admin/products"
+            href="/admin/products"
             className="px-6 py-2.5 text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-gray-100 rounded-xl transition-colors"
           >
             Cancelar

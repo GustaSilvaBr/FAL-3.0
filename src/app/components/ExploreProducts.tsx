@@ -1,10 +1,8 @@
+'use client';
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Search, Star, X, SlidersHorizontal, ChevronLeft, ChevronRight } from 'lucide-react';
-import { collection, query, onSnapshot, orderBy } from 'firebase/firestore';
-import { db } from '../../lib/firebase';
 import { NUTRITION_FIELDS, type Product, type Folder } from '../../lib/types';
-import { preloadImages } from '../../lib/imageCache';
 import { useProductNavigation } from '../../lib/productNavigation';
 
 const weightRanges = [
@@ -21,9 +19,12 @@ function parseWeight(weight: string): number | null {
 
 const ITEMS_PER_PAGE = 9;
 
-export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
-  const [products, setProducts]             = useState<Product[]>([]);
-  const [folders, setFolders]               = useState<Folder[]>([]);
+type Props = {
+  products: Product[];
+  folders: Folder[];
+};
+
+export default function ExploreProducts({ products, folders }: Props) {
   const [search, setSearch]                 = useState('');
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [selectedWeight, setSelectedWeight] = useState<string | null>(null);
@@ -40,32 +41,6 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
   const tabsRef    = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft]   = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
-
-  // ── Firestore subscriptions ──────────────────────────────────────────────
-  useEffect(() => {
-    const unsub = onSnapshot(
-      query(collection(db, 'folders'), orderBy('name')),
-      (snap) => setFolders(snap.docs.map((d) => ({ id: d.id, ...d.data() } as Folder))),
-    );
-    return unsub;
-  }, []);
-
-  const loadReported = useRef(false);
-  useEffect(() => {
-    const unsub = onSnapshot(
-      query(collection(db, 'products'), orderBy('name')),
-      (snap) => {
-        const prods = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Product));
-        setProducts(prods);
-        if (!loadReported.current) {
-          loadReported.current = true;
-          preloadImages(prods.map((p) => p.imageUrl));
-          onLoad?.();
-        }
-      },
-    );
-    return unsub;
-  }, [onLoad]);
 
   // ── Tab scroll state ─────────────────────────────────────────────────────
   const updateScrollState = () => {
@@ -125,10 +100,8 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
     let cancelled = false;
     const timeouts: ReturnType<typeof setTimeout>[] = [];
 
-    // Step 1 — scroll to section
     sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-    // Step 2 — activate category filter
     timeouts.push(setTimeout(() => {
       if (cancelled) return;
       setSelectedFolder(topFolderId);
@@ -136,12 +109,10 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
       setSearch('');
       setSelectedWeight(null);
 
-      // Step 3 — highlight product (filtered useMemo moves it to index 0, page resets to 1)
       timeouts.push(setTimeout(() => {
         if (cancelled) return;
         setHighlightedProductId(pendingProduct.id);
 
-        // Step 4 — open product modal
         timeouts.push(setTimeout(() => {
           if (cancelled) return;
           setSelectedProduct(pendingProduct);
@@ -172,7 +143,6 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
     [folders],
   );
 
-  // child folder IDs grouped by parent id
   const childFolderIds = useMemo(() => {
     const map: Record<string, string[]> = {};
     folders.forEach((f) => {
@@ -253,7 +223,6 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
 
   const clearAll = () => { setSelectedFolder(null); setSelectedWeight(null); setSearch(''); };
 
-  // ── Nutrition display rows for modal ─────────────────────────────────────
   const nutritionRows = selectedProduct
     ? NUTRITION_FIELDS.map((field) => ({
         label:   field.label,
@@ -358,7 +327,6 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
                 </button>
               )}
               <div ref={tabsRef} className="flex items-center gap-2 overflow-x-auto flex-1" style={{ scrollbarWidth: 'none' }}>
-                {/* "All" chip */}
                 <button
                   onClick={() => setSelectedFolder(null)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold uppercase tracking-wide whitespace-nowrap shrink-0 transition-all ${
@@ -507,11 +475,10 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
             </>
           )}
 
-
         </div>
       </section>
 
-      {/* ── Product detail modal ─────────────────────────────────────────────── */}
+      {/* Product detail modal */}
       <AnimatePresence>
         {selectedProduct && (
           <motion.div

@@ -40,7 +40,10 @@
       "Bash(Remove-Item \"c:\\\\Users\\\\anjog\\\\projects\\\\FAL 3.0\\\\src\\\\app\\\\components\\\\ui\\\\aspect-ratio.tsx\" -Force)",
       "WebFetch(domain:www.instagram.com)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5173)",
-      "Bash(node_modules/.bin/tsc --noEmit)"
+      "Bash(node_modules/.bin/tsc --noEmit)",
+      "Bash(mkdir -p \"/c/Users/anjog/projects/FAL 3.0/app/admin/products/new\" && mkdir -p \"/c/Users/anjog/projects/FAL 3.0/app/admin/products/[id]/edit\" && mkdir -p \"/c/Users/anjog/projects/FAL 3.0/app/admin/sections\")",
+      "Bash(npx next *)",
+      "Bash(kill %1)"
     ],
     "deny": [
       "Read(c:\\Users\\anjog\\projects\\FAL 3.0\\.env)",
@@ -48,6 +51,9 @@
       "Write(c:\\Users\\anjog\\projects\\FAL 3.0\\.env)",
       "Bash(* .env *)",
       "Bash(* .env)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\anjog\\projects\\FAL 3.0\\app\\admin\\products\\[id]"
     ]
   }
 }

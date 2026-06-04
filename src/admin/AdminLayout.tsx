@@ -1,10 +1,23 @@
-import { NavLink, Outlet } from 'react-router';
+'use client';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Package, LayoutGrid, LogOut, House } from 'lucide-react';
 import { useAuth } from '../lib/useAuth';
-import falLogo from '../assets/FAL_LOGO.png';
+import falLogoImg from '../assets/FAL_LOGO.png';
+import type { ReactNode } from 'react';
 
-export default function AdminLayout() {
+const falLogo = (falLogoImg as unknown as { src: string }).src ?? falLogoImg as unknown as string;
+
+export default function AdminLayout({ children }: { children: ReactNode }) {
   const { user, signOut } = useAuth();
+  const pathname = usePathname();
+
+  const navClass = (base: string) =>
+    `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+      pathname.startsWith(base)
+        ? 'bg-primary text-white'
+        : 'text-foreground hover:bg-gray-100'
+    }`;
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
@@ -25,33 +38,15 @@ export default function AdminLayout() {
         </div>
 
         <nav className="flex-1 p-3 space-y-0.5 overflow-auto">
-          <NavLink
-            to="/admin/products"
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                isActive
-                  ? 'bg-primary text-white'
-                  : 'text-foreground hover:bg-gray-100'
-              }`
-            }
-          >
+          <Link href="/admin/products" className={navClass('/admin/products')}>
             <Package className="w-4 h-4 shrink-0" />
             Produtos
-          </NavLink>
+          </Link>
 
-          <NavLink
-            to="/admin/sections"
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                isActive
-                  ? 'bg-primary text-white'
-                  : 'text-foreground hover:bg-gray-100'
-              }`
-            }
-          >
+          <Link href="/admin/sections" className={navClass('/admin/sections')}>
             <LayoutGrid className="w-4 h-4 shrink-0" />
             Seções
-          </NavLink>
+          </Link>
         </nav>
 
         <div className="p-4 border-t border-gray-100">
@@ -82,7 +77,7 @@ export default function AdminLayout() {
 
       {/* Main */}
       <main className="flex-1 overflow-auto">
-        <Outlet />
+        {children}
       </main>
     </div>
   );

@@ -1,10 +1,8 @@
+'use client';
 import { useState, useEffect } from 'react';
-import { preloadImages } from '../../lib/imageCache';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowRight, Star } from 'lucide-react';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../lib/firebase';
-import type { Product, SectionNovidades, NovidadesItem } from '../../lib/types';
+import type { Product } from '../../lib/types';
 import { useProductNavigation } from '../../lib/productNavigation';
 
 type DisplayItem = {
@@ -15,47 +13,9 @@ type DisplayItem = {
   product?: Product;
 };
 
-function toDisplayItem(item: NovidadesItem, product: Product | undefined): DisplayItem {
-  return {
-    image: product?.imageUrl ?? '',
-    tag: item.tag || undefined,
-    title: product?.name ?? '',
-    description: item.description,
-    product,
-  };
-}
-
-export default function Novidades({ onLoad }: { onLoad?: () => void }) {
-  const [items, setItems] = useState<DisplayItem[]>([]);
+export default function Novidades({ items }: { items: DisplayItem[] }) {
   const [index, setIndex] = useState(0);
   const { navigateToProduct } = useProductNavigation();
-
-  useEffect(() => {
-    async function load() {
-      const sectionSnap = await getDoc(doc(db, 'sections', 'novidades'));
-      if (!sectionSnap.exists()) { onLoad?.(); return; }
-
-      const section = sectionSnap.data() as SectionNovidades;
-      if (!section.items?.length) { onLoad?.(); return; }
-
-      const productIds = [...new Set(section.items.map((i) => i.productId))];
-      const productMap: Record<string, Product> = {};
-
-      await Promise.all(
-        productIds.map(async (pid) => {
-          const snap = await getDoc(doc(db, 'products', pid));
-          if (snap.exists()) productMap[pid] = { id: snap.id, ...snap.data() } as Product;
-        }),
-      );
-
-      const displayItems = section.items.map((item) => toDisplayItem(item, productMap[item.productId]));
-      await preloadImages(displayItems.map((i) => i.image));
-      setItems(displayItems);
-      onLoad?.();
-    }
-
-    load();
-  }, [onLoad]);
 
   useEffect(() => {
     if (items.length < 2) return;

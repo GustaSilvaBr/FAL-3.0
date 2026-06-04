@@ -1,39 +1,27 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
+'use client';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { ChevronDown } from 'lucide-react';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../lib/firebase';
-import type { SectionBanners } from '../../lib/types';
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   type CarouselApi,
 } from './ui/carousel';
+
 const PHOTO_DURATION = 5000;
 
 type Slide = { src: string; alt: string };
 
-export default function Hero() {
-  const [slides, setSlides]   = useState<Slide[]>([]);
+export default function Hero({ slides }: { slides: Slide[] }) {
   const [api, setApi]         = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const timerRef              = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  useEffect(() => {
-    getDoc(doc(db, 'sections', 'banners')).then((snap) => {
-      if (!snap.exists()) return;
-      const data = snap.data() as SectionBanners;
-      if (data.items?.length) {
-        setSlides(data.items.map((b) => ({ src: b.imageUrl, alt: b.alt || 'Banner FAL' })));
-      }
-    });
-  }, []);
-
   const stopAutoplay = useCallback(() => clearTimeout(timerRef.current), []);
 
   const scheduleNext = useCallback(
-    (index: number) => {
+    (_index: number) => {
       stopAutoplay();
       timerRef.current = setTimeout(() => { api?.scrollNext(); }, PHOTO_DURATION);
     },

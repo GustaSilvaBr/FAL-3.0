@@ -1,3 +1,4 @@
+'use client';
 import { useState } from 'react';
 import { Loader2, DatabaseZap, X, CheckCircle2, AlertCircle } from 'lucide-react';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
@@ -6,11 +7,8 @@ import { db, storage } from '../../lib/firebase';
 import { EMPTY_NUTRITION } from '../../lib/types';
 import seedData from './seed-data.json';
 
-// Resolved at build/dev time by Vite — keys are like "/src/assets/products/Folder/file.png"
-const imageModules = import.meta.glob('/src/assets/products/**/*', {
-  eager: true,
-  as: 'url',
-}) as Record<string, string>;
+// Local image seeding is disabled in Next.js — upload images manually via the product edit form
+const imageModules: Record<string, string> = {};
 
 type Status = 'idle' | 'confirm' | 'running' | 'done' | 'error';
 

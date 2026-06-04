@@ -1,15 +1,18 @@
+'use client';
 import { useState, useEffect, useRef } from 'react';
 import { Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useLocation } from 'react-router';
-import falLogo from '../../assets/FAL_LOGO.png';
+import { usePathname } from 'next/navigation';
+import falLogoImg from '../../assets/FAL_LOGO.png';
+
+const falLogo = (falLogoImg as unknown as { src: string }).src ?? falLogoImg as unknown as string;
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [visible, setVisible] = useState(true);
   const lastScrollY = useRef(0);
-  const location = useLocation();
-  const isHome = location.pathname === '/';
+  const pathname = usePathname();
+  const isHome = pathname === '/';
 
   useEffect(() => {
     const handleScroll = () => {

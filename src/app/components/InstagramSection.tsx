@@ -21,7 +21,7 @@ export default function InstagramSection() {
   return (
     <section
       id="instagram"
-      className="py-20 bg-gradient-to-br from-accent/20 to-primary/10"
+      className="py-20 bg-white"
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
@@ -49,7 +49,7 @@ export default function InstagramSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: index * 0.07 }}
-              className="relative overflow-hidden rounded-2xl bg-white shadow-sm"
+              className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-accent/20 to-primary/10 shadow-sm"
               style={{ aspectRatio: '1 / 1' }}
             >
               <iframe

@@ -1,78 +1,136 @@
+import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
-import { Heart, Award, Users, Leaf } from 'lucide-react';
-import falCompany from '@/assets/FAL_COMPANY.png';
+
+const truckImg      = new URL('../../assets/nossa_historia/truck.png', import.meta.url).href;
+const nordesteImg   = new URL('../../assets/nossa_historia/nordeste_gravatá.jpg', import.meta.url).href;
+const pipocaImg     = new URL('../../assets/nossa_historia/pipoca_inclusão.png', import.meta.url).href;
+
+const panels = [
+  {
+    img: truckImg,
+    fit: 'cover' as const,
+    alt: 'Caminhão FAL na estrada',
+    num: '01',
+    title: 'Na Estrada Desde o Início',
+    text: 'Com nosso caminhão, levamos o sabor nordestino de Gravatá para todo o Brasil. Cada entrega é uma promessa de qualidade e tradição.',
+  },
+  {
+    img: nordesteImg,
+    fit: 'cover' as const,
+    alt: 'Fachada Nordeste Gravatá — Desde 1971',
+    num: '02',
+    title: 'Gravatá, Nossa Origem',
+    text: 'Fundada em 1971 no coração de Pernambuco, nossa fábrica carrega décadas de receitas autênticas e o orgulho de uma tradição que resistiu ao tempo.',
+  },
+  {
+    img: pipocaImg,
+    fit: 'contain' as const,
+    alt: 'Pipoca Gravatá — linha inclusiva',
+    num: '03',
+    title: 'Pipoca para Todos',
+    text: 'Acreditamos que o bom sabor não tem barreiras. Nossa linha inclusiva celebra a diversidade e garante que todos possam saborear o melhor do Nordeste.',
+  },
+] as const;
 
 export default function About() {
-  const values = [
-    {
-      icon: Heart,
-      title: 'Paixão',
-      description: 'Cada produto é feito com amor e dedicação aos sabores autênticos do Brasil.',
-    },
-    {
-      icon: Award,
-      title: 'Qualidade',
-      description: 'Mantemos os mais altos padrões em cada etapa do nosso processo de produção.',
-    },
-    {
-      icon: Users,
-      title: 'Comunidade',
-      description: 'Apoiamos produtores locais e unimos famílias por meio da comida.',
-    },
-    {
-      icon: Leaf,
-      title: 'Sustentabilidade',
-      description: 'Comprometidos com práticas ambientalmente responsáveis e ingredientes naturais.',
-    },
-  ];
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 768px)');
+    setIsDesktop(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
 
   return (
-    <section id="about" className="min-h-screen flex flex-col justify-center relative py-20 overflow-hidden">
-      <img
-        src={falCompany}
-        alt=""
-        aria-hidden="true"
-        className="absolute inset-0 w-full h-full object-cover blur-sm scale-105"
-      />
-      <div className="absolute inset-0 bg-background/75" />
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
+    <section id="about" className="overflow-hidden bg-white">
+
+      {/* ── Section header ── */}
+      {/* <div className="py-16 text-center px-4">
+        <motion.h2
+          className="text-4xl md:text-5xl lg:text-6xl font-black text-primary mb-4"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl text-primary mb-6">
-            Nossa História
-          </h2>
-          <p className="text-lg md:text-xl max-w-3xl mx-auto" style={{ color: '#666' }}>
-            Há mais de três décadas fabricamos petiscos brasileiros autênticos em Gravatá. Da nossa famosa pipoca à tradicional
-            paçoca, amendoim e salgadinhos, levamos o verdadeiro sabor do Nordeste brasileiro para famílias de todo o país.
-            Nosso compromisso com a qualidade, a tradição e os sabores autênticos permanece inabalável.
-          </p>
-        </motion.div>
+          Nossa História
+        </motion.h2>
+        <motion.p
+          className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.12 }}
+        >
+          Tradição, sabor e paixão que atravessam gerações — essa é a história da FAL.
+        </motion.p>
+      </div> */}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {values.map((value, index) => (
+      {/* ── Diagonal panels ── */}
+      <div
+        className="flex"
+        style={{ flexDirection: isDesktop ? 'row' : 'column', height: isDesktop ? '620px' : 'auto' }}
+      >
+        {panels.map((panel, i) => {
+          const isLast = i === panels.length - 1;
+
+          const panelStyle = isDesktop
+            ? {
+                clipPath: isLast
+                  ? undefined
+                  : 'polygon(0 0, calc(100% - 3.5rem) 0, 100% 100%, 0 100%)',
+                marginLeft: i > 0 ? '-3.5rem' : undefined,
+                zIndex: panels.length - i,
+              }
+            : { zIndex: panels.length - i };
+
+          return (
             <motion.div
-              key={value.title}
-              initial={{ opacity: 0, y: 20 }}
+              key={panel.title}
+              className="relative flex-1"
+              style={{ ...panelStyle, minHeight: isDesktop ? 0 : '360px' }}
+              initial={{ opacity: 0, y: 36 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200"
+              transition={{ duration: 0.65, delay: i * 0.14 }}
             >
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
-                <value.icon className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="text-xl mb-3 text-primary">{value.title}</h3>
-              <p className="text-muted-foreground">{value.description}</p>
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </section>
+              {/* ── Background image ── */}
+              <img
+                src={panel.img}
+                alt={panel.alt}
+                className="absolute inset-0 w-full h-full"
+                style={{
+                  objectFit: panel.fit,
+                  objectPosition: 'center',
+                  padding: panel.fit === 'contain' ? '1.5rem' : undefined,
+                }}
+              />
 
+              {/* ── Text area: frosted glass with brand gradient ── */}
+              <div
+                className="absolute inset-x-0 bottom-0 backdrop-blur-md p-7 md:p-8 text-white"
+                style={{
+                  background: 'linear-gradient(135deg, color-mix(in srgb,var(--accent) 72%,transparent) 0%, color-mix(in srgb,var(--primary) 78%,transparent) 100%)',
+                  paddingLeft: isDesktop && i > 0 ? '5rem' : undefined,
+                }}
+              >
+                <span className="block text-[0.65rem] font-black uppercase tracking-[0.35em] opacity-60 mb-2">
+                  {panel.num}
+                </span>
+                <h3 className="text-xl md:text-[1.35rem] font-black leading-tight mb-2">
+                  {panel.title}
+                </h3>
+                <p className="text-[0.82rem] md:text-sm leading-relaxed" style={{ opacity: 0.9 }}>
+                  {panel.text}
+                </p>
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
+
+    </section>
   );
 }

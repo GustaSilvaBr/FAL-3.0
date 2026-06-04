@@ -37,8 +37,9 @@ export default function App() {
         <Brands        onLoad={onSectionLoad} />
         <About />
         <ExploreProducts onLoad={onSectionLoad} />
+           <InstagramSection />
         <Contact />
-        <InstagramSection />
+     
         <Footer />
       </div>
     </ProductNavigationProvider>

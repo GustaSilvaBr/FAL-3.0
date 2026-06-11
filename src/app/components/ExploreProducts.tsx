@@ -447,7 +447,7 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
                       </div>
                       <div className="px-2 pb-2 flex flex-col flex-1 gap-3">
                         <h3 className="text-sm font-semibold text-foreground leading-snug line-clamp-2 text-center">
-                          {product.name}
+                          {product.name}{product.weight ? ` - ${product.weight}` : ''}
                         </h3>
                         <button className="mt-auto w-full py-2.5 px-3 rounded-xl bg-primary/10 text-primary text-sm font-medium hover:bg-primary hover:text-white transition-all duration-200">
                           Confira a tabela nutricional

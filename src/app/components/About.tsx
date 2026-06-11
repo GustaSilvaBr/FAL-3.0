@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 
 const truckImg      = new URL('../../assets/nossa_historia/truck.png', import.meta.url).href;
-const nordesteImg   = new URL('../../assets/nossa_historia/nordeste_gravatá.jpg', import.meta.url).href;
-const pipocaImg     = new URL('../../assets/nossa_historia/pipoca_inclusão.png', import.meta.url).href;
+const nordesteImg   = new URL('../../assets/nossa_historia/nordeste_gravatá.png', import.meta.url).href;
+const pipocaImg     = new URL('../../assets/nossa_historia/pipoca_inclusão.jpeg', import.meta.url).href;
 
 const panels = [
   {
     img: truckImg,
-    fit: 'cover' as const,
+    bgSize: 'cover',
+    bgPosition: '70% center',
     alt: 'Caminhão FAL na estrada',
     num: '01',
     title: 'Na Estrada Desde o Início',
@@ -16,7 +17,8 @@ const panels = [
   },
   {
     img: nordesteImg,
-    fit: 'cover' as const,
+    bgSize: 'cover',
+    bgPosition: 'center',
     alt: 'Fachada Nordeste Gravatá — Desde 1971',
     num: '02',
     title: 'Gravatá, Nossa Origem',
@@ -24,13 +26,14 @@ const panels = [
   },
   {
     img: pipocaImg,
-    fit: 'contain' as const,
+    bgSize: 'cover',
+    bgPosition: 'center',
     alt: 'Pipoca Gravatá — linha inclusiva',
     num: '03',
     title: 'Pipoca para Todos',
     text: 'Acreditamos que o bom sabor não tem barreiras. Nossa linha inclusiva celebra a diversidade e garante que todos possam saborear o melhor do Nordeste.',
   },
-] as const;
+];
 
 export default function About() {
   const [isDesktop, setIsDesktop] = useState(false);
@@ -45,28 +48,6 @@ export default function About() {
 
   return (
     <section id="about" className="overflow-hidden bg-white">
-
-      {/* ── Section header ── */}
-      {/* <div className="py-16 text-center px-4">
-        <motion.h2
-          className="text-4xl md:text-5xl lg:text-6xl font-black text-primary mb-4"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          Nossa História
-        </motion.h2>
-        <motion.p
-          className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.12 }}
-        >
-          Tradição, sabor e paixão que atravessam gerações — essa é a história da FAL.
-        </motion.p>
-      </div> */}
 
       {/* ── Diagonal panels ── */}
       <div
@@ -90,24 +71,21 @@ export default function About() {
             <motion.div
               key={panel.title}
               className="relative flex-1"
-              style={{ ...panelStyle, minHeight: isDesktop ? 0 : '360px' }}
+              style={{
+                ...panelStyle,
+                minHeight: isDesktop ? 0 : '360px',
+                backgroundImage: `url(${panel.img})`,
+                backgroundSize: panel.bgSize,
+                backgroundPosition: panel.bgPosition,
+                backgroundRepeat: 'no-repeat',
+                backgroundColor: '#111',
+              }}
+              aria-label={panel.alt}
               initial={{ opacity: 0, y: 36 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.65, delay: i * 0.14 }}
             >
-              {/* ── Background image ── */}
-              <img
-                src={panel.img}
-                alt={panel.alt}
-                className="absolute inset-0 w-full h-full"
-                style={{
-                  objectFit: panel.fit,
-                  objectPosition: 'center',
-                  padding: panel.fit === 'contain' ? '1.5rem' : undefined,
-                }}
-              />
-
               {/* ── Text area: frosted glass with brand gradient ── */}
               <div
                 className="absolute inset-x-0 bottom-0 backdrop-blur-md p-7 md:p-8 text-white"

@@ -1,8 +1,6 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Search, Star, X, SlidersHorizontal, ChevronLeft, ChevronRight } from 'lucide-react';
-import { collection, query, onSnapshot, orderBy } from 'firebase/firestore';
-import { db } from '../../lib/firebase';
 import { NUTRITION_FIELDS, type Product, type Folder } from '../../lib/types';
 import { preloadImages } from '../../lib/imageCache';
 import { useProductNavigation } from '../../lib/productNavigation';
@@ -41,33 +39,25 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
   const [canScrollLeft, setCanScrollLeft]   = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
 
-  // ── Firestore subscriptions ──────────────────────────────────────────────
-  useEffect(() => {
-    const unsub = onSnapshot(
-      query(collection(db, 'folders'), orderBy('name')),
-      (snap) => setFolders(snap.docs.map((d) => ({ id: d.id, ...d.data() } as Folder))),
-    );
-    return unsub;
-  }, []);
-
+  // ── Fetch data once ──────────────────────────────────────────────────────────
   const loadReported = useRef(false);
   useEffect(() => {
-    const unsub = onSnapshot(
-      query(collection(db, 'products'), orderBy('name')),
-      (snap) => {
-        const prods = snap.docs.map((d) => ({ id: d.id, ...d.data() } as Product));
-        setProducts(prods);
-        if (!loadReported.current) {
-          loadReported.current = true;
-          preloadImages(prods.map((p) => p.imageUrl));
-          onLoad?.();
-        }
-      },
-    );
-    return unsub;
+    Promise.all([
+      fetch('/api/folders.php').then((r) => r.json()),
+      fetch('/api/products.php').then((r) => r.json()),
+    ]).then(([folderRows, productRows]: [Folder[], Product[]]) => {
+      setFolders([...folderRows].sort((a, b) => a.name.localeCompare(b.name)));
+      const prods = [...productRows].sort((a, b) => a.name.localeCompare(b.name));
+      setProducts(prods);
+      if (!loadReported.current) {
+        loadReported.current = true;
+        preloadImages(prods.map((p) => p.imageUrl));
+        onLoad?.();
+      }
+    }).catch(() => { onLoad?.(); });
   }, [onLoad]);
 
-  // ── Tab scroll state ─────────────────────────────────────────────────────
+  // ── Tab scroll state ─────────────────────────────────────────────────────────
   const updateScrollState = () => {
     const el = tabsRef.current;
     if (!el) return;
@@ -89,7 +79,7 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
     return () => { el.removeEventListener('scroll', updateScrollState); ro.disconnect(); };
   }, []);
 
-  // ── Click outside → close filter dropdown ───────────────────────────────
+  // ── Click outside → close filter dropdown ───────────────────────────────────
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       if (filterRef.current && !filterRef.current.contains(e.target as Node)) {
@@ -100,7 +90,7 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  // ── Keyboard: Escape closes modal ────────────────────────────────────────
+  // ── Keyboard: Escape closes modal ────────────────────────────────────────────
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setSelectedProduct(null); };
     if (selectedProduct) {
@@ -115,7 +105,7 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
     };
   }, [selectedProduct]);
 
-  // ── Step-by-step product navigation ─────────────────────────────────────
+  // ── Step-by-step product navigation ─────────────────────────────────────────
   useEffect(() => {
     if (!pendingProduct || !products.length || !folders.length) return;
 
@@ -125,10 +115,8 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
     let cancelled = false;
     const timeouts: ReturnType<typeof setTimeout>[] = [];
 
-    // Step 1 — scroll to section
     sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-    // Step 2 — activate category filter
     timeouts.push(setTimeout(() => {
       if (cancelled) return;
       setSelectedFolder(topFolderId);
@@ -136,12 +124,10 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
       setSearch('');
       setSelectedWeight(null);
 
-      // Step 3 — highlight product (filtered useMemo moves it to index 0, page resets to 1)
       timeouts.push(setTimeout(() => {
         if (cancelled) return;
         setHighlightedProductId(pendingProduct.id);
 
-        // Step 4 — open product modal
         timeouts.push(setTimeout(() => {
           if (cancelled) return;
           setSelectedProduct(pendingProduct);
@@ -161,7 +147,7 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pendingProduct]);
 
-  // ── Derived data ─────────────────────────────────────────────────────────
+  // ── Derived data ─────────────────────────────────────────────────────────────
   const folderMap = useMemo<Record<string, string>>(
     () => Object.fromEntries(folders.map((f) => [f.id, f.name])),
     [folders],
@@ -172,7 +158,6 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
     [folders],
   );
 
-  // child folder IDs grouped by parent id
   const childFolderIds = useMemo(() => {
     const map: Record<string, string[]> = {};
     folders.forEach((f) => {
@@ -253,7 +238,7 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
 
   const clearAll = () => { setSelectedFolder(null); setSelectedWeight(null); setSearch(''); };
 
-  // ── Nutrition display rows for modal ─────────────────────────────────────
+  // ── Nutrition display rows for modal ─────────────────────────────────────────
   const nutritionRows = selectedProduct
     ? NUTRITION_FIELDS.map((field) => ({
         label:   field.label,

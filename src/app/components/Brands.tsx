@@ -1,8 +1,6 @@
 import { motion, AnimatePresence, useMotionValue, useTransform, useAnimationFrame } from 'motion/react';
 import type { Variants } from 'motion/react';
 import { useState, useEffect } from 'react';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../lib/firebase';
 import type { Product, SectionBrands } from '../../lib/types';
 import { preloadImages } from '../../lib/imageCache';
 import { useProductNavigation } from '../../lib/productNavigation';
@@ -75,8 +73,6 @@ const productVariants: Variants = {
 // ─── Product wheel ────────────────────────────────────────────────────────────
 
 export function ProductWheel({ products, onProductClick }: { products: Product[]; onProductClick?: (p: Product) => void }) {
-  // Single MotionValue drives orbit; counter-rotation is derived so it is
-  // always perfectly in sync — new products mount already upright.
   const orbitAngle   = useMotionValue(0);
   const counterAngle = useTransform(orbitAngle, (v) => -v);
 
@@ -108,7 +104,6 @@ export function ProductWheel({ products, onProductClick }: { products: Product[]
           const y     = Math.sin(rad) * RADIUS;
 
           return (
-            // key=i keeps the slot stable; only the product inside changes
             <div
               key={i}
               className="absolute"
@@ -118,7 +113,6 @@ export function ProductWheel({ products, onProductClick }: { products: Product[]
                 transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
               }}
             >
-              {/* Shared counter-rotation — always synced with the orbit */}
               <motion.div style={{ rotate: counterAngle }}>
                 <motion.div
                   style={{ width: 103, height: 103 }}
@@ -128,7 +122,6 @@ export function ProductWheel({ products, onProductClick }: { products: Product[]
                   title={product.name}
                   onClick={() => onProductClick?.(product)}
                 >
-                  {/* Circle stays visible always; only the image scales in/out */}
                   <div className="w-full h-full rounded-full bg-white shadow-lg overflow-hidden flex items-center justify-center">
                     <AnimatePresence mode="wait">
                       {product.imageUrl ? (
@@ -174,22 +167,16 @@ export default function Brands({ onLoad }: { onLoad?: () => void }) {
 
   useEffect(() => {
     async function load() {
-      const snap = await getDoc(doc(db, 'sections', 'brands'));
-      if (!snap.exists()) { onLoad?.(); return; }
+      const section: SectionBrands = await fetch('/api/sections.php?id=brands').then((r) => r.json()).catch(() => ({}));
+      const ids = section.productIds ?? [];
+      if (!ids.length) { onLoad?.(); return; }
 
-      const data = snap.data() as SectionBrands;
-      const ids  = data.productIds ?? [];
+      const allProds: Product[] = await fetch('/api/products.php').then((r) => r.json()).catch(() => []);
+      const idSet = new Set(ids);
+      const filtered = allProds.filter((p) => idSet.has(p.id));
 
-      const loaded = await Promise.all(
-        ids.map(async (id) => {
-          const pSnap = await getDoc(doc(db, 'products', id));
-          return pSnap.exists() ? ({ id: pSnap.id, ...pSnap.data() } as Product) : null;
-        }),
-      );
-
-      const all = loaded.filter(Boolean) as Product[];
-      await preloadImages(all.map((p) => p.imageUrl));
-      setAllProducts(all);
+      await preloadImages(filtered.map((p) => p.imageUrl));
+      setAllProducts(filtered);
       onLoad?.();
     }
 

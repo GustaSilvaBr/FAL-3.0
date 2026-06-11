@@ -1,59 +1,53 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import {
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut as firebaseSignOut,
-  onAuthStateChanged,
-  type User,
-} from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
-import { auth, db } from './firebase';
 
 type AuthState = {
-  user: User | null;
-  isAdmin: boolean;
+  username: string | null;
   loading: boolean;
-  signIn: () => Promise<void>;
+  signIn: (username: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthState>({
-  user: null,
-  isAdmin: false,
+  username: null,
   loading: true,
   signIn: async () => {},
   signOut: async () => {},
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [username, setUsername] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    return onAuthStateChanged(auth, async (u) => {
-      setUser(u);
-      if (u?.email) {
-        const snap = await getDoc(doc(db, 'admins', u.email));
-        setIsAdmin(snap.exists());
-      } else {
-        setIsAdmin(false);
-      }
-      setLoading(false);
-    });
+    fetch('/api/auth.php')
+      .then((r) => r.json())
+      .then((data) => setUsername(data.email ?? null))
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
-  const signIn = async () => {
-    const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
+  const signIn = async (user: string, password: string) => {
+    const res = await fetch('/api/auth.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'login', email: user, password }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error ?? 'Erro ao fazer login.');
+    setUsername(data.email);
   };
 
   const signOut = async () => {
-    await firebaseSignOut(auth);
+    await fetch('/api/auth.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'logout' }),
+    });
+    setUsername(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAdmin, loading, signIn, signOut }}>
+    <AuthContext.Provider value={{ username, loading, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );

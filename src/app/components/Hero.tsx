@@ -1,8 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { motion } from 'motion/react';
 import { ChevronDown } from 'lucide-react';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../lib/firebase';
 import type { SectionBanners } from '../../lib/types';
 import {
   Carousel,
@@ -21,13 +19,14 @@ export default function Hero() {
   const timerRef              = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => {
-    getDoc(doc(db, 'sections', 'banners')).then((snap) => {
-      if (!snap.exists()) return;
-      const data = snap.data() as SectionBanners;
-      if (data.items?.length) {
-        setSlides(data.items.map((b) => ({ src: b.imageUrl, alt: b.alt || 'Banner FAL' })));
-      }
-    });
+    fetch('/api/sections.php?id=banners')
+      .then((r) => r.json())
+      .then((data: SectionBanners) => {
+        if (data.items?.length) {
+          setSlides(data.items.map((b) => ({ src: b.imageUrl, alt: b.alt || 'Banner FAL' })));
+        }
+      })
+      .catch(() => {});
   }, []);
 
   const stopAutoplay = useCallback(() => clearTimeout(timerRef.current), []);

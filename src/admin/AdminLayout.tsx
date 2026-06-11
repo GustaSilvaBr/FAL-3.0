@@ -4,7 +4,7 @@ import { useAuth } from '../lib/useAuth';
 import falLogo from '../assets/FAL_LOGO.png';
 
 export default function AdminLayout() {
-  const { user, signOut } = useAuth();
+  const { username, signOut } = useAuth();
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
@@ -56,18 +56,11 @@ export default function AdminLayout() {
 
         <div className="p-4 border-t border-gray-100">
           <div className="flex items-center gap-3 mb-3">
-            {user?.photoURL && (
-              <img
-                src={user.photoURL}
-                alt=""
-                className="w-8 h-8 rounded-full shrink-0"
-              />
-            )}
+            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+              <span className="text-xs font-bold text-primary uppercase">{username?.[0]}</span>
+            </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-foreground truncate">
-                {user?.displayName}
-              </p>
-              <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+              <p className="text-xs font-semibold text-foreground truncate">{username}</p>
             </div>
           </div>
           <button

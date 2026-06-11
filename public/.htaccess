@@ -1,0 +1,12 @@
+Options -Indexes
+RewriteEngine On
+
+# Skip actual files and directories
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Skip API requests
+RewriteRule ^api/ - [L]
+
+# Everything else goes to React app
+RewriteRule ^ index.html [L]

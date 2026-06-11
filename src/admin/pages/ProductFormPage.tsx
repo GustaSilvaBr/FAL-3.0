@@ -2,19 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useSearchParams, useNavigate, Link } from 'react-router';
 import { ChevronLeft, Upload, X, Loader2, FolderPlus } from 'lucide-react';
 import {
-  doc,
-  getDoc,
-  setDoc,
-  collection,
-  query,
-  getDocs,
-  orderBy,
-  addDoc,
-  serverTimestamp,
-} from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
-import { db, storage } from '../../lib/firebase';
-import {
   type Folder,
   type Product,
   type NutritionTable,
@@ -64,9 +51,9 @@ export default function ProductFormPage() {
 
   // Load folders
   useEffect(() => {
-    getDocs(query(collection(db, 'folders'), orderBy('name'))).then((snap) =>
-      setFolders(snap.docs.map((d) => ({ id: d.id, ...d.data() } as Folder))),
-    );
+    fetch('/api/folders.php')
+      .then((r) => r.json())
+      .then((rows: Folder[]) => setFolders([...rows].sort((a, b) => a.name.localeCompare(b.name))));
   }, []);
 
   // Flatten folder tree in display order for the select
@@ -87,18 +74,18 @@ export default function ProductFormPage() {
   // Load existing product
   useEffect(() => {
     if (!isEditing || !id) return;
-    getDoc(doc(db, 'products', id)).then((snap) => {
-      if (!snap.exists()) return;
-      const p = { id: snap.id, ...snap.data() } as Product;
-      setExistingProduct(p);
-      setForm({
-        name: p.name,
-        weight: p.weight,
-        folderId: p.folderId,
-        nutrition: p.nutrition ?? EMPTY_NUTRITION,
+    fetch(`/api/products.php?id=${id}`)
+      .then((r) => r.json())
+      .then((p: Product) => {
+        setExistingProduct(p);
+        setForm({
+          name: p.name,
+          weight: p.weight,
+          folderId: p.folderId,
+          nutrition: p.nutrition ?? EMPTY_NUTRITION,
+        });
+        if (p.imageUrl) setImagePreview(p.imageUrl);
       });
-      if (p.imageUrl) setImagePreview(p.imageUrl);
-    });
   }, [id, isEditing]);
 
   const handleFileSelect = (file: File) => {
@@ -117,14 +104,15 @@ export default function ProductFormPage() {
   const handleAddFolder = async () => {
     const name = newFolderName.trim();
     if (!name) return;
-    const docRef = await addDoc(collection(db, 'folders'), {
-      name,
-      order: folders.length,
-      createdAt: serverTimestamp(),
+    const res = await fetch('/api/folders.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, order: folders.length }),
     });
-    const newFolder: Folder = { id: docRef.id, name, order: folders.length };
+    const { id: newId } = await res.json();
+    const newFolder: Folder = { id: newId, name, order: folders.length };
     setFolders((prev) => [...prev, newFolder].sort((a, b) => a.name.localeCompare(b.name)));
-    setForm((f) => ({ ...f, folderId: docRef.id }));
+    setForm((f) => ({ ...f, folderId: newId }));
     setNewFolderName('');
     setAddingFolder(false);
   };
@@ -151,43 +139,52 @@ export default function ProductFormPage() {
     setError('');
 
     try {
-      const docRef = isEditing
-        ? doc(db, 'products', id!)
-        : doc(collection(db, 'products'));
-
       let imageUrl = existingProduct?.imageUrl ?? '';
       let imagePath = existingProduct?.imagePath ?? '';
+      let productId = id;
 
-      if (imageFile) {
-        // Delete old image if it exists
-        if (imagePath) {
-          await deleteObject(ref(storage, imagePath)).catch(() => {});
-        }
-        const ext = imageFile.name.split('.').pop();
-        imagePath = `products/${docRef.id}/image.${ext}`;
-        const imgRef = ref(storage, imagePath);
-        await uploadBytes(imgRef, imageFile);
-        imageUrl = await getDownloadURL(imgRef);
+      const productData = {
+        name: form.name.trim(),
+        weight: form.weight.trim(),
+        folderId: form.folderId,
+        imageUrl,
+        imagePath,
+        nutrition: form.nutrition,
+      };
+
+      if (!isEditing) {
+        const createRes = await fetch('/api/products.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(productData),
+        });
+        if (!createRes.ok) throw new Error('Erro ao criar produto.');
+        const created = await createRes.json();
+        productId = created.id;
       }
 
-      await setDoc(
-        docRef,
-        {
-          name: form.name.trim(),
-          weight: form.weight.trim(),
-          folderId: form.folderId,
-          imageUrl,
-          imagePath,
-          nutrition: form.nutrition,
-          ...(isEditing ? {} : { createdAt: serverTimestamp() }),
-        },
-        { merge: true },
-      );
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append('file', imageFile);
+        formData.append('type', 'products');
+        formData.append('id', productId!);
+        const uploadRes = await fetch('/api/upload.php', { method: 'POST', body: formData });
+        if (!uploadRes.ok) throw new Error('Erro no upload da imagem.');
+        const uploadData = await uploadRes.json();
+        imageUrl = uploadData.imageUrl;
+        imagePath = uploadData.imagePath;
+      }
+
+      await fetch(`/api/products.php?id=${productId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...productData, imageUrl, imagePath }),
+      });
 
       navigate('/admin/products');
     } catch (e) {
       console.error(e);
-      setError('Erro ao salvar. Tente novamente.');
+      setError(e instanceof Error ? e.message : 'Erro ao salvar. Tente novamente.');
     } finally {
       setSaving(false);
     }
@@ -274,7 +271,7 @@ export default function ProductFormPage() {
                     <option value="">Selecione…</option>
                     {flattenFolders(folders).map(({ folder: f, depth }) => (
                       <option key={f.id} value={f.id}>
-                        {'    '.repeat(depth)}{depth > 0 ? '↳ ' : ''}{f.name}
+                        {'    '.repeat(depth)}{depth > 0 ? '↳ ' : ''}{f.name}
                       </option>
                     ))}
                   </select>

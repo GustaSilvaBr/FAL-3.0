@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react';
 import { preloadImages } from '../../lib/imageCache';
 import { motion } from 'motion/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../lib/firebase';
 import type { Product, SectionPipoca, PipocaCategory } from '../../lib/types';
 import { useProductNavigation } from '../../lib/productNavigation';
 
@@ -84,22 +82,20 @@ export default function PipocaGravata({ onLoad }: { onLoad?: () => void }) {
 
   useEffect(() => {
     async function load() {
-      const snap = await getDoc(doc(db, 'sections', 'pipoca-gravata'));
-      if (!snap.exists()) { onLoad?.(); return; }
-
-      const data = snap.data() as SectionPipoca;
+      const data: SectionPipoca = await fetch('/api/sections.php?id=pipoca-gravata').then((r) => r.json()).catch(() => ({}));
       const cats = data.categories ?? [];
+      if (!cats.length) { onLoad?.(); return; }
+
       setCategories(cats);
       setCurrent(Math.floor((cats.length - 1) / 2));
 
       const allIds = [...new Set(cats.flatMap((c) => c.productIds))];
-      const map: Record<string, Product> = {};
-      await Promise.all(
-        allIds.map(async (pid) => {
-          const pSnap = await getDoc(doc(db, 'products', pid));
-          if (pSnap.exists()) map[pid] = { id: pSnap.id, ...pSnap.data() } as Product;
-        }),
+      const allProds: Product[] = await fetch('/api/products.php').then((r) => r.json()).catch(() => []);
+      const idSet = new Set(allIds);
+      const map: Record<string, Product> = Object.fromEntries(
+        allProds.filter((p) => idSet.has(p.id)).map((p) => [p.id, p])
       );
+
       await preloadImages(Object.values(map).map((p) => p.imageUrl));
       setProductMap(map);
       onLoad?.();

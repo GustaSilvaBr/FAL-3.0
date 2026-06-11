@@ -1,8 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { doc, getDoc, setDoc, collection, query, onSnapshot, orderBy } from 'firebase/firestore';
-import { ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { Plus, X, Search, Loader2, GripVertical, ImagePlus, Trash2, Instagram } from 'lucide-react';
-import { db, storage } from '../../lib/firebase';
 import { ProductWheel } from '../../app/components/Brands';
 import type {
   Product,
@@ -215,9 +212,9 @@ function NovidadesTab({ products }: { products: Product[] }) {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    getDoc(doc(db, 'sections', 'novidades')).then((snap) => {
-      if (snap.exists()) setItems((snap.data() as SectionNovidades).items ?? []);
-    });
+    fetch('/api/sections.php?id=novidades')
+      .then((r) => r.json())
+      .then((data: SectionNovidades) => setItems(data.items ?? []));
   }, []);
 
   const getProduct = (id: string) => products.find((p) => p.id === id);
@@ -234,7 +231,11 @@ function NovidadesTab({ products }: { products: Product[] }) {
 
   const handleSave = async () => {
     setSaving(true);
-    await setDoc(doc(db, 'sections', 'novidades'), { items });
+    await fetch('/api/sections.php?id=novidades', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items }),
+    });
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
@@ -326,9 +327,9 @@ function PipocaTab({ products }: { products: Product[] }) {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    getDoc(doc(db, 'sections', 'pipoca-gravata')).then((snap) => {
-      if (snap.exists()) setCategories((snap.data() as SectionPipoca).categories ?? []);
-    });
+    fetch('/api/sections.php?id=pipoca-gravata')
+      .then((r) => r.json())
+      .then((data: SectionPipoca) => setCategories(data.categories ?? []));
   }, []);
 
   const getProduct = (id: string) => products.find((p) => p.id === id);
@@ -368,7 +369,11 @@ function PipocaTab({ products }: { products: Product[] }) {
 
   const handleSave = async () => {
     setSaving(true);
-    await setDoc(doc(db, 'sections', 'pipoca-gravata'), { categories });
+    await fetch('/api/sections.php?id=pipoca-gravata', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ categories }),
+    });
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
@@ -482,9 +487,9 @@ function BrandsTab({ products }: { products: Product[] }) {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    getDoc(doc(db, 'sections', 'brands')).then((snap) => {
-      if (snap.exists()) setProductIds((snap.data() as SectionBrands).productIds ?? []);
-    });
+    fetch('/api/sections.php?id=brands')
+      .then((r) => r.json())
+      .then((data: SectionBrands) => setProductIds(data.productIds ?? []));
   }, []);
 
   const getProduct = (id: string) => products.find((p) => p.id === id);
@@ -498,7 +503,11 @@ function BrandsTab({ products }: { products: Product[] }) {
 
   const handleSave = async () => {
     setSaving(true);
-    await setDoc(doc(db, 'sections', 'brands'), { productIds });
+    await fetch('/api/sections.php?id=brands', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productIds }),
+    });
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
@@ -609,10 +618,8 @@ function BannerPreview({ items }: { items: BannerItem[] }) {
         />
       ))}
 
-      {/* overlay gradient */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none" />
 
-      {/* dots */}
       {items.length > 1 && (
         <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
           {items.map((_, i) => (
@@ -627,7 +634,6 @@ function BannerPreview({ items }: { items: BannerItem[] }) {
         </div>
       )}
 
-      {/* slide counter */}
       <span className="absolute top-3 right-3 text-xs text-white/80 font-semibold bg-black/30 px-2 py-0.5 rounded-full">
         {index + 1} / {items.length}
       </span>
@@ -645,9 +651,9 @@ function BannersTab() {
   const fileInputRef          = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    getDoc(doc(db, 'sections', 'banners')).then((snap) => {
-      if (snap.exists()) setItems((snap.data() as SectionBanners).items ?? []);
-    });
+    fetch('/api/sections.php?id=banners')
+      .then((r) => r.json())
+      .then((data: SectionBanners) => setItems(data.items ?? []));
   }, []);
 
   const handleFiles = async (files: FileList | null) => {
@@ -655,21 +661,21 @@ function BannersTab() {
     setUploading(true);
     const newItems: BannerItem[] = [];
     for (const file of Array.from(files)) {
-      const id  = crypto.randomUUID();
-      const ext = file.name.split('.').pop() ?? 'jpg';
-      const path = `banners/${id}/image.${ext}`;
-      const sRef = storageRef(storage, path);
-      await uploadBytes(sRef, file);
-      const url = await getDownloadURL(sRef);
-      newItems.push({ id, imageUrl: url, imagePath: path, alt: '' });
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('type', 'banners');
+      const uploadRes = await fetch('/api/upload.php', { method: 'POST', body: formData });
+      if (uploadRes.ok) {
+        const { imageUrl, imagePath } = await uploadRes.json();
+        newItems.push({ id: crypto.randomUUID(), imageUrl, imagePath, alt: '' });
+      }
     }
     setItems((prev) => [...prev, ...newItems]);
     setUploading(false);
   };
 
-  const handleRemove = async (item: BannerItem) => {
+  const handleRemove = (item: BannerItem) => {
     if (!confirm(`Remover este banner?`)) return;
-    await deleteObject(storageRef(storage, item.imagePath)).catch(() => {});
     setItems((prev) => prev.filter((b) => b.id !== item.id));
   };
 
@@ -678,7 +684,11 @@ function BannersTab() {
 
   const handleSave = async () => {
     setSaving(true);
-    await setDoc(doc(db, 'sections', 'banners'), { items });
+    await fetch('/api/sections.php?id=banners', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items }),
+    });
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
@@ -690,7 +700,6 @@ function BannersTab() {
         Imagens exibidas no carrossel da seção principal (Hero). A ordem de upload determina a ordem de exibição.
       </p>
 
-      {/* Banner list */}
       {items.map((item) => (
         <div key={item.id} className="flex gap-4 bg-white border border-gray-100 rounded-2xl p-4 items-center">
           <div
@@ -720,7 +729,6 @@ function BannersTab() {
         </div>
       ))}
 
-      {/* Upload button */}
       <button
         onClick={() => fileInputRef.current?.click()}
         disabled={uploading}
@@ -741,7 +749,6 @@ function BannersTab() {
         onChange={(e) => handleFiles(e.target.files)}
       />
 
-      {/* Save */}
       <button
         onClick={handleSave}
         disabled={saving || uploading}
@@ -751,7 +758,6 @@ function BannersTab() {
         {saved ? 'Salvo!' : saving ? 'Salvando…' : 'Salvar'}
       </button>
 
-      {/* Preview */}
       {items.length > 0 && (
         <div className="pt-6 border-t border-gray-100 space-y-3">
           <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Pré-visualização</p>
@@ -784,9 +790,9 @@ function InstagramTab() {
   const [saved, setSaved]     = useState(false);
 
   useEffect(() => {
-    getDoc(doc(db, 'sections', 'instagram')).then((snap) => {
-      if (snap.exists()) setPosts((snap.data() as SectionInstagram).posts ?? []);
-    });
+    fetch('/api/sections.php?id=instagram')
+      .then((r) => r.json())
+      .then((data: SectionInstagram) => setPosts(data.posts ?? []));
   }, []);
 
   const handleAdd = () => {
@@ -812,7 +818,11 @@ function InstagramTab() {
 
   const handleSave = async () => {
     setSaving(true);
-    await setDoc(doc(db, 'sections', 'instagram'), { posts });
+    await fetch('/api/sections.php?id=instagram', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ posts }),
+    });
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
@@ -824,7 +834,6 @@ function InstagramTab() {
         Posts do Instagram exibidos na seção da página inicial. Cole o link do post para adicionar.
       </p>
 
-      {/* Input */}
       <div className="flex gap-2">
         <input
           value={input}
@@ -843,7 +852,6 @@ function InstagramTab() {
       </div>
       {error && <p className="text-xs text-red-600">{error}</p>}
 
-      {/* Post list */}
       {posts.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-10 border-2 border-dashed border-border rounded-2xl text-muted-foreground text-sm gap-2">
           <Instagram className="w-6 h-6" />
@@ -856,7 +864,6 @@ function InstagramTab() {
               key={post.id}
               className="bg-white border border-gray-100 rounded-xl overflow-hidden"
             >
-              {/* URL row */}
               <div className="flex items-center gap-3 px-4 py-3">
                 <span className="text-xs font-bold text-muted-foreground w-5 text-center shrink-0">{index + 1}</span>
                 <span className={`text-xs font-bold px-2 py-0.5 rounded-full shrink-0 ${
@@ -883,7 +890,6 @@ function InstagramTab() {
                 </button>
               </div>
 
-              {/* Inline embed preview */}
               <div className="border-t border-gray-100 overflow-hidden" style={{ height: 360 }}>
                 <iframe
                   src={`https://www.instagram.com/${post.type === 'reel' ? 'reel' : 'p'}/${post.shortcode}/embed/`}
@@ -899,7 +905,6 @@ function InstagramTab() {
         </div>
       )}
 
-      {/* Save */}
       <button
         onClick={handleSave}
         disabled={saving}
@@ -908,7 +913,6 @@ function InstagramTab() {
         {saving && <Loader2 className="w-4 h-4 animate-spin" />}
         {saved ? 'Salvo!' : saving ? 'Salvando…' : 'Salvar'}
       </button>
-
     </div>
   );
 }
@@ -923,11 +927,9 @@ export default function SectionsPage() {
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    const unsub = onSnapshot(
-      query(collection(db, 'products'), orderBy('name')),
-      (snap) => setProducts(snap.docs.map((d) => ({ id: d.id, ...d.data() } as Product))),
-    );
-    return unsub;
+    fetch('/api/products.php')
+      .then((r) => r.json())
+      .then((rows: Product[]) => setProducts([...rows].sort((a, b) => a.name.localeCompare(b.name))));
   }, []);
 
   return (
@@ -937,7 +939,6 @@ export default function SectionsPage() {
         Configure os grupos de produtos exibidos em cada seção do site.
       </p>
 
-      {/* Tabs */}
       <div className="flex gap-1 mb-8 bg-gray-100 rounded-xl p-1 w-fit">
         {TABS.map((tab) => (
           <button

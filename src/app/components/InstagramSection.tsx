@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { Instagram } from 'lucide-react';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../lib/firebase';
 import type { InstagramPost, SectionInstagram } from '../../lib/types';
 
 const INSTAGRAM_PROFILE = 'https://www.instagram.com/pipocasgravata_oficial';
@@ -11,9 +9,12 @@ export default function InstagramSection() {
   const [posts, setPosts] = useState<InstagramPost[]>([]);
 
   useEffect(() => {
-    getDoc(doc(db, 'sections', 'instagram')).then((snap) => {
-      if (snap.exists()) setPosts((snap.data() as SectionInstagram).posts ?? []);
-    });
+    fetch('/api/sections.php?id=instagram')
+      .then((r) => r.json())
+      .then((data: SectionInstagram) => {
+        if (data.posts?.length) setPosts(data.posts);
+      })
+      .catch(() => {});
   }, []);
 
   if (posts.length === 0) return null;

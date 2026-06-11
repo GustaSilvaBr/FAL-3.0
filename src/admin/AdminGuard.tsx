@@ -4,7 +4,7 @@ import AdminLoginPage from './AdminLoginPage';
 import AdminLayout from './AdminLayout';
 
 export default function AdminGuard() {
-  const { user, isAdmin, loading } = useAuth();
+  const { username, loading } = useAuth();
 
   if (loading) {
     return (
@@ -14,7 +14,7 @@ export default function AdminGuard() {
     );
   }
 
-  if (!user || !isAdmin) {
+  if (!username) {
     return <AdminLoginPage />;
   }
 

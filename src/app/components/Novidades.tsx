@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react';
 import { preloadImages } from '../../lib/imageCache';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowRight, Star } from 'lucide-react';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../../lib/firebase';
 import type { Product, SectionNovidades, NovidadesItem } from '../../lib/types';
 import { useProductNavigation } from '../../lib/productNavigation';
 
@@ -32,21 +30,11 @@ export default function Novidades({ onLoad }: { onLoad?: () => void }) {
 
   useEffect(() => {
     async function load() {
-      const sectionSnap = await getDoc(doc(db, 'sections', 'novidades'));
-      if (!sectionSnap.exists()) { onLoad?.(); return; }
-
-      const section = sectionSnap.data() as SectionNovidades;
+      const section: SectionNovidades = await fetch('/api/sections.php?id=novidades').then((r) => r.json()).catch(() => ({}));
       if (!section.items?.length) { onLoad?.(); return; }
 
-      const productIds = [...new Set(section.items.map((i) => i.productId))];
-      const productMap: Record<string, Product> = {};
-
-      await Promise.all(
-        productIds.map(async (pid) => {
-          const snap = await getDoc(doc(db, 'products', pid));
-          if (snap.exists()) productMap[pid] = { id: snap.id, ...snap.data() } as Product;
-        }),
-      );
+      const allProducts: Product[] = await fetch('/api/products.php').then((r) => r.json()).catch(() => []);
+      const productMap: Record<string, Product> = Object.fromEntries(allProducts.map((p) => [p.id, p]));
 
       const displayItems = section.items.map((item) => toDisplayItem(item, productMap[item.productId]));
       await preloadImages(displayItems.map((i) => i.image));

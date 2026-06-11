@@ -46,8 +46,8 @@
       "Read(c:\\Users\\anjog\\projects\\FAL 3.0\\.env)",
       "Edit(c:\\Users\\anjog\\projects\\FAL 3.0\\.env)",
       "Write(c:\\Users\\anjog\\projects\\FAL 3.0\\.env)",
-      "Bash(* .env *)",
-      "Bash(* .env)"
+      "Bash(*.env *)",
+      "Bash(*.env)"
     ]
   }
 }

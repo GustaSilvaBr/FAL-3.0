@@ -12,19 +12,6 @@ import {
   X,
   Tag,
 } from 'lucide-react';
-import {
-  collection,
-  query,
-  onSnapshot,
-  orderBy,
-  deleteDoc,
-  doc,
-  addDoc,
-  updateDoc,
-  serverTimestamp,
-} from 'firebase/firestore';
-import { ref, deleteObject } from 'firebase/storage';
-import { db, storage } from '../../lib/firebase';
 import type { Folder, Product } from '../../lib/types';
 
 // ─── Tree helpers ─────────────────────────────────────────────────────────────
@@ -194,6 +181,7 @@ export default function ProductsPage() {
   const [folders, setFolders] = useState<Folder[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
+  const [refresh, setRefresh] = useState(0);
 
   const [newFolderName, setNewFolderName] = useState('');
   const [addingFolder, setAddingFolder] = useState(false);
@@ -211,6 +199,8 @@ export default function ProductsPage() {
 
   const [sidebarWidth, setSidebarWidth] = useState(224);
   const dragState = useRef<{ startX: number; startWidth: number } | null>(null);
+
+  const reload = () => setRefresh((n) => n + 1);
 
   const handleDividerMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -241,44 +231,41 @@ export default function ProductsPage() {
   }, []);
 
   useEffect(() => {
-    const unsub = onSnapshot(
-      query(collection(db, 'folders'), orderBy('name')),
-      (snap) => setFolders(snap.docs.map((d) => ({ id: d.id, ...d.data() } as Folder))),
-    );
-    return unsub;
-  }, []);
+    fetch('/api/folders.php')
+      .then((r) => r.json())
+      .then((rows: Folder[]) => setFolders([...rows].sort((a, b) => a.name.localeCompare(b.name))));
+  }, [refresh]);
 
   useEffect(() => {
-    const unsub = onSnapshot(
-      query(collection(db, 'products'), orderBy('name')),
-      (snap) => setProducts(snap.docs.map((d) => ({ id: d.id, ...d.data() } as Product))),
-    );
-    return unsub;
-  }, []);
+    fetch('/api/products.php')
+      .then((r) => r.json())
+      .then((rows: Product[]) => setProducts([...rows].sort((a, b) => a.name.localeCompare(b.name))));
+  }, [refresh]);
 
   const handleAddFolder = async () => {
     const name = newFolderName.trim();
     if (!name) return;
-    await addDoc(collection(db, 'folders'), {
-      name,
-      order: folders.length,
-      createdAt: serverTimestamp(),
+    await fetch('/api/folders.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, order: folders.length }),
     });
     setNewFolderName('');
     setAddingFolder(false);
+    reload();
   };
 
   const handleAddSubfolder = async () => {
     const name = newSubfolderName.trim();
     if (!name || !addingSubfolderId) return;
-    await addDoc(collection(db, 'folders'), {
-      name,
-      parentId: addingSubfolderId,
-      order: folders.length,
-      createdAt: serverTimestamp(),
+    await fetch('/api/folders.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, parentId: addingSubfolderId, order: folders.length }),
     });
     setNewSubfolderName('');
     setAddingSubfolderId(null);
+    reload();
   };
 
   const handleStartRename = (folder: Folder) => {
@@ -290,7 +277,13 @@ export default function ProductsPage() {
   const handleRenameSubmit = async () => {
     const name = renameValue.trim();
     if (name && renamingId) {
-      await updateDoc(doc(db, 'folders', renamingId), { name });
+      const folder = folders.find((f) => f.id === renamingId);
+      await fetch(`/api/folders.php?id=${renamingId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, order: folder?.order ?? 0, parentId: folder?.parentId ?? null }),
+      });
+      reload();
     }
     setRenamingId(null);
     setRenameValue('');
@@ -308,18 +301,17 @@ export default function ProductsPage() {
       return;
     }
     if (!confirm(`Excluir pasta "${folder.name}"?`)) return;
-    await deleteDoc(doc(db, 'folders', folder.id));
+    await fetch(`/api/folders.php?id=${folder.id}`, { method: 'DELETE' });
     if (selectedFolder === folder.id) setSelectedFolder(null);
+    reload();
   };
 
   const handleDeleteProduct = async (product: Product) => {
     if (!confirm(`Excluir "${product.name}"?`)) return;
     setDeletingId(product.id);
     try {
-      if (product.imagePath) {
-        await deleteObject(ref(storage, product.imagePath)).catch(() => {});
-      }
-      await deleteDoc(doc(db, 'products', product.id));
+      await fetch(`/api/products.php?id=${product.id}`, { method: 'DELETE' });
+      reload();
     } finally {
       setDeletingId(null);
     }
@@ -331,16 +323,28 @@ export default function ProductsPage() {
   const handleAddKeyword = async () => {
     const kw = keywordInput.trim().toLowerCase();
     if (!kw || !selectedFolder || currentKeywords.includes(kw)) { setKeywordInput(''); return; }
-    await updateDoc(doc(db, 'folders', selectedFolder), { keywords: [...currentKeywords, kw] });
+    const folder = folders.find((f) => f.id === selectedFolder);
+    if (!folder) return;
+    await fetch(`/api/folders.php?id=${selectedFolder}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: folder.name, order: folder.order ?? 0, parentId: folder.parentId ?? null, keywords: [...currentKeywords, kw] }),
+    });
     setKeywordInput('');
     keywordInputRef.current?.focus();
+    reload();
   };
 
   const handleRemoveKeyword = async (kw: string) => {
     if (!selectedFolder) return;
-    await updateDoc(doc(db, 'folders', selectedFolder), {
-      keywords: currentKeywords.filter((k) => k !== kw),
+    const folder = folders.find((f) => f.id === selectedFolder);
+    if (!folder) return;
+    await fetch(`/api/folders.php?id=${selectedFolder}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: folder.name, order: folder.order ?? 0, parentId: folder.parentId ?? null, keywords: currentKeywords.filter((k) => k !== kw) }),
     });
+    reload();
   };
 
   const rootFolders = sortedChildren(folders);
@@ -454,7 +458,7 @@ export default function ProductsPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            <SeedButton />
+            <SeedButton onDone={reload} />
             <Link
               to={`/admin/products/new${selectedFolder ? `?folder=${selectedFolder}` : ''}`}
               className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl text-sm font-semibold hover:bg-primary/90 transition-colors shadow-sm"

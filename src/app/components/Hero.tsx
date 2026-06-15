@@ -2,15 +2,16 @@ import { useEffect, useState } from 'react';
 import type { SectionBanners } from '../../lib/types';
 
 const PHOTO_DURATION = 5000;
-const SLIDE_VW = 72;   // slide width as % of viewport
-const GAP_VW   = 3;    // gap between slides
-const PEEK_VW  = 14;   // visible peek on each side
+const SLIDE_VW = 72;
+const GAP_VW   = 3;
+const PEEK_VW  = 14;
 
 type Slide = { src: string; alt: string };
 
 export default function Hero() {
   const [slides, setSlides] = useState<Slide[]>([]);
-  const [current, setCurrent] = useState(0);
+  const [displayIdx, setDisplayIdx] = useState(1); // position within extSlides
+  const [animated, setAnimated]     = useState(true);
 
   useEffect(() => {
     fetch('/api/sections.php?id=banners')
@@ -23,11 +24,23 @@ export default function Hero() {
       .catch(() => {});
   }, []);
 
+  // Auto-advance
   useEffect(() => {
-    if (slides.length === 0) return;
-    const id = setTimeout(() => setCurrent((c) => (c + 1) % slides.length), PHOTO_DURATION);
+    if (slides.length < 2) return;
+    const id = setTimeout(() => {
+      setAnimated(true);
+      setDisplayIdx((i) => i + 1);
+    }, PHOTO_DURATION);
     return () => clearTimeout(id);
-  }, [current, slides.length]);
+  }, [displayIdx, slides.length]);
+
+  // Re-enable animation one frame after a silent jump
+  useEffect(() => {
+    if (!animated) {
+      const frame = requestAnimationFrame(() => setAnimated(true));
+      return () => cancelAnimationFrame(frame);
+    }
+  }, [animated]);
 
   if (slides.length === 0) {
     return (
@@ -36,7 +49,23 @@ export default function Hero() {
     );
   }
 
-  const translateX = PEEK_VW - current * (SLIDE_VW + GAP_VW);
+  // Extended track: [last, ...slides, first] for infinite loop
+  const ext = [slides[slides.length - 1], ...slides, slides[0]];
+  const realIdx = (displayIdx - 1 + slides.length) % slides.length; // 0-based dot index
+
+  const handleTransitionEnd = () => {
+    if (displayIdx >= ext.length - 1) {
+      // Landed on clone of first → silently jump to real first
+      setAnimated(false);
+      setDisplayIdx(1);
+    } else if (displayIdx <= 0) {
+      // Landed on clone of last → silently jump to real last
+      setAnimated(false);
+      setDisplayIdx(slides.length);
+    }
+  };
+
+  const translateX = PEEK_VW - displayIdx * (SLIDE_VW + GAP_VW);
 
   return (
     <div id="home" className="relative w-full my-10 overflow-hidden"
@@ -44,15 +73,19 @@ export default function Hero() {
 
       {/* Sliding track */}
       <div
-        className="flex h-full transition-transform duration-700 ease-in-out"
+        className={animated ? 'flex h-full transition-transform duration-700 ease-in-out' : 'flex h-full'}
         style={{ transform: `translateX(${translateX}vw)`, gap: `${GAP_VW}vw` }}
+        onTransitionEnd={handleTransitionEnd}
       >
-        {slides.map((slide, i) => (
+        {ext.map((slide, i) => (
           <div
-            key={slide.src}
-            onClick={() => setCurrent(i)}
-            className={`shrink-0 h-full rounded-2xl overflow-hidden shadow-lg transition-all duration-700 ${
-              i !== current ? 'opacity-60 cursor-pointer' : 'cursor-default'
+            key={i}
+            onClick={() => {
+              if (i < displayIdx) { setAnimated(true); setDisplayIdx((d) => d - 1); }
+              else if (i > displayIdx) { setAnimated(true); setDisplayIdx((d) => d + 1); }
+            }}
+            className={`shrink-0 h-full rounded-2xl overflow-hidden shadow-lg transition-opacity duration-700 ${
+              i !== displayIdx ? 'opacity-60 cursor-pointer' : 'cursor-default'
             }`}
             style={{ width: `${SLIDE_VW}vw` }}
           >
@@ -65,17 +98,19 @@ export default function Hero() {
         ))}
       </div>
 
-      {/* Dot indicators */}
+      {/* Dot indicators — centered over the main slide */}
       {slides.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex gap-2 items-center"
-          style={{ marginLeft: `${-translateX / 2}vw` }}>
+        <div
+          className="absolute bottom-4 z-10 flex gap-2 items-center"
+          style={{ left: `${PEEK_VW + SLIDE_VW / 2}vw`, transform: 'translateX(-50%)' }}
+        >
           {slides.map((_, i) => (
             <button
               key={i}
-              onClick={() => setCurrent(i)}
+              onClick={() => { setAnimated(true); setDisplayIdx(i + 1); }}
               aria-label={`Ir para slide ${i + 1}`}
               className={`h-2 rounded-full transition-all duration-300 ${
-                i === current ? 'w-6 bg-white' : 'w-2 bg-white/50 hover:bg-white/75'
+                i === realIdx ? 'w-6 bg-white' : 'w-2 bg-white/50 hover:bg-white/75'
               }`}
             />
           ))}

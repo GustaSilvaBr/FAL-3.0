@@ -20,10 +20,8 @@ export default function Navigation() {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 shadow-md">
-      <div className="absolute inset-0 bg-gradient-to-br from-accent/20 to-primary/10 bg-white/90 backdrop-blur-sm" />
-
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center h-24 gap-4">
 
           {/* Logo — left */}

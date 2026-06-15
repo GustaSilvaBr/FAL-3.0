@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import type { SectionBanners } from '../../lib/types';
 
 const PHOTO_DURATION = 5000;
-const SLIDE_VW = 60;
-const GAP_VW   = 10;
-const PEEK_VW  = 20;
+const SLIDE_VW = 68;
+const GAP_VW   = 6;
+const PEEK_VW  = 13;
 
 type Slide = { src: string; alt: string };
 
@@ -46,7 +46,7 @@ export default function Hero() {
 
   if (slides.length === 0) {
     return (
-      <div id="home" className="w-full my-10 bg-gray-200 animate-pulse rounded-2xl"
+      <div id="home" className="w-full animate-pulse rounded-2xl"
         style={{ height: `${SLIDE_VW * 9 / 16}vw` }} />
     );
   }
@@ -71,7 +71,7 @@ export default function Hero() {
   const translateX = PEEK_VW - displayIdx * (SLIDE_VW + GAP_VW);
 
   return (
-    <div id="home" className="relative w-full my-10 overflow-hidden"
+    <div id="home" className="relative w-full overflow-hidden"
       style={{ height: `${SLIDE_VW * 9 / 16}vw` }}>
 
       {/* Sliding track */}
@@ -87,7 +87,7 @@ export default function Hero() {
               if (i < displayIdx) { setAnimated(true); setDisplayIdx((d) => d - 1); }
               else if (i > displayIdx) { setAnimated(true); setDisplayIdx((d) => d + 1); }
             }}
-            className={`shrink-0 h-full rounded-2xl overflow-hidden shadow-lg ${animated ? 'transition-opacity duration-700' : ''} ${
+            className={`shrink-0 h-full rounded-2xl overflow-hidden ${animated ? 'transition-opacity duration-700' : ''} ${
               i !== displayIdx ? 'opacity-60 cursor-pointer' : 'cursor-default'
             }`}
             style={{ width: `${SLIDE_VW}vw` }}

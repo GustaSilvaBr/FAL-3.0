@@ -57,7 +57,7 @@ export default function Novidades({ onLoad }: { onLoad?: () => void }) {
   const sidebar  = items.filter((_, i) => i !== index);
 
   return (
-    <section id="novidades" className="min-h-screen flex flex-col justify-center py-20 bg-gradient-to-br from-accent/20 to-primary/10 px-4 sm:px-6 lg:px-8">
+    <section id="novidades" className="min-h-screen flex flex-col justify-center py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
 
         <motion.h2

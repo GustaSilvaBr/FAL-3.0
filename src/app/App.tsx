@@ -29,10 +29,10 @@ export default function App() {
         {!allReady && <LoadingScreen key="loading" progress={progress} />}
       </AnimatePresence>
 
-      <div className="min-h-screen">
+      <div className="min-h-screen bg-gradient-to-br from-accent/20 to-primary/10">
         <Navigation />
         <Hero />
-        <Novidades    onLoad={onSectionLoad} />
+        <Novidades onLoad={onSectionLoad} />
         <PipocaGravata onLoad={onSectionLoad} />
         <Brands        onLoad={onSectionLoad} />
         <About />

@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { SectionBanners } from '../../lib/types';
 
 const PHOTO_DURATION = 5000;
@@ -27,66 +26,80 @@ export default function Hero() {
     return () => clearTimeout(id);
   }, [current, slides.length]);
 
-  const prev = () => setCurrent((c) => (c - 1 + slides.length) % slides.length);
-  const next = () => setCurrent((c) => (c + 1) % slides.length);
+  const prevIdx = (current - 1 + slides.length) % slides.length;
+  const nextIdx = (current + 1) % slides.length;
 
   if (slides.length === 0) {
-    return <section id="home" className="w-[60%] mx-auto my-6 rounded-2xl bg-gray-200 animate-pulse" style={{ aspectRatio: '16/9' }} />;
+    return <div id="home" className="w-full my-6 bg-gray-200 animate-pulse rounded-2xl" style={{ aspectRatio: '16/9' }} />;
   }
 
   return (
-    <section id="home" className="relative w-[60%] mx-auto my-6 rounded-2xl overflow-hidden shadow-lg" style={{ aspectRatio: '16/9' }}>
+    <div id="home" className="flex items-stretch w-full my-10">
 
-      {/* Slides */}
-      {slides.map((slide, i) => (
-        <div
-          key={slide.src}
-          aria-label={slide.alt}
-          className="absolute inset-0 transition-opacity duration-700 bg-center bg-contain bg-no-repeat"
+      {/* Peek — slide anterior */}
+      {slides.length > 1 && (
+        <button
+          onClick={() => setCurrent(prevIdx)}
+          aria-label="Slide anterior"
+          className="w-[5%] shrink-0 rounded-r-2xl overflow-hidden opacity-50 hover:opacity-70 transition-opacity shadow-md"
           style={{
-            backgroundImage: `url(${slide.src})`,
-            opacity: i === current ? 1 : 0,
+            backgroundImage: `url(${slides[prevIdx].src})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'right center',
           }}
         />
-      ))}
-
-      {/* Arrow — prev */}
-      {slides.length > 1 && (
-        <button
-          onClick={prev}
-          aria-label="Slide anterior"
-          className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/90 hover:bg-white shadow flex items-center justify-center transition"
-        >
-          <ChevronLeft size={22} className="text-gray-800" />
-        </button>
       )}
 
-      {/* Arrow — next */}
+      {/* Gap esquerdo */}
+      <div className="w-[8%] shrink-0" />
+
+      {/* Slide principal */}
+      <section
+        className="flex-1 relative overflow-hidden rounded-2xl shadow-lg"
+        style={{ aspectRatio: '16/9' }}
+      >
+        {slides.map((slide, i) => (
+          <div
+            key={slide.src}
+            aria-label={slide.alt}
+            className="absolute inset-0 transition-opacity duration-700 bg-center bg-contain bg-no-repeat"
+            style={{ backgroundImage: `url(${slide.src})`, opacity: i === current ? 1 : 0 }}
+          />
+        ))}
+
+        {slides.length > 1 && (
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex gap-2 items-center">
+            {slides.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrent(i)}
+                aria-label={`Ir para slide ${i + 1}`}
+                className={`h-2 rounded-full transition-all duration-300 ${
+                  i === current ? 'w-6 bg-white' : 'w-2 bg-white/50 hover:bg-white/75'
+                }`}
+              />
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* Gap direito */}
+      <div className="w-[8%] shrink-0" />
+
+      {/* Peek — próximo slide */}
       {slides.length > 1 && (
         <button
-          onClick={next}
+          onClick={() => setCurrent(nextIdx)}
           aria-label="Próximo slide"
-          className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/90 hover:bg-white shadow flex items-center justify-center transition"
-        >
-          <ChevronRight size={22} className="text-gray-800" />
-        </button>
+          className="w-[5%] shrink-0 rounded-l-2xl overflow-hidden opacity-50 hover:opacity-70 transition-opacity shadow-md"
+          style={{
+            backgroundImage: `url(${slides[nextIdx].src})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'left center',
+          }}
+        />
       )}
 
-      {/* Dot indicators */}
-      {slides.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 flex gap-2 items-center">
-          {slides.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setCurrent(i)}
-              aria-label={`Ir para slide ${i + 1}`}
-              className={`h-2 rounded-full transition-all duration-300 ${
-                i === current ? 'w-6 bg-white' : 'w-2 bg-white/50 hover:bg-white/75'
-              }`}
-            />
-          ))}
-        </div>
-      )}
-    </section>
+    </div>
   );
 }

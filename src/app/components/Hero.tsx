@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import type { SectionBanners } from '../../lib/types';
 
 const PHOTO_DURATION = 5000;
-const SLIDE_VW = 72;
+const SLIDE_VW = 65;
 const GAP_VW   = 3;
-const PEEK_VW  = 14;
+const PEEK_VW  = 17;
 
 type Slide = { src: string; alt: string };
 
@@ -18,7 +18,9 @@ export default function Hero() {
       .then((r) => r.json())
       .then((data: SectionBanners) => {
         if (data.items?.length) {
-          setSlides(data.items.map((b) => ({ src: b.imageUrl, alt: b.alt || 'Banner FAL' })));
+          const items = data.items.map((b) => ({ src: b.imageUrl, alt: b.alt || 'Banner FAL' }));
+          items.forEach(({ src }) => { new Image().src = src; });
+          setSlides(items);
         }
       })
       .catch(() => {});
@@ -53,7 +55,8 @@ export default function Hero() {
   const ext = [slides[slides.length - 1], ...slides, slides[0]];
   const realIdx = (displayIdx - 1 + slides.length) % slides.length; // 0-based dot index
 
-  const handleTransitionEnd = () => {
+  const handleTransitionEnd = (e: React.TransitionEvent) => {
+    if (e.propertyName !== 'transform') return;
     if (displayIdx >= ext.length - 1) {
       // Landed on clone of first → silently jump to real first
       setAnimated(false);
@@ -84,7 +87,7 @@ export default function Hero() {
               if (i < displayIdx) { setAnimated(true); setDisplayIdx((d) => d - 1); }
               else if (i > displayIdx) { setAnimated(true); setDisplayIdx((d) => d + 1); }
             }}
-            className={`shrink-0 h-full rounded-2xl overflow-hidden shadow-lg transition-opacity duration-700 ${
+            className={`shrink-0 h-full rounded-2xl overflow-hidden shadow-lg ${animated ? 'transition-opacity duration-700' : ''} ${
               i !== displayIdx ? 'opacity-60 cursor-pointer' : 'cursor-default'
             }`}
             style={{ width: `${SLIDE_VW}vw` }}

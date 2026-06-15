@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import type { SectionBanners } from '../../lib/types';
 
 const PHOTO_DURATION = 5000;
-const SLIDE_VW = 65;
-const GAP_VW   = 3;
-const PEEK_VW  = 17;
+const SLIDE_VW = 60;
+const GAP_VW   = 10;
+const PEEK_VW  = 20;
 
 type Slide = { src: string; alt: string };
 

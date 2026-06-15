@@ -1,4 +1,4 @@
-import { Facebook, Instagram, Mail, Phone, MapPin, Clock } from 'lucide-react';
+import { Instagram, Mail, Phone, MapPin, Clock } from 'lucide-react';
 
 const falLogo = new URL('../../assets/FAL_LOGO.png', import.meta.url).href;
 
@@ -60,13 +60,9 @@ export default function Footer() {
             </p>
             <div className="flex gap-4 mb-8">
               <a
-                href="#"
-                className="w-10 h-10 bg-black/10 hover:bg-[#1B3A8F] hover:text-white text-gray-900 rounded-full flex items-center justify-center transition-colors"
-              >
-                <Facebook size={20} />
-              </a>
-              <a
-                href="#"
+                href="https://www.instagram.com/pipocasgravata_oficial"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-10 h-10 bg-black/10 hover:bg-[#1B3A8F] hover:text-white text-gray-900 rounded-full flex items-center justify-center transition-colors"
               >
                 <Instagram size={20} />

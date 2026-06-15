@@ -51,7 +51,7 @@ export default function Hero() {
       )}
 
       {/* Gap esquerdo */}
-      <div className="w-[8%] shrink-0" />
+      <div className="w-[14%] shrink-0" />
 
       {/* Slide principal */}
       <section
@@ -84,7 +84,7 @@ export default function Hero() {
       </section>
 
       {/* Gap direito */}
-      <div className="w-[8%] shrink-0" />
+      <div className="w-[14%] shrink-0" />
 
       {/* Peek — próximo slide */}
       {slides.length > 1 && (

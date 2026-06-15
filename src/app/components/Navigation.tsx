@@ -1,25 +1,13 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useLocation } from 'react-router';
 import falLogo from '../../assets/FAL_LOGO.png';
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
-  const [visible, setVisible] = useState(true);
-  const lastScrollY = useRef(0);
   const location = useLocation();
   const isHome = location.pathname === '/';
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentY = window.scrollY;
-      setVisible(currentY < lastScrollY.current || currentY < 10);
-      lastScrollY.current = currentY;
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const anchorItems = [
     { label: 'Início', anchor: 'home' },
@@ -32,11 +20,7 @@ export default function Navigation() {
   ];
 
   return (
-    <motion.nav
-      className="fixed top-0 left-0 right-0 z-50 shadow-md"
-      animate={{ y: visible ? 0 : '-110%' }}
-      transition={{ duration: 0.3, ease: 'easeInOut' }}
-    >
+    <nav className="sticky top-0 z-50 shadow-md">
       <div className="absolute inset-0 bg-gradient-to-br from-accent/20 to-primary/10 bg-white/90 backdrop-blur-sm" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -103,6 +87,6 @@ export default function Navigation() {
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.nav>
+    </nav>
   );
 }

@@ -49,6 +49,28 @@ export default function ProductFormPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
+  // JSON nutrition import
+  const [jsonMode, setJsonMode] = useState(false);
+  const [jsonText, setJsonText] = useState('');
+  const [jsonError, setJsonError] = useState('');
+
+  const openJsonMode = () => {
+    setJsonText(JSON.stringify(form.nutrition, null, 2));
+    setJsonMode(true);
+    setJsonError('');
+  };
+
+  const applyJson = () => {
+    try {
+      const parsed = JSON.parse(jsonText) as NutritionTable;
+      setForm((f) => ({ ...f, nutrition: { ...EMPTY_NUTRITION, ...parsed } }));
+      setJsonMode(false);
+      setJsonError('');
+    } catch {
+      setJsonError('JSON inválido. Verifique a formatação.');
+    }
+  };
+
   // Load folders
   useEffect(() => {
     fetch('/api/folders.php')
@@ -339,70 +361,111 @@ export default function ProductFormPage() {
 
         {/* ── Nutrition table ────────────────────────────────────────────── */}
         <section className="bg-white border border-gray-100 rounded-2xl p-6">
-          <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground mb-5">
-            Tabela Nutricional
-          </h2>
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">
+              Tabela Nutricional
+            </h2>
+            {!jsonMode ? (
+              <button
+                type="button"
+                onClick={openJsonMode}
+                className="text-xs font-semibold text-primary hover:underline"
+              >
+                Importar via JSON
+              </button>
+            ) : (
+              <div className="flex items-center gap-3">
+                {jsonError && (
+                  <span className="text-xs text-red-500 font-medium">{jsonError}</span>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setJsonMode(false)}
+                  className="text-xs font-semibold text-muted-foreground hover:text-foreground"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  onClick={applyJson}
+                  className="text-xs font-semibold px-3 py-1.5 bg-primary text-white rounded-lg hover:bg-primary/90"
+                >
+                  Aplicar
+                </button>
+              </div>
+            )}
+          </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm border-collapse">
-              <thead>
-                <tr className="border-b-2 border-foreground/20">
-                  <th className="text-left py-2 pr-4 font-semibold text-foreground text-xs">
-                    Nutriente
-                  </th>
-                  <th className="py-2 px-2 font-semibold text-foreground text-xs w-24 text-center">
-                    Por 100g
-                  </th>
-                  <th className="py-2 px-2 font-semibold text-foreground text-xs w-24 text-center">
-                    Por porção
-                  </th>
-                  <th className="py-2 pl-2 font-semibold text-foreground text-xs w-20 text-center">
-                    %VD
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {NUTRITION_FIELDS.map((field, i) => (
-                  <tr
-                    key={field.key}
-                    className={`border-b border-border ${i % 2 === 0 ? 'bg-white' : 'bg-muted/10'}`}
-                  >
-                    <td className={`py-2 pr-4 text-xs text-foreground ${field.indent ? 'pl-5' : ''}`}>
-                      {field.label}
-                    </td>
-                    <td className="py-1.5 px-2">
-                      <input
-                        value={form.nutrition[field.key].per100g}
-                        onChange={(e) => updateNutrition(field.key, 'per100g', e.target.value)}
-                        className="w-full px-2 py-1 border border-border rounded-md text-xs text-center outline-none focus:ring-1 focus:ring-primary/30"
-                        placeholder="—"
-                      />
-                    </td>
-                    <td className="py-1.5 px-2">
-                      <input
-                        value={form.nutrition[field.key].per10g}
-                        onChange={(e) => updateNutrition(field.key, 'per10g', e.target.value)}
-                        className="w-full px-2 py-1 border border-border rounded-md text-xs text-center outline-none focus:ring-1 focus:ring-primary/30"
-                        placeholder="—"
-                      />
-                    </td>
-                    <td className="py-1.5 pl-2">
-                      {field.noVd ? (
-                        <p className="text-xs text-center text-muted-foreground">—</p>
-                      ) : (
+          {jsonMode ? (
+            <textarea
+              value={jsonText}
+              onChange={(e) => setJsonText(e.target.value)}
+              spellCheck={false}
+              rows={20}
+              className="w-full font-mono text-xs p-3 border border-border rounded-xl outline-none focus:ring-2 focus:ring-primary/20 resize-y bg-muted/10"
+            />
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm border-collapse">
+                <thead>
+                  <tr className="border-b-2 border-foreground/20">
+                    <th className="text-left py-2 pr-4 font-semibold text-foreground text-xs">
+                      Nutriente
+                    </th>
+                    <th className="py-2 px-2 font-semibold text-foreground text-xs w-24 text-center">
+                      Por 100g
+                    </th>
+                    <th className="py-2 px-2 font-semibold text-foreground text-xs w-24 text-center">
+                      Por porção
+                    </th>
+                    <th className="py-2 pl-2 font-semibold text-foreground text-xs w-20 text-center">
+                      %VD
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {NUTRITION_FIELDS.map((field, i) => (
+                    <tr
+                      key={field.key}
+                      className={`border-b border-border ${i % 2 === 0 ? 'bg-white' : 'bg-muted/10'}`}
+                    >
+                      <td className={`py-2 pr-4 text-xs text-foreground ${field.indent ? 'pl-5' : ''}`}>
+                        {field.label}
+                      </td>
+                      <td className="py-1.5 px-2">
                         <input
-                          value={form.nutrition[field.key].vd}
-                          onChange={(e) => updateNutrition(field.key, 'vd', e.target.value)}
+                          value={form.nutrition[field.key].per100g}
+                          onChange={(e) => updateNutrition(field.key, 'per100g', e.target.value)}
                           className="w-full px-2 py-1 border border-border rounded-md text-xs text-center outline-none focus:ring-1 focus:ring-primary/30"
                           placeholder="—"
                         />
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                      </td>
+                      <td className="py-1.5 px-2">
+                        <input
+                          value={form.nutrition[field.key].per10g}
+                          onChange={(e) => updateNutrition(field.key, 'per10g', e.target.value)}
+                          className="w-full px-2 py-1 border border-border rounded-md text-xs text-center outline-none focus:ring-1 focus:ring-primary/30"
+                          placeholder="—"
+                        />
+                      </td>
+                      <td className="py-1.5 pl-2">
+                        {field.noVd ? (
+                          <p className="text-xs text-center text-muted-foreground">—</p>
+                        ) : (
+                          <input
+                            value={form.nutrition[field.key].vd}
+                            onChange={(e) => updateNutrition(field.key, 'vd', e.target.value)}
+                            className="w-full px-2 py-1 border border-border rounded-md text-xs text-center outline-none focus:ring-1 focus:ring-primary/30"
+                            placeholder="—"
+                          />
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </section>
 
         {/* ── Actions ────────────────────────────────────────────────────── */}

@@ -1,9 +1,19 @@
 <?php
-// ── Database credentials — fill these in after creating the DB in cPanel ───────
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'your_database_name');
-define('DB_USER', 'your_database_user');
-define('DB_PASS', 'your_database_password');
+// ── Database credentials ────────────────────────────────────────────────────────
+// Reads from .env.php one level above public_html (never web-accessible).
+$_envFile = dirname($_SERVER['DOCUMENT_ROOT']) . '/.env.php';
+if (file_exists($_envFile)) {
+    $env = parse_ini_file($_envFile);
+    define('DB_HOST', $env['DB_HOST'] ?? 'localhost');
+    define('DB_NAME', $env['DB_NAME'] ?? '');
+    define('DB_USER', $env['DB_USER'] ?? '');
+    define('DB_PASS', $env['DB_PASS'] ?? '');
+} else {
+    define('DB_HOST', 'localhost');
+    define('DB_NAME', '');
+    define('DB_USER', '');
+    define('DB_PASS', '');
+}
 
 define('UPLOAD_DIR', __DIR__ . '/../uploads/');
 define('UPLOAD_URL', '/uploads/');

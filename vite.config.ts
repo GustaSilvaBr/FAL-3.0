@@ -20,12 +20,12 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://fal2.test.psoftweb.com.br',
+        target: 'https://fabricadealimentos.com.br',
         changeOrigin: true,
         secure: true,
       },
       '/uploads': {
-        target: 'https://fal2.test.psoftweb.com.br',
+        target: 'https://fabricadealimentos.com.br',
         changeOrigin: true,
         secure: true,
       },

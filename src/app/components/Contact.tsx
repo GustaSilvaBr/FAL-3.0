@@ -10,7 +10,9 @@ export default function Contact() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // TODO: integrar envio
+    const subject = encodeURIComponent(`Contato de ${form.nome} ${form.sobrenome}`);
+    const body = encodeURIComponent(`Nome: ${form.nome} ${form.sobrenome}\nE-mail: ${form.email}\n\n${form.mensagem}`);
+    window.location.href = `mailto:contato@fal.com.br?subject=${subject}&body=${body}`;
   }
 
   return (

@@ -586,7 +586,7 @@ export default function ProductsPage() {
                       </div>
 
                       <div className="p-3">
-                        <p className="text-xs font-semibold text-foreground leading-snug line-clamp-2">
+                        <p className="text-xs font-semibold text-foreground leading-snug">
                           {product.name}
                         </p>
                         <p className="text-xs text-muted-foreground mt-0.5">{product.weight}</p>

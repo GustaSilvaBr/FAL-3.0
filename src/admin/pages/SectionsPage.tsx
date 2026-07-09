@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
-import { Plus, X, Search, Loader2, GripVertical, ImagePlus, Trash2, Instagram } from 'lucide-react';
+import { Plus, X, Search, Loader2, GripVertical, ImagePlus, Trash2, Instagram, Package } from 'lucide-react';
 import { ProductWheel } from '../../app/components/Brands';
 import type {
+  Folder,
   Product,
   SectionNovidades,
   SectionPipoca,
@@ -74,9 +75,12 @@ function ProductPicker({
                     <span className="text-2xl">📦</span>
                   )}
                 </div>
-                <p className="text-xs font-medium text-foreground leading-tight text-center line-clamp-2">
+                <p className="text-xs font-medium text-foreground leading-tight text-center">
                   {p.name}
                 </p>
+                {p.weight && (
+                  <p className="text-xs text-muted-foreground text-center">{p.weight}</p>
+                )}
               </button>
             ))
           )}
@@ -261,6 +265,7 @@ function NovidadesTab({ products }: { products: Product[] }) {
 
             <div className="flex-1 space-y-2">
               <p className="text-sm font-semibold text-foreground">{p?.name ?? item.productId}</p>
+              {p?.weight && <p className="text-xs text-muted-foreground">{p.weight}</p>}
               <div className="grid grid-cols-2 gap-2">
                 <input
                   value={item.tag ?? ''}
@@ -481,25 +486,61 @@ function PipocaTab({ products }: { products: Product[] }) {
 // ── Brands tab ────────────────────────────────────────────────────────────────
 
 function BrandsTab({ products }: { products: Product[] }) {
+  const [folders, setFolders] = useState<Folder[]>([]);
   const [productIds, setProductIds] = useState<string[]>([]);
-  const [picker, setPicker] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    fetch('/api/sections.php?id=brands')
-      .then((r) => r.json())
-      .then((data: SectionBrands) => setProductIds(data.productIds ?? []));
-  }, []);
+    Promise.all([
+      fetch('/api/folders.php').then((r) => r.json()) as Promise<Folder[]>,
+      fetch('/api/sections.php?id=brands').then((r) => r.json()) as Promise<SectionBrands>,
+    ]).then(([folderRows, data]) => {
+      const sorted = [...folderRows].sort((a, b) => a.name.localeCompare(b.name));
+      setFolders(sorted);
 
-  const getProduct = (id: string) => products.find((p) => p.id === id);
+      let ids = data.productIds ?? [];
+      if (ids.length === 0) {
+        const rootFolders = sorted.filter((f) => !f.parentId);
+        ids = rootFolders.flatMap((folder) =>
+          products.filter((p) => p.folderId === folder.id).slice(0, 3).map((p) => p.id),
+        );
+      }
+      setProductIds(ids);
+    });
+  }, [products]);
 
-  const addProduct = (p: Product) => {
-    if (!productIds.includes(p.id)) setProductIds((prev) => [...prev, p.id]);
+  // Walks up the tree to find the root ancestor folder id
+  const getRootFolderId = (folderId: string | undefined): string | undefined => {
+    if (!folderId) return undefined;
+    let f = folders.find((x) => x.id === folderId);
+    while (f?.parentId) f = folders.find((x) => x.id === f!.parentId);
+    return f?.id;
   };
 
-  const removeProduct = (id: string) =>
-    setProductIds((prev) => prev.filter((pid) => pid !== id));
+  const toggle = (id: string) =>
+    setProductIds((prev) =>
+      prev.includes(id) ? prev.filter((pid) => pid !== id) : [...prev, id],
+    );
+
+  const selectThree = (rootFolderId: string) => {
+    const folderProducts = products.filter(
+      (p) => getRootFolderId(p.folderId) === rootFolderId,
+    );
+    const pick = folderProducts.slice(0, 3).map((p) => p.id);
+    const others = productIds.filter(
+      (id) => getRootFolderId(products.find((p) => p.id === id)?.folderId) !== rootFolderId,
+    );
+    setProductIds([...others, ...pick]);
+  };
+
+  const clearFolder = (rootFolderId: string) => {
+    setProductIds((prev) =>
+      prev.filter(
+        (id) => getRootFolderId(products.find((p) => p.id === id)?.folderId) !== rootFolderId,
+      ),
+    );
+  };
 
   const handleSave = async () => {
     setSaving(true);
@@ -513,58 +554,94 @@ function BrandsTab({ products }: { products: Product[] }) {
     setTimeout(() => setSaved(false), 2000);
   };
 
+  const rootFolders = folders.filter((f) => !f.parentId);
+
+  const groups = rootFolders
+    .map((folder) => ({
+      folder,
+      items: products.filter((p) => getRootFolderId(p.folderId) === folder.id),
+    }))
+    .filter((g) => g.items.length > 0);
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <p className="text-sm text-muted-foreground">
-        Produtos exibidos na órbita da seção Nordeste Gravatá.
+        Selecione os produtos de cada categoria que aparecerão na órbita da seção Nordeste Gravatá.
+        Por padrão, os 3 primeiros produtos de cada pasta são pré-selecionados.
       </p>
 
-      <div className="flex flex-wrap gap-3">
-        {productIds.map((pid) => {
-          const p = getProduct(pid);
-          return (
-            <div key={pid} className="relative group">
-              <div className="w-20 h-20 bg-gradient-to-br from-accent/20 to-primary/10 rounded-2xl overflow-hidden flex items-center justify-center">
-                {p?.imageUrl ? (
-                  <img src={p.imageUrl} alt={p?.name} className="w-full h-full object-contain p-2" />
-                ) : (
-                  <span className="text-xs text-muted-foreground text-center p-1">{p?.name}</span>
+      {groups.map(({ folder, items }) => {
+        const selectedCount = items.filter((p) => productIds.includes(p.id)).length;
+        return (
+          <div key={folder.id} className="bg-white border border-gray-100 rounded-2xl p-5 space-y-3">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-bold text-foreground">{folder.name}</h3>
+                <span className="text-xs bg-primary/10 text-primary font-semibold px-2 py-0.5 rounded-full">
+                  {selectedCount} selecionado{selectedCount !== 1 ? 's' : ''}
+                </span>
+              </div>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => selectThree(folder.id)}
+                  className="text-xs font-semibold text-primary hover:underline"
+                >
+                  Selecionar 3
+                </button>
+                {selectedCount > 0 && (
+                  <button
+                    onClick={() => clearFolder(folder.id)}
+                    className="text-xs font-semibold text-muted-foreground hover:text-red-600 hover:underline"
+                  >
+                    Limpar
+                  </button>
                 )}
               </div>
-              <button
-                onClick={() => removeProduct(pid)}
-                className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-white border border-border rounded-full flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                <X className="w-3 h-3 text-muted-foreground" />
-              </button>
             </div>
-          );
-        })}
 
+            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2">
+              {items.map((p) => {
+                const selected = productIds.includes(p.id);
+                return (
+                  <button
+                    key={p.id}
+                    onClick={() => toggle(p.id)}
+                    className={`flex flex-col items-start gap-1 p-2 rounded-xl border-2 transition-all text-left ${
+                      selected
+                        ? 'border-primary bg-primary/5'
+                        : 'border-transparent bg-gray-50 hover:bg-gray-100'
+                    }`}
+                  >
+                    <div className="w-full aspect-square bg-gradient-to-br from-accent/20 to-primary/10 rounded-lg overflow-hidden flex items-center justify-center">
+                      {p.imageUrl ? (
+                        <img src={p.imageUrl} alt={p.name} className="w-full h-full object-contain p-1" />
+                      ) : (
+                        <Package className="w-5 h-5 text-muted-foreground/30" />
+                      )}
+                    </div>
+                    <p className="text-xs font-medium text-foreground leading-tight">{p.name}</p>
+                    {p.weight && <p className="text-xs text-muted-foreground">{p.weight}</p>}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+
+      <div className="flex items-center justify-between pt-1">
+        <p className="text-sm text-muted-foreground">
+          {productIds.length} produto{productIds.length !== 1 ? 's' : ''} selecionado{productIds.length !== 1 ? 's' : ''} no total
+        </p>
         <button
-          onClick={() => setPicker(true)}
-          className="w-20 h-20 border-2 border-dashed border-border hover:border-primary/40 rounded-2xl flex items-center justify-center text-muted-foreground hover:text-primary transition-colors"
+          onClick={handleSave}
+          disabled={saving}
+          className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-60"
         >
-          <Plus className="w-6 h-6" />
+          {saving && <Loader2 className="w-4 h-4 animate-spin" />}
+          {saved ? 'Salvo!' : saving ? 'Salvando…' : 'Salvar'}
         </button>
       </div>
-
-      <button
-        onClick={handleSave}
-        disabled={saving}
-        className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-60"
-      >
-        {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-        {saved ? 'Salvo!' : saving ? 'Salvando…' : 'Salvar'}
-      </button>
-
-      {picker && (
-        <ProductPicker
-          products={products}
-          onSelect={(p) => { addProduct(p); setPicker(false); }}
-          onClose={() => setPicker(false)}
-        />
-      )}
 
       {productIds.length > 0 && (() => {
         const wheelProducts = productIds

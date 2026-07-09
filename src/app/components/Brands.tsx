@@ -200,10 +200,10 @@ export default function Brands({ onLoad }: { onLoad?: () => void }) {
               Nordeste Gravatá
             </h3>
             <p className="text-2xl md:text-3xl mb-8" style={{ color: '#666' }}>
-              O Sabor Autêntico do Nordeste Brasileiro
+              TRADIÇÃO E SABOR QUE CONQUISTAM GERAÇÕES.
             </p>
             <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-              Nossa marca principal leva receitas tradicionais e qualidade premium para cada cozinha. Da nossa famosa pipoca a salgadinhos e doces irresistíveis, Nordeste Gravatá é sinônimo de sabor e tradição brasileiros autênticos.
+               HÁ MAIS DE 5 DÉCADAS UNINDO TRADIÇÃO, QUALIDADE E SABOR. SÃO DIVERSAS OPÇÕES PARA VOCÊ ESCOLHER.
             </p>
             <div>
               <a

@@ -1,0 +1,577 @@
+{
+  "folders": [
+    { "id": "amendoim",                    "name": "Amendoim",             "order": 0 },
+    { "id": "batata-chips",                "name": "Batata Chips",          "order": 1 },
+    { "id": "bolinhos-de-goma",            "name": "Bolinhos de Goma",      "order": 2 },
+    { "id": "pacoca",                      "name": "Paçoca",                "order": 3 },
+    { "id": "pipoca-gravata",              "name": "Pipoca Gravatá",        "order": 4 },
+    { "id": "pipoca-gravata-amanteigadas", "name": "Amanteigadas",          "order": 0, "parentId": "pipoca-gravata" },
+    { "id": "pipoca-gravata-doces",        "name": "Doces",                 "order": 1, "parentId": "pipoca-gravata" },
+    { "id": "pipoca-gravata-gourmet",      "name": "Gourmet",               "order": 2, "parentId": "pipoca-gravata" },
+    { "id": "pipoca-gravata-premium",      "name": "Premium",               "order": 3, "parentId": "pipoca-gravata" },
+    { "id": "salgadinhos-de-trigo",        "name": "Salgadinhos de Trigo",  "order": 5 },
+    { "id": "salgadinhos-trigo-belleza",   "name": "Belleza",               "order": 0, "parentId": "salgadinhos-de-trigo" },
+    { "id": "salgadinhos-trigo-good-fried","name": "Good Fried",            "order": 1, "parentId": "salgadinhos-de-trigo" },
+    { "id": "salgadinhos-trigo-pimentas",  "name": "Pimentas",              "order": 2, "parentId": "salgadinhos-de-trigo" },
+    { "id": "salgadinhos",                 "name": "Salgadinhos",           "order": 6 },
+    { "id": "salgadinhos-pipoflocs",       "name": "Pipofloc's",            "order": 0, "parentId": "salgadinhos" },
+    { "id": "salgadinhos-qi-flocs",        "name": "Qi-Flocs",              "order": 1, "parentId": "salgadinhos" },
+    { "id": "salgadinhos-iae",             "name": "Salgadinhos iaê",       "order": 2, "parentId": "salgadinhos" },
+    { "id": "torresminho",                 "name": "Torresminho",           "order": 7 }
+  ],
+  "products": [
+    {
+      "id": "amendoim",
+      "name": "Amendoim",
+      "weight": "24g",
+      "folderId": "amendoim",
+      "localImagePath": "Amendoim/amendoim.png"
+    },
+
+    {
+      "id": "batatachips-cebola-salsa",
+      "name": "Batata Chips Cebola e Salsa",
+      "weight": "17g",
+      "folderId": "batata-chips",
+      "localImagePath": "Batata Chips/batatachips_cebola_salsa.png"
+    },
+    {
+      "id": "batatachips-churrasco",
+      "name": "Batata Chips Churrasco",
+      "weight": "17g",
+      "folderId": "batata-chips",
+      "localImagePath": "Batata Chips/batatachips_churrasco.png"
+    },
+    {
+      "id": "batatachips-original",
+      "name": "Batata Chips Original",
+      "weight": "17g",
+      "folderId": "batata-chips",
+      "localImagePath": "Batata Chips/batatachips_original.png"
+    },
+
+    {
+      "id": "bolinhos-goma-50g",
+      "name": "Bolinhos de Goma",
+      "weight": "50g",
+      "folderId": "bolinhos-de-goma",
+      "localImagePath": "Bolinhos de Goma/bolinhos_De_goma_50g.png"
+    },
+    {
+      "id": "bolinhos-goma-90g",
+      "name": "Bolinhos de Goma",
+      "weight": "90g",
+      "folderId": "bolinhos-de-goma",
+      "localImagePath": "Bolinhos de Goma/bolinhos_de_goma_90g.png"
+    },
+
+    {
+      "id": "pacoca",
+      "name": "Paçoca",
+      "weight": "",
+      "folderId": "pacoca",
+      "localImagePath": "Paçoca/paçoca.png"
+    },
+
+    {
+      "id": "pipoca-gravata-sem-sal-10g",
+      "name": "Pipoca Gravatá Sem Sal 0 Trans",
+      "weight": "10g",
+      "folderId": "pipoca-gravata-amanteigadas",
+      "localImagePath": "Pipoca Gravatá/Amanteigadas/pipoca_gravatá_10g_0trans_sem_sal.png"
+    },
+    {
+      "id": "pipoca-gravata-amanteigada-branca-10g",
+      "name": "Pipoca Gravatá Amanteigada 0 Trans (Branca)",
+      "weight": "10g",
+      "folderId": "pipoca-gravata-amanteigadas",
+      "localImagePath": "Pipoca Gravatá/Amanteigadas/pipoca_gravatá_10g_0trans_white.png"
+    },
+    {
+      "id": "pipoca-gravata-amanteigada-amarela-10g",
+      "name": "Pipoca Gravatá Amanteigada 0 Trans (Amarela)",
+      "weight": "10g",
+      "folderId": "pipoca-gravata-amanteigadas",
+      "localImagePath": "Pipoca Gravatá/Amanteigadas/pipoca_gravatá_10g_0trans_yellow.png"
+    },
+    {
+      "id": "pipoca-gravata-amanteigada-14g",
+      "name": "Pipoca Gravatá Amanteigada 0 Trans",
+      "weight": "14g",
+      "folderId": "pipoca-gravata-amanteigadas",
+      "localImagePath": "Pipoca Gravatá/Amanteigadas/pipoca_gravatá_14g_0trans_white.png"
+    },
+    {
+      "id": "pipocao-gravata-amanteigada-30g",
+      "name": "Pipocão Gravatá Amanteigada 0 Trans",
+      "weight": "30g",
+      "folderId": "pipoca-gravata-amanteigadas",
+      "localImagePath": "Pipoca Gravatá/Amanteigadas/pipocao_gravatá_30g_0trans_white.png"
+    },
+    {
+      "id": "pipocao-gravata-amanteigada-40g",
+      "name": "Pipocão Gravatá Amanteigada 0 Trans",
+      "weight": "40g",
+      "folderId": "pipoca-gravata-amanteigadas",
+      "localImagePath": "Pipoca Gravatá/Amanteigadas/pipocao_gravatá_40g_0trans_white.png"
+    },
+    {
+      "id": "pipocao-gravata-amanteigada-72g",
+      "name": "Pipocão Gravatá Amanteigada 0 Trans",
+      "weight": "72g",
+      "folderId": "pipoca-gravata-amanteigadas",
+      "localImagePath": "Pipoca Gravatá/Amanteigadas/pipocao_gravatá_72g_0trans_white.png"
+    },
+    {
+      "id": "pipocao-gravata-amanteigada-90g",
+      "name": "Pipocão Gravatá Amanteigada 0 Trans",
+      "weight": "90g",
+      "folderId": "pipoca-gravata-amanteigadas",
+      "localImagePath": "Pipoca Gravatá/Amanteigadas/pipocao_gravatá_90g_0trans_white.png"
+    },
+
+    {
+      "id": "pipoca-gravata-doce-10g",
+      "name": "Pipoca Gravatá Doce 0 Trans",
+      "weight": "10g",
+      "folderId": "pipoca-gravata-doces",
+      "localImagePath": "Pipoca Gravatá/Doces/pipoca_gravatá_10g_0trans_doce.png"
+    },
+    {
+      "id": "pipoca-gravata-amendoim-doce-12g",
+      "name": "Pipoca Gravatá Amendoim Doce 0 Trans",
+      "weight": "12g",
+      "folderId": "pipoca-gravata-doces",
+      "localImagePath": "Pipoca Gravatá/Doces/pipoca_gravatá_12g_0trans_amendoim_doce.png"
+    },
+    {
+      "id": "pipoca-gravata-doce-14g",
+      "name": "Pipoca Gravatá Doce 0 Trans",
+      "weight": "14g",
+      "folderId": "pipoca-gravata-doces",
+      "localImagePath": "Pipoca Gravatá/Doces/pipoca_gravatá_14g_0trans_doce.png"
+    },
+    {
+      "id": "pipocao-gravata-amendoim-doce-30g",
+      "name": "Pipocão Gravatá Amendoim Doce 0 Trans",
+      "weight": "30g",
+      "folderId": "pipoca-gravata-doces",
+      "localImagePath": "Pipoca Gravatá/Doces/pipocao_gravatá_30g_0trans_amendoim_doce.png"
+    },
+    {
+      "id": "pipocao-gravata-doce-30g",
+      "name": "Pipocão Gravatá Doce 0 Trans",
+      "weight": "30g",
+      "folderId": "pipoca-gravata-doces",
+      "localImagePath": "Pipoca Gravatá/Doces/pipocao_gravatá_30g_0trans_doce.png"
+    },
+
+    {
+      "id": "pipoca-gravata-chocolate-gourmet-15g",
+      "name": "Pipoca Gravatá Chocolate Gourmet 0 Trans",
+      "weight": "15g",
+      "folderId": "pipoca-gravata-gourmet",
+      "localImagePath": "Pipoca Gravatá/Gourmet/pipoca_gravatá_15g_0trans_sabor_chocolate_gourmet.png"
+    },
+    {
+      "id": "pipocao-gravata-chocolate-gourmet-45g",
+      "name": "Pipocão Gravatá Chocolate Gourmet 0 Trans",
+      "weight": "45g",
+      "folderId": "pipoca-gravata-gourmet",
+      "localImagePath": "Pipoca Gravatá/Gourmet/pipocao_gravatá_45g_0trans_chocolate_gourmet.png"
+    },
+
+    {
+      "id": "pipoca-gravata-himalaia-premium-15g",
+      "name": "Pipoca Gravatá Himalaia Premium 0 Trans",
+      "weight": "15g",
+      "folderId": "pipoca-gravata-premium",
+      "localImagePath": "Pipoca Gravatá/Premium/pipoca_gravatá_15g_0trans_himalaia_premium.png"
+    },
+    {
+      "id": "pipoca-gravata-himalaia-premium-40g",
+      "name": "Pipoca Gravatá Himalaia Premium 0 Trans",
+      "weight": "40g",
+      "folderId": "pipoca-gravata-premium",
+      "localImagePath": "Pipoca Gravatá/Premium/pipoca_gravatá_40g_0trans_himalaia_premium.png"
+    },
+
+    {
+      "id": "belleza-cebola-salsa-40g",
+      "name": "Belleza Cebola e Salsa",
+      "weight": "40g",
+      "folderId": "salgadinhos-trigo-belleza",
+      "localImagePath": "Salgadinhos de Trigo/Belleza/belleza_cebola_salsa_40g.jpeg"
+    },
+    {
+      "id": "belleza-churrasco-40g",
+      "name": "Belleza Churrasco",
+      "weight": "40g",
+      "folderId": "salgadinhos-trigo-belleza",
+      "localImagePath": "Salgadinhos de Trigo/Belleza/belleza_churrasco_40g.jpeg"
+    },
+    {
+      "id": "belleza-frango-40g",
+      "name": "Belleza Frango",
+      "weight": "40g",
+      "folderId": "salgadinhos-trigo-belleza",
+      "localImagePath": "Salgadinhos de Trigo/Belleza/belleza_frango_40g.jpeg"
+    },
+    {
+      "id": "belleza-pimenta-40g",
+      "name": "Belleza Pimenta",
+      "weight": "40g",
+      "folderId": "salgadinhos-trigo-belleza",
+      "localImagePath": "Salgadinhos de Trigo/Belleza/belleza_pimenta_40g.jpeg"
+    },
+    {
+      "id": "belleza-queijo-40g",
+      "name": "Belleza Queijo",
+      "weight": "40g",
+      "folderId": "salgadinhos-trigo-belleza",
+      "localImagePath": "Salgadinhos de Trigo/Belleza/belleza_queijo_40g.jpeg"
+    },
+
+    {
+      "id": "good-fried-queijo-12g",
+      "name": "Good Fried Queijo",
+      "weight": "12g",
+      "folderId": "salgadinhos-trigo-good-fried",
+      "localImagePath": "Salgadinhos de Trigo/Good Fried/good_fried_queijo_12g.jpeg"
+    },
+
+    {
+      "id": "good-fried-pimenta-12g",
+      "name": "Good Fried Pimenta",
+      "weight": "12g",
+      "folderId": "salgadinhos-trigo-pimentas",
+      "localImagePath": "Salgadinhos de Trigo/Pimentas/good_fried_pimenta_12g.jpeg"
+    },
+
+    {
+      "id": "pipoflocs-cebola-13g",
+      "name": "Pipo Floc's Cebola",
+      "weight": "13g",
+      "folderId": "salgadinhos-pipoflocs",
+      "localImagePath": "Salgadinhos/Pipofloc's/pipo_flocs_cebola_13g.jpeg"
+    },
+    {
+      "id": "pipoflocs-cebola-42g",
+      "name": "Pipo Floc's Cebola",
+      "weight": "42g",
+      "folderId": "salgadinhos-pipoflocs",
+      "localImagePath": "Salgadinhos/Pipofloc's/pipo_flocs_cebola_42g.jpeg"
+    },
+    {
+      "id": "pipoflocs-cebola-55g",
+      "name": "Pipo Floc's Cebola",
+      "weight": "55g",
+      "folderId": "salgadinhos-pipoflocs",
+      "localImagePath": "Salgadinhos/Pipofloc's/pipo_flocs_cebola_55g.jpeg"
+    },
+    {
+      "id": "pipoflocs-cebola-salsa-20g",
+      "name": "Pipo Floc's Cebola e Salsa",
+      "weight": "20g",
+      "folderId": "salgadinhos-pipoflocs",
+      "localImagePath": "Salgadinhos/Pipofloc's/pipo_flocs_cebola_salsa_20g.jpeg"
+    },
+    {
+      "id": "pipoflocs-cebola-salsa-40g",
+      "name": "Pipo Floc's Cebola e Salsa",
+      "weight": "40g",
+      "folderId": "salgadinhos-pipoflocs",
+      "localImagePath": "Salgadinhos/Pipofloc's/pipo_flocs_cebola_salsa_40g.jpeg"
+    },
+    {
+      "id": "pipoflocs-cebola-salsa-50g",
+      "name": "Pipo Floc's Cebola e Salsa",
+      "weight": "50g",
+      "folderId": "salgadinhos-pipoflocs",
+      "localImagePath": "Salgadinhos/Pipofloc's/pipo_flocs_cebola_salsa_50g.jpeg"
+    },
+    {
+      "id": "pipoflocs-churrasco-13g",
+      "name": "Pipo Floc's Churrasco",
+      "weight": "13g",
+      "folderId": "salgadinhos-pipoflocs",
+      "localImagePath": "Salgadinhos/Pipofloc's/pipo_flocs_churrasco_13g.jpeg"
+    },
+    {
+      "id": "pipoflocs-churrasco-20g",
+      "name": "Pipo Floc's Churrasco",
+      "weight": "20g",
+      "folderId": "salgadinhos-pipoflocs",
+      "localImagePath": "Salgadinhos/Pipofloc's/pipo_flocs_churrasco_20g.jpeg"
+    },
+    {
+      "id": "pipoflocs-churrasco-40g",
+      "name": "Pipo Floc's Churrasco",
+      "weight": "40g",
+      "folderId": "salgadinhos-pipoflocs",
+      "localImagePath": "Salgadinhos/Pipofloc's/pipo_flocs_churrasco_40g.jpeg"
+    },
+    {
+      "id": "pipoflocs-churrasco-50g",
+      "name": "Pipo Floc's Churrasco",
+      "weight": "50g",
+      "folderId": "salgadinhos-pipoflocs",
+      "localImagePath": "Salgadinhos/Pipofloc's/pipo_flocs_churrasco_50g.jpeg"
+    },
+    {
+      "id": "pipoflocs-churrasco-55g",
+      "name": "Pipo Floc's Churrasco",
+      "weight": "55g",
+      "folderId": "salgadinhos-pipoflocs",
+      "localImagePath": "Salgadinhos/Pipofloc's/pipo_flocs_churrasco_55g.jpeg"
+    },
+    {
+      "id": "pipoflocs-churrasco-brasa-50g",
+      "name": "Pipo Floc's Churrasco Brasa",
+      "weight": "50g",
+      "folderId": "salgadinhos-pipoflocs",
+      "localImagePath": "Salgadinhos/Pipofloc's/pipo_flocs_churrasco_brasa_50g.jpeg"
+    },
+    {
+      "id": "pipoflocs-milho-13g",
+      "name": "Pipo Floc's Milho",
+      "weight": "13g",
+      "folderId": "salgadinhos-pipoflocs",
+      "localImagePath": "Salgadinhos/Pipofloc's/pipo_flocs_milho_13g.jpeg"
+    },
+    {
+      "id": "pipoflocs-milho-42g",
+      "name": "Pipo Floc's Milho",
+      "weight": "42g",
+      "folderId": "salgadinhos-pipoflocs",
+      "localImagePath": "Salgadinhos/Pipofloc's/pipo_flocs_milho_42g.jpeg"
+    },
+    {
+      "id": "pipoflocs-milho-55g",
+      "name": "Pipo Floc's Milho",
+      "weight": "55g",
+      "folderId": "salgadinhos-pipoflocs",
+      "localImagePath": "Salgadinhos/Pipofloc's/pipo_flocs_milho_55g.jpeg"
+    },
+    {
+      "id": "pipoflocs-presunto-42g",
+      "name": "Pipo Floc's Presunto",
+      "weight": "42g",
+      "folderId": "salgadinhos-pipoflocs",
+      "localImagePath": "Salgadinhos/Pipofloc's/pipo_flocs_presunto_42g.jpeg"
+    },
+    {
+      "id": "pipoflocs-presunto-55g",
+      "name": "Pipo Floc's Presunto",
+      "weight": "55g",
+      "folderId": "salgadinhos-pipoflocs",
+      "localImagePath": "Salgadinhos/Pipofloc's/pipo_flocs_presunto_55g.jpeg"
+    },
+    {
+      "id": "pipoflocs-queijo-13g",
+      "name": "Pipo Floc's Queijo",
+      "weight": "13g",
+      "folderId": "salgadinhos-pipoflocs",
+      "localImagePath": "Salgadinhos/Pipofloc's/pipo_flocs_queijo_13g.jpeg"
+    },
+    {
+      "id": "pipoflocs-queijo-20g",
+      "name": "Pipo Floc's Queijo",
+      "weight": "20g",
+      "folderId": "salgadinhos-pipoflocs",
+      "localImagePath": "Salgadinhos/Pipofloc's/pipo_flocs_queijo_20g.jpeg"
+    },
+    {
+      "id": "pipoflocs-queijo-40g",
+      "name": "Pipo Floc's Queijo",
+      "weight": "40g",
+      "folderId": "salgadinhos-pipoflocs",
+      "localImagePath": "Salgadinhos/Pipofloc's/pipo_flocs_queijo_40g.jpeg"
+    },
+    {
+      "id": "pipoflocs-queijo-42g",
+      "name": "Pipo Floc's Queijo",
+      "weight": "42g",
+      "folderId": "salgadinhos-pipoflocs",
+      "localImagePath": "Salgadinhos/Pipofloc's/pipo_flocs_queijo_42g.jpeg"
+    },
+    {
+      "id": "pipoflocs-queijo-50g",
+      "name": "Pipo Floc's Queijo",
+      "weight": "50g",
+      "folderId": "salgadinhos-pipoflocs",
+      "localImagePath": "Salgadinhos/Pipofloc's/pipo_flocs_queijo_50g.jpeg"
+    },
+    {
+      "id": "pipoflocs-queijo-55g",
+      "name": "Pipo Floc's Queijo",
+      "weight": "55g",
+      "folderId": "salgadinhos-pipoflocs",
+      "localImagePath": "Salgadinhos/Pipofloc's/pipo_flocs_queijo_55g.jpeg"
+    },
+    {
+      "id": "pipoflocs-requeijao-13g",
+      "name": "Pipo Floc's Requeijão",
+      "weight": "13g",
+      "folderId": "salgadinhos-pipoflocs",
+      "localImagePath": "Salgadinhos/Pipofloc's/pipo_flocs_requeijão_13g.jpeg"
+    },
+    {
+      "id": "pipoflocs-requeijao-20g",
+      "name": "Pipo Floc's Requeijão",
+      "weight": "20g",
+      "folderId": "salgadinhos-pipoflocs",
+      "localImagePath": "Salgadinhos/Pipofloc's/pipo_flocs_requeijão_20g.jpeg"
+    },
+    {
+      "id": "pipoflocs-requeijao-40g",
+      "name": "Pipo Floc's Requeijão",
+      "weight": "40g",
+      "folderId": "salgadinhos-pipoflocs",
+      "localImagePath": "Salgadinhos/Pipofloc's/pipo_flocs_requeijão_40g.jpeg"
+    },
+    {
+      "id": "pipoflocs-requeijao-42g",
+      "name": "Pipo Floc's Requeijão",
+      "weight": "42g",
+      "folderId": "salgadinhos-pipoflocs",
+      "localImagePath": "Salgadinhos/Pipofloc's/pipo_flocs_requeijão_42g.jpeg"
+    },
+    {
+      "id": "pipoflocs-requeijao-50g",
+      "name": "Pipo Floc's Requeijão",
+      "weight": "50g",
+      "folderId": "salgadinhos-pipoflocs",
+      "localImagePath": "Salgadinhos/Pipofloc's/pipo_flocs_requeijão_50g.jpeg"
+    },
+    {
+      "id": "pipoflocs-requeijao-55g",
+      "name": "Pipo Floc's Requeijão",
+      "weight": "55g",
+      "folderId": "salgadinhos-pipoflocs",
+      "localImagePath": "Salgadinhos/Pipofloc's/pipo_flocs_requeijão_55g.jpeg"
+    },
+
+    {
+      "id": "qi-flocs-cebola-salsa-40g",
+      "name": "Qi Flocs Cebola e Salsa",
+      "weight": "40g",
+      "folderId": "salgadinhos-qi-flocs",
+      "localImagePath": "Salgadinhos/Qi-Flocs/qi_flocs_cebola_salsa_40g.jpeg"
+    },
+    {
+      "id": "qi-flocs-milho-40g",
+      "name": "Qi Flocs Milho",
+      "weight": "40g",
+      "folderId": "salgadinhos-qi-flocs",
+      "localImagePath": "Salgadinhos/Qi-Flocs/qi_flocs_milho_40g.jpeg"
+    },
+    {
+      "id": "qi-flocs-queijo-40g",
+      "name": "Qi Flocs Queijo",
+      "weight": "40g",
+      "folderId": "salgadinhos-qi-flocs",
+      "localImagePath": "Salgadinhos/Qi-Flocs/qi_flocs_queijo_40g.jpeg"
+    },
+
+    {
+      "id": "iae-acebolado-30g",
+      "name": "iaê Acebolado",
+      "weight": "30g",
+      "folderId": "salgadinhos-iae",
+      "localImagePath": "Salgadinhos/Salgadinhos iaê/iae_acebolado_30g.jpeg"
+    },
+    {
+      "id": "iae-acebolado-60g",
+      "name": "iaê Acebolado",
+      "weight": "60g",
+      "folderId": "salgadinhos-iae",
+      "localImagePath": "Salgadinhos/Salgadinhos iaê/iae_acebolado_60g.jpeg"
+    },
+    {
+      "id": "iae-churrasco-30g",
+      "name": "iaê Churrasco",
+      "weight": "30g",
+      "folderId": "salgadinhos-iae",
+      "localImagePath": "Salgadinhos/Salgadinhos iaê/iae_churrasco_30g.jpeg"
+    },
+    {
+      "id": "iae-costelinha-limao-60g",
+      "name": "iaê Costelinha com Limão",
+      "weight": "60g",
+      "folderId": "salgadinhos-iae",
+      "localImagePath": "Salgadinhos/Salgadinhos iaê/iae_costelinha_limao_60g.jpeg"
+    },
+    {
+      "id": "iae-galinha-30g",
+      "name": "iaê Galinha",
+      "weight": "30g",
+      "folderId": "salgadinhos-iae",
+      "localImagePath": "Salgadinhos/Salgadinhos iaê/iae_galinha_30g.jpeg"
+    },
+    {
+      "id": "iae-milho-30g",
+      "name": "iaê Milho",
+      "weight": "30g",
+      "folderId": "salgadinhos-iae",
+      "localImagePath": "Salgadinhos/Salgadinhos iaê/iae_milho_30g.jpeg"
+    },
+    {
+      "id": "iae-milho-60g",
+      "name": "iaê Milho",
+      "weight": "60g",
+      "folderId": "salgadinhos-iae",
+      "localImagePath": "Salgadinhos/Salgadinhos iaê/iae_milho_60g.jpeg"
+    },
+    {
+      "id": "iae-presunto-30g",
+      "name": "iaê Presunto",
+      "weight": "30g",
+      "folderId": "salgadinhos-iae",
+      "localImagePath": "Salgadinhos/Salgadinhos iaê/iae_presunto_30g.jpeg"
+    },
+    {
+      "id": "iae-queijo-suico-30g",
+      "name": "iaê Queijo Suíço",
+      "weight": "30g",
+      "folderId": "salgadinhos-iae",
+      "localImagePath": "Salgadinhos/Salgadinhos iaê/iae_queijo_suiço_30g.jpeg"
+    },
+    {
+      "id": "iae-queijo-suico-60g",
+      "name": "iaê Queijo Suíço",
+      "weight": "60g",
+      "folderId": "salgadinhos-iae",
+      "localImagePath": "Salgadinhos/Salgadinhos iaê/iae_queijo_suiço_60g.jpeg"
+    },
+    {
+      "id": "iae-requeijao-30g",
+      "name": "iaê Requeijão",
+      "weight": "30g",
+      "folderId": "salgadinhos-iae",
+      "localImagePath": "Salgadinhos/Salgadinhos iaê/iae_requeijão_30g.jpeg"
+    },
+    {
+      "id": "iae-requeijao-60g",
+      "name": "iaê Requeijão",
+      "weight": "60g",
+      "folderId": "salgadinhos-iae",
+      "localImagePath": "Salgadinhos/Salgadinhos iaê/iae_requeijão_60g.jpeg"
+    },
+
+    {
+      "id": "piggys-bacon-30g",
+      "name": "Piggy's Bacon",
+      "weight": "30g",
+      "folderId": "torresminho",
+      "localImagePath": "Torresminho/piggys_bacon_30g.jpeg"
+    },
+    {
+      "id": "piggys-picanha-30g",
+      "name": "Piggy's Picanha",
+      "weight": "30g",
+      "folderId": "torresminho",
+      "localImagePath": "Torresminho/piggys_picanha_30g.jpeg"
+    }
+  ]
+}

@@ -124,7 +124,7 @@ export default function PipocaGravata({ onLoad }: { onLoad?: () => void }) {
             Pipocas Gravatá
           </h2>
           <p className="text-sm max-w-xl mx-auto" style={{ color: '#666' }}>
-            Quatro linhas, um só sabor autêntico. Encontre a sua preferida.
+            SEMPRE IMITADA, NUNCA IGUALADA. ENCONTRE A SUA PREFERIDA.
           </p>
         </motion.div>
 

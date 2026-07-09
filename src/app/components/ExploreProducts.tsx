@@ -257,7 +257,7 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
           {/* Header */}
           <div className="text-center mb-10">
             <h2 className="text-3xl sm:text-4xl font-bold text-primary mb-3">Nossos Produtos</h2>
-            <p className="text-lg" style={{ color: '#666' }}>Explore o sabor autêntico do Nordeste.</p>
+            <p className="text-lg" style={{ color: '#666' }}>SABOR, QUALIDADE E TRADIÇÃO</p>
           </div>
 
           {/* Toolbar */}

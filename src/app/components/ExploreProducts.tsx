@@ -417,7 +417,7 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.2 }}
-                  className="grid grid-cols-3 gap-6 max-w-4xl mx-auto"
+                  className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto"
                 >
                   {paginated.map((product, i) => {
                     const isHighlighted = highlightedProductId === product.id;
@@ -434,7 +434,7 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
                         isHighlighted ? 'ring-4 ring-accent shadow-xl shadow-accent/20' : ''
                       }`}
                     >
-                      <div className="h-72 bg-gradient-to-br from-accent/20 to-primary/10 rounded-2xl p-4 flex items-center justify-center overflow-hidden group">
+                      <div className="h-40 sm:h-72 bg-gradient-to-br from-accent/20 to-primary/10 rounded-2xl p-4 flex items-center justify-center overflow-hidden group">
                         {product.imageUrl ? (
                           <img
                             src={product.imageUrl}
@@ -449,7 +449,7 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
                         <h3 className="text-sm font-semibold text-foreground leading-snug line-clamp-2 text-center">
                           {product.name}{product.weight ? ` - ${product.weight}` : ''}
                         </h3>
-                        <button className="mt-auto w-full py-2.5 px-3 rounded-xl bg-primary/10 text-primary text-sm font-medium hover:bg-primary hover:text-white transition-all duration-200">
+                        <button className="mt-auto w-full py-2.5 px-3 rounded-xl bg-primary/10 text-primary text-xs sm:text-sm font-medium hover:bg-primary hover:text-white transition-all duration-200">
                           Confira a tabela nutricional
                         </button>
                       </div>
@@ -508,28 +508,28 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
             transition={{ duration: 0.2 }}
           >
             <motion.div
-              className="bg-white rounded-3xl overflow-hidden w-full max-w-5xl max-h-[90vh] flex"
+              className="bg-white rounded-3xl overflow-hidden w-full max-w-5xl max-h-[90vh] flex flex-col sm:flex-row"
               onClick={(e) => e.stopPropagation()}
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.25 }}
             >
-              {/* Left — product image */}
-              <div className="w-2/5 shrink-0 bg-gradient-to-br from-accent/30 to-primary/15 flex items-center justify-center p-10">
+              {/* Top (mobile) / Left (desktop) — product image */}
+              <div className="w-full sm:w-2/5 shrink-0 bg-gradient-to-br from-accent/30 to-primary/15 flex items-center justify-center p-6 sm:p-10 h-52 sm:h-auto">
                 {selectedProduct.imageUrl ? (
                   <img
                     src={selectedProduct.imageUrl}
                     alt={selectedProduct.name}
-                    className="max-h-[65vh] w-full object-contain drop-shadow-xl"
+                    className="max-h-full sm:max-h-[65vh] w-full object-contain drop-shadow-xl"
                   />
                 ) : (
                   <span className="text-6xl opacity-30">📦</span>
                 )}
               </div>
 
-              {/* Right — info + nutrition */}
-              <div className="flex-1 overflow-y-auto p-8 flex flex-col gap-6">
+              {/* Bottom (mobile) / Right (desktop) — info + nutrition */}
+              <div className="flex-1 overflow-y-auto p-5 sm:p-8 flex flex-col gap-6">
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <span className="inline-block text-xs font-bold text-primary uppercase tracking-widest bg-primary/10 px-3 py-1.5 rounded-full mb-3">

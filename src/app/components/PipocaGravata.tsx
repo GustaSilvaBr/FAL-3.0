@@ -130,8 +130,9 @@ export default function PipocaGravata({ onLoad }: { onLoad?: () => void }) {
 
         <div className="bg-white rounded-3xl shadow-xl overflow-hidden px-6 py-8">
 
-          {/* Carousel */}
-          <div className="relative h-[320px] overflow-hidden">
+          {/* Carousel - scaled down on mobile */}
+          <div className="overflow-hidden h-[210px] sm:h-auto">
+          <div className="relative h-[320px] overflow-hidden scale-[0.65] sm:scale-100 origin-top">
             {categories.map((cat, i) => {
               const p = getSlideProps(i, current);
               return (
@@ -173,6 +174,7 @@ export default function PipocaGravata({ onLoad }: { onLoad?: () => void }) {
                 <ChevronRight className="w-5 h-5 text-foreground" />
               </button>
             )}
+          </div>
           </div>
 
           {/* Dots */}

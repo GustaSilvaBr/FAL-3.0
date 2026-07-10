@@ -215,8 +215,10 @@ export default function Brands({ onLoad }: { onLoad?: () => void }) {
             </div>
           </div>
 
-          <div className="flex items-center justify-center order-2 py-8 lg:py-0">
-            <ProductWheel products={products} onProductClick={navigateToProduct} />
+          <div className="flex items-center justify-center order-2 overflow-hidden h-[340px] sm:h-auto sm:py-8 lg:py-0">
+            <div className="scale-[0.68] sm:scale-100 origin-center">
+              <ProductWheel products={products} onProductClick={navigateToProduct} />
+            </div>
           </div>
         </motion.div>
       </div>

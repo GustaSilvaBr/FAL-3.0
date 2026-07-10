@@ -24,13 +24,8 @@ if (!in_array($mime, $allowed)) {
     error_out('Tipo de arquivo não permitido. Use JPG, PNG, WebP ou GIF.');
 }
 
-$ext = match ($mime) {
-    'image/jpeg' => 'jpg',
-    'image/png'  => 'png',
-    'image/webp' => 'webp',
-    'image/gif'  => 'gif',
-    default      => 'jpg',
-};
+$extMap = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp', 'image/gif' => 'gif'];
+$ext    = $extMap[$mime] ?? 'jpg';
 
 $subDir = UPLOAD_DIR . $type . '/' . $entityId . '/';
 if (!is_dir($subDir)) {
@@ -51,7 +46,7 @@ if (!move_uploaded_file($file['tmp_name'], $destPath)) {
 
 $relativePath = '/uploads/' . $type . '/' . $entityId . '/' . $filename;
 $protocol     = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-$imageUrl     = $protocol . '://' . $_SERVER['HTTP_HOST'] . $relativePath;
+$imageUrl     = $protocol . '://' . $_SERVER['HTTP_HOST'] . $relativePath . '?v=' . time();
 
 json_out([
     'imageUrl'  => $imageUrl,

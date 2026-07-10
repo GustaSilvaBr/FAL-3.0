@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router';
-import SeedButton from '../seed/SeedButton';
 import {
   Plus,
   Folder as FolderIcon,
@@ -459,7 +458,6 @@ export default function ProductsPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            <SeedButton onDone={reload} />
             <Link
               to={`/admin/products/new${selectedFolder ? `?folder=${selectedFolder}` : ''}`}
               className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white rounded-xl text-sm font-semibold hover:bg-primary/90 transition-colors shadow-sm"

@@ -47,13 +47,13 @@ function db(): PDO {
     return $pdo;
 }
 
-function json_out(mixed $data, int $status = 200): never {
+function json_out($data, int $status = 200): void {
     http_response_code($status);
     echo json_encode($data, JSON_UNESCAPED_UNICODE);
     exit;
 }
 
-function error_out(string $message, int $status = 400): never {
+function error_out(string $message, int $status = 400): void {
     json_out(['error' => $message], $status);
 }
 

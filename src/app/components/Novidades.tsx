@@ -71,14 +71,14 @@ export default function Novidades({ onLoad }: { onLoad?: () => void }) {
         </motion.h2>
 
         <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
-          <div className="flex">
+          <div className="flex flex-col md:flex-row">
 
             {/* Featured */}
-            <div className="flex w-[62%] p-[25px]">
-              <div className="flex w-full">
+            <div className="flex w-full md:w-[62%] p-[25px]">
+              <div className="flex flex-col sm:flex-row w-full">
 
                 {/* Product image */}
-                <div className="w-[44%] shrink-0 relative overflow-hidden flex items-center justify-center h-[380px] bg-gradient-to-br from-accent/20 to-primary/10 rounded-2xl m-4">
+                <div className="w-full sm:w-[44%] shrink-0 relative overflow-hidden flex items-center justify-center h-[220px] sm:h-[380px] bg-gradient-to-br from-accent/20 to-primary/10 rounded-2xl my-4 sm:m-4">
                   <AnimatePresence mode="wait">
                     {featured.image && (
                       <motion.img
@@ -114,7 +114,7 @@ export default function Novidades({ onLoad }: { onLoad?: () => void }) {
                 </div>
 
                 {/* Text */}
-                <div className="flex flex-col justify-center gap-6 p-10 lg:p-12">
+                <div className="flex flex-col justify-center gap-6 p-6 sm:p-10 lg:p-12">
                   <AnimatePresence mode="wait">
                     <motion.div
                       key={featured.title}
@@ -151,7 +151,7 @@ export default function Novidades({ onLoad }: { onLoad?: () => void }) {
             </div>
 
             {/* Sidebar */}
-            <div className="flex flex-col justify-between w-[38%] p-8 border-l border-primary/20">
+            <div className="flex flex-col justify-between w-full md:w-[38%] p-8 border-t md:border-t-0 md:border-l border-primary/20">
               <p className="text-xs font-bold uppercase tracking-widest text-primary mb-4">
                 Também em destaque
               </p>

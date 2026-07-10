@@ -28,6 +28,11 @@ function countAllProducts(folderId: string, folders: Folder[], products: Product
   return direct + children.reduce((sum, child) => sum + countAllProducts(child.id, folders, products), 0);
 }
 
+function countAllFolders(folderId: string, folders: Folder[]): number {
+  const children = folders.filter((f) => f.parentId === folderId);
+  return children.length + children.reduce((sum, child) => sum + countAllFolders(child.id, folders), 0);
+}
+
 // ─── FolderRow ────────────────────────────────────────────────────────────────
 
 type RowProps = {
@@ -193,6 +198,7 @@ export default function ProductsPage() {
   const [newSubfolderName, setNewSubfolderName] = useState('');
 
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [folderToDelete, setFolderToDelete] = useState<Folder | null>(null);
 
   const [keywordInput, setKeywordInput] = useState('');
   const keywordInputRef = useRef<HTMLInputElement>(null);
@@ -289,20 +295,15 @@ export default function ProductsPage() {
     setRenameValue('');
   };
 
-  const handleDeleteFolder = async (folder: Folder) => {
-    const hasProducts = products.some((p) => p.folderId === folder.id);
-    if (hasProducts) {
-      alert('Mova ou exclua os produtos desta pasta antes de excluí-la.');
-      return;
-    }
-    const hasChildren = folders.some((f) => f.parentId === folder.id);
-    if (hasChildren) {
-      alert('Mova ou exclua as subpastas antes de excluir esta pasta.');
-      return;
-    }
-    if (!confirm(`Excluir pasta "${folder.name}"?`)) return;
-    await fetch(`/api/folders.php?id=${folder.id}`, { method: 'DELETE' });
-    if (selectedFolder === folder.id) setSelectedFolder(null);
+  const handleDeleteFolder = (folder: Folder) => {
+    setFolderToDelete(folder);
+  };
+
+  const confirmDeleteFolder = async () => {
+    if (!folderToDelete) return;
+    await fetch(`/api/folders.php?id=${folderToDelete.id}`, { method: 'DELETE' });
+    if (selectedFolder === folderToDelete.id) setSelectedFolder(null);
+    setFolderToDelete(null);
     reload();
   };
 
@@ -616,6 +617,45 @@ export default function ProductsPage() {
           </>
         )}
       </div>
+      {folderToDelete && (() => {
+        const productCount = countAllProducts(folderToDelete.id, folders, products);
+        const subfolderCount = countAllFolders(folderToDelete.id, folders);
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+            <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm mx-4">
+              <h2 className="text-base font-bold text-foreground mb-2">Excluir pasta</h2>
+              <p className="text-sm text-muted-foreground mb-4">
+                Tem certeza que deseja excluir a pasta{' '}
+                <span className="font-semibold text-foreground">"{folderToDelete.name}"</span>?
+              </p>
+              {(productCount > 0 || subfolderCount > 0) && (
+                <div className="bg-red-50 border border-red-100 rounded-xl p-3 mb-4 text-xs text-red-700 space-y-1">
+                  {productCount > 0 && (
+                    <p>• {productCount} produto{productCount !== 1 ? 's' : ''} dentro desta pasta serão excluídos.</p>
+                  )}
+                  {subfolderCount > 0 && (
+                    <p>• {subfolderCount} subpasta{subfolderCount !== 1 ? 's' : ''} e seus conteúdos serão excluídos.</p>
+                  )}
+                </div>
+              )}
+              <div className="flex gap-2 justify-end">
+                <button
+                  onClick={() => setFolderToDelete(null)}
+                  className="px-4 py-2 text-sm rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors"
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={confirmDeleteFolder}
+                  className="px-4 py-2 text-sm font-semibold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-colors"
+                >
+                  Excluir
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }

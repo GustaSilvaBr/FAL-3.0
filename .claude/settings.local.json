@@ -40,7 +40,8 @@
       "Bash(Remove-Item \"c:\\\\Users\\\\anjog\\\\projects\\\\FAL 3.0\\\\src\\\\app\\\\components\\\\ui\\\\aspect-ratio.tsx\" -Force)",
       "WebFetch(domain:www.instagram.com)",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5173)",
-      "Bash(node_modules/.bin/tsc --noEmit)"
+      "Bash(node_modules/.bin/tsc --noEmit)",
+      "PowerShell(Get-ChildItem -Recurse \"c:\\\\Users\\\\anjog\\\\projects\\\\FAL 3.0\\\\src\\\\assets\\\\TABELA_NUTRI\" | Where-Object { !$_.PSIsContainer } | Select-Object -ExpandProperty FullName)"
     ],
     "deny": [
       "Read(c:\\Users\\anjog\\projects\\FAL 3.0\\.env)",

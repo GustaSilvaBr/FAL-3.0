@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import type { SectionBanners } from '../../lib/types';
 
 const PHOTO_DURATION = 5000;
-const SLIDE_VW = 68;
+const SLIDE_VW = 62;
 const GAP_VW   = 6;
-const PEEK_VW  = 13;
+const PEEK_VW  = 16;
 
 type Slide = { src: string; alt: string };
 
@@ -46,7 +46,7 @@ export default function Hero() {
 
   if (slides.length === 0) {
     return (
-      <div id="home" className="w-full animate-pulse rounded-2xl"
+      <div id="home" className="w-full mt-4 animate-pulse rounded-2xl"
         style={{ height: `${SLIDE_VW * 9 / 16}vw` }} />
     );
   }
@@ -71,7 +71,7 @@ export default function Hero() {
   const translateX = PEEK_VW - displayIdx * (SLIDE_VW + GAP_VW);
 
   return (
-    <div id="home" className="relative w-full overflow-hidden"
+    <div id="home" className="relative w-full mt-4 overflow-hidden"
       style={{ height: `${SLIDE_VW * 9 / 16}vw` }}>
 
       {/* Sliding track */}

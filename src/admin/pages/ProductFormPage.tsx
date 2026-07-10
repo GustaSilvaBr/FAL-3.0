@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useSearchParams, useNavigate, Link } from 'react-router';
-import { ChevronLeft, Upload, X, Loader2, FolderPlus } from 'lucide-react';
+import { ChevronLeft, Upload, X, Loader2, FolderPlus, Folder as FolderIcon, ChevronDown } from 'lucide-react';
 import {
   type Folder,
   type Product,
@@ -8,6 +8,92 @@ import {
   EMPTY_NUTRITION,
   NUTRITION_FIELDS,
 } from '../../lib/types';
+
+// ── Folder tree helpers ───────────────────────────────────────────────────────
+
+function flattenFolders(
+  list: Folder[],
+  parentId?: string,
+  depth = 0,
+): { folder: Folder; depth: number }[] {
+  return list
+    .filter((f) => (parentId ? f.parentId === parentId : !f.parentId))
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .flatMap((f) => [{ folder: f, depth }, ...flattenFolders(list, f.id, depth + 1)]);
+}
+
+// ── Custom folder select ───────────────────────────────────────────────────────
+
+function FolderSelect({
+  folders,
+  value,
+  onChange,
+}: {
+  folders: Folder[];
+  value: string;
+  onChange: (id: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const items = flattenFolders(folders);
+  const selected = folders.find((f) => f.id === value);
+
+  return (
+    <div ref={ref} className="relative flex-1">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="w-full flex items-center gap-2 px-3 py-2.5 border border-border rounded-xl text-sm bg-white text-left outline-none focus:ring-2 focus:ring-primary/20"
+      >
+        {selected ? (
+          <>
+            <FolderIcon className="w-4 h-4 text-primary/60 shrink-0" />
+            <span className="flex-1 truncate">{selected.name}</span>
+          </>
+        ) : (
+          <span className="flex-1 text-muted-foreground">Selecione…</span>
+        )}
+        <ChevronDown className={`w-4 h-4 text-muted-foreground shrink-0 transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+
+      {open && (
+        <div className="absolute z-20 top-full mt-1 left-0 right-0 bg-white border border-border rounded-xl shadow-lg max-h-56 overflow-auto py-1">
+          {items.map(({ folder: f, depth }) => (
+            <button
+              key={f.id}
+              type="button"
+              onClick={() => { onChange(f.id); setOpen(false); }}
+              style={{ paddingLeft: `${12 + depth * 20}px` }}
+              className={`w-full flex items-center gap-2 pr-3 py-2 text-sm text-left transition-colors ${
+                value === f.id
+                  ? 'bg-primary/5 text-primary font-semibold'
+                  : 'text-foreground hover:bg-gray-50'
+              }`}
+            >
+              {depth === 0 ? (
+                <FolderIcon className="w-4 h-4 shrink-0 text-primary/50" />
+              ) : (
+                <span className="w-4 h-4 flex items-center justify-center text-xs text-muted-foreground shrink-0">↳</span>
+              )}
+              <span className="truncate">{f.name}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 type FormState = {
   name: string;
@@ -78,21 +164,6 @@ export default function ProductFormPage() {
       .then((rows: Folder[]) => setFolders([...rows].sort((a, b) => a.name.localeCompare(b.name))));
   }, []);
 
-  // Flatten folder tree in display order for the select
-  function flattenFolders(
-    list: Folder[],
-    parentId?: string,
-    depth = 0,
-  ): { folder: Folder; depth: number }[] {
-    return list
-      .filter((f) => (parentId ? f.parentId === parentId : !f.parentId))
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .flatMap((f) => [
-        { folder: f, depth },
-        ...flattenFolders(list, f.id, depth + 1),
-      ]);
-  }
-
   // Load existing product
   useEffect(() => {
     if (!isEditing || !id) return;
@@ -104,7 +175,7 @@ export default function ProductFormPage() {
           name: p.name,
           weight: p.weight,
           folderId: p.folderId,
-          nutrition: p.nutrition ?? EMPTY_NUTRITION,
+          nutrition: { ...EMPTY_NUTRITION, ...(p.nutrition ?? {}) },
         });
         if (p.imageUrl) setImagePreview(p.imageUrl);
       });
@@ -285,18 +356,11 @@ export default function ProductFormPage() {
                 </div>
               ) : (
                 <div className="flex gap-2">
-                  <select
+                  <FolderSelect
+                    folders={folders}
                     value={form.folderId}
-                    onChange={(e) => setForm((f) => ({ ...f, folderId: e.target.value }))}
-                    className="flex-1 px-3 py-2.5 border border-border rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 bg-white"
-                  >
-                    <option value="">Selecione…</option>
-                    {flattenFolders(folders).map(({ folder: f, depth }) => (
-                      <option key={f.id} value={f.id}>
-                        {'    '.repeat(depth)}{depth > 0 ? '↳ ' : ''}{f.name}
-                      </option>
-                    ))}
-                  </select>
+                    onChange={(id) => setForm((f) => ({ ...f, folderId: id }))}
+                  />
                   <button
                     onClick={() => setAddingFolder(true)}
                     title="Nova pasta"

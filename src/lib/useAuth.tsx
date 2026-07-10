@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 
 type AuthState = {
   username: string | null;
+  canManageAdmins: boolean;
   loading: boolean;
   signIn: (username: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
@@ -9,6 +10,7 @@ type AuthState = {
 
 const AuthContext = createContext<AuthState>({
   username: null,
+  canManageAdmins: false,
   loading: true,
   signIn: async () => {},
   signOut: async () => {},
@@ -16,12 +18,16 @@ const AuthContext = createContext<AuthState>({
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [username, setUsername] = useState<string | null>(null);
+  const [canManageAdmins, setCanManageAdmins] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch('/api/auth.php')
       .then((r) => r.json())
-      .then((data) => setUsername(data.email ?? null))
+      .then((data) => {
+        setUsername(data.email ?? null);
+        setCanManageAdmins(data.can_manage_admins ?? false);
+      })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
@@ -35,6 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error ?? 'Erro ao fazer login.');
     setUsername(data.email);
+    setCanManageAdmins(data.can_manage_admins ?? false);
   };
 
   const signOut = async () => {
@@ -44,10 +51,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       body: JSON.stringify({ action: 'logout' }),
     });
     setUsername(null);
+    setCanManageAdmins(false);
   };
 
   return (
-    <AuthContext.Provider value={{ username, loading, signIn, signOut }}>
+    <AuthContext.Provider value={{ username, canManageAdmins, loading, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );

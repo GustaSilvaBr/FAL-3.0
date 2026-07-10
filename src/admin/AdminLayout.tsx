@@ -1,10 +1,32 @@
 import { NavLink, Outlet } from 'react-router';
-import { Package, LayoutGrid, LogOut, House } from 'lucide-react';
+import { Package, LayoutGrid, LogOut, House, Users, Salad } from 'lucide-react';
+import { useState } from 'react';
 import { useAuth } from '../lib/useAuth';
 import falLogo from '../assets/FAL_LOGO.png';
 
 export default function AdminLayout() {
-  const { username, signOut } = useAuth();
+  const { username, canManageAdmins, signOut } = useAuth();
+  const [nutritionLoading, setNutritionLoading] = useState(false);
+  const [nutritionResult, setNutritionResult] = useState<string | null>(null);
+
+  async function handleUpdateNutrition() {
+    if (!confirm('Atualizar tabelas nutricionais de todos os produtos do nutrition-data.json?')) return;
+    setNutritionLoading(true);
+    setNutritionResult(null);
+    try {
+      const res = await fetch('/api/update-nutrition.php', { method: 'POST', credentials: 'include' });
+      const json = await res.json();
+      if (json.ok) {
+        setNutritionResult(`✓ ${json.updated} produto(s) atualizados${json.skipped ? `, ${json.skipped} não encontrados` : ''}.`);
+      } else {
+        setNutritionResult(`Erros: ${json.errors?.join(', ') ?? 'desconhecido'}`);
+      }
+    } catch {
+      setNutritionResult('Falha na requisição.');
+    } finally {
+      setNutritionLoading(false);
+    }
+  }
 
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
@@ -52,7 +74,41 @@ export default function AdminLayout() {
             <LayoutGrid className="w-4 h-4 shrink-0" />
             Seções
           </NavLink>
+
+          {canManageAdmins && (
+            <NavLink
+              to="/admin/users"
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  isActive
+                    ? 'bg-primary text-white'
+                    : 'text-foreground hover:bg-gray-100'
+                }`
+              }
+            >
+              <Users className="w-4 h-4 shrink-0" />
+              Usuários
+            </NavLink>
+          )}
         </nav>
+
+        {/* Ferramentas */}
+        <div className="px-3 pb-3 border-t border-gray-100 pt-3">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground px-3 mb-1.5">
+            Ferramentas
+          </p>
+          <button
+            onClick={handleUpdateNutrition}
+            disabled={nutritionLoading}
+            className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-foreground hover:bg-gray-100 transition-colors disabled:opacity-50"
+          >
+            <Salad className="w-4 h-4 shrink-0" />
+            {nutritionLoading ? 'Atualizando...' : 'Popular nutrição'}
+          </button>
+          {nutritionResult && (
+            <p className="text-xs px-3 pt-1 text-muted-foreground">{nutritionResult}</p>
+          )}
+        </div>
 
         <div className="p-4 border-t border-gray-100">
           <div className="flex items-center gap-3 mb-3">

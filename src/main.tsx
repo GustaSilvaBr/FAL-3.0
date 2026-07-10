@@ -6,6 +6,7 @@ import AdminGuard from './admin/AdminGuard.tsx';
 import ProductsPage from './admin/pages/ProductsPage.tsx';
 import ProductFormPage from './admin/pages/ProductFormPage.tsx';
 import SectionsPage from './admin/pages/SectionsPage.tsx';
+import UsersPage from './admin/pages/UsersPage.tsx';
 import './styles/index.css';
 
 const router = createBrowserRouter([
@@ -23,6 +24,7 @@ const router = createBrowserRouter([
       { path: 'products/new',      element: <ProductFormPage /> },
       { path: 'products/:id/edit', element: <ProductFormPage /> },
       { path: 'sections',          element: <SectionsPage /> },
+      { path: 'users',             element: <UsersPage /> },
     ],
   },
 ]);

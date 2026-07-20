@@ -99,17 +99,10 @@ export default function ExploreProducts() {
 
   // ── Keyboard: Escape closes modal ────────────────────────────────────────────
   useEffect(() => {
+    if (!selectedProduct) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setSelectedProduct(null); };
-    if (selectedProduct) {
-      window.addEventListener('keydown', onKey);
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      window.removeEventListener('keydown', onKey);
-      document.body.style.overflow = '';
-    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
   }, [selectedProduct]);
 
   // ── Step-by-step product navigation ─────────────────────────────────────────
@@ -543,7 +536,7 @@ export default function ExploreProducts() {
               </div>
 
               {/* Bottom (mobile) / Right (desktop) — info + nutrition */}
-              <div className="flex-1 overflow-y-auto p-5 sm:p-8 flex flex-col gap-6">
+              <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-5 sm:p-8 flex flex-col gap-6">
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <span className="inline-block text-xs font-bold text-primary uppercase tracking-widest bg-primary/10 px-3 py-1.5 rounded-full mb-3">
@@ -566,7 +559,7 @@ export default function ExploreProducts() {
                 </div>
 
                 {/* Nutrition table */}
-                <div className="border border-border rounded-xl overflow-hidden text-xs">
+                <div className="shrink-0 border border-border rounded-xl overflow-hidden text-xs">
                   <div className="bg-foreground text-background px-4 py-2.5 text-center font-bold text-sm uppercase tracking-wider">
                     Informação Nutricional
                   </div>

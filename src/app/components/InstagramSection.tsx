@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { Instagram } from 'lucide-react';
 import type { InstagramPost, SectionInstagram } from '../../lib/types';
+import { apiFetch } from '../../lib/api';
 
 const INSTAGRAM_PROFILE = 'https://www.instagram.com/pipocasgravata_oficial';
 
@@ -9,7 +10,7 @@ export default function InstagramSection() {
   const [posts, setPosts] = useState<InstagramPost[]>([]);
 
   useEffect(() => {
-    fetch('/api/sections.php?id=instagram')
+    apiFetch('/api/sections.php?id=instagram')
       .then((r) => r.json())
       .then((data: SectionInstagram) => {
         if (data.posts?.length) setPosts(data.posts);

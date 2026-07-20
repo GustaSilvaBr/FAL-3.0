@@ -24,6 +24,13 @@ if ($method === 'GET') {
 
 require_auth();
 
+// "Valor energético (kJ)" foi removido da tabela nutricional — descarta a chave
+// caso ainda venha de um JSON colado manualmente no admin (modo "Importar via JSON").
+function sanitize_nutrition($nutrition) {
+    if (is_array($nutrition)) unset($nutrition['energyKj']);
+    return $nutrition ?? new stdClass();
+}
+
 if ($method === 'POST') {
     $body = json_decode(file_get_contents('php://input'), true) ?? [];
     $name = trim($body['name'] ?? '');
@@ -32,7 +39,7 @@ if ($method === 'POST') {
 
     $newId = uuid();
     db()->prepare(
-        'INSERT INTO products (id, name, weight, folderId, imageUrl, imagePath, nutrition) VALUES (?,?,?,?,?,?,?)'
+        'INSERT INTO products (id, name, weight, folderId, imageUrl, imagePath, nutrition, servingsPerPackage, servingSize, servingMeasure) VALUES (?,?,?,?,?,?,?,?,?,?)'
     )->execute([
         $newId,
         $name,
@@ -40,7 +47,10 @@ if ($method === 'POST') {
         $body['folderId'],
         $body['imageUrl']  ?? '',
         $body['imagePath'] ?? '',
-        json_encode($body['nutrition'] ?? new stdClass()),
+        json_encode(sanitize_nutrition($body['nutrition'] ?? null)),
+        $body['servingsPerPackage'] ?? '',
+        $body['servingSize']        ?? '',
+        $body['servingMeasure']     ?? '',
     ]);
 
     json_out(['id' => $newId], 201);
@@ -52,14 +62,17 @@ if ($method === 'PUT' && $id) {
     if (!$name) error_out('Nome é obrigatório.');
 
     db()->prepare(
-        'UPDATE products SET name=?, weight=?, folderId=?, imageUrl=?, imagePath=?, nutrition=? WHERE id=?'
+        'UPDATE products SET name=?, weight=?, folderId=?, imageUrl=?, imagePath=?, nutrition=?, servingsPerPackage=?, servingSize=?, servingMeasure=? WHERE id=?'
     )->execute([
         $name,
         $body['weight']    ?? '',
         $body['folderId']  ?? '',
         $body['imageUrl']  ?? '',
         $body['imagePath'] ?? '',
-        json_encode($body['nutrition'] ?? new stdClass()),
+        json_encode(sanitize_nutrition($body['nutrition'] ?? null)),
+        $body['servingsPerPackage'] ?? '',
+        $body['servingSize']        ?? '',
+        $body['servingMeasure']     ?? '',
         $id,
     ]);
 

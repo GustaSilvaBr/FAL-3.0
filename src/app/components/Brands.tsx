@@ -2,8 +2,8 @@ import { motion, AnimatePresence, useMotionValue, useTransform, useAnimationFram
 import type { Variants } from 'motion/react';
 import { useState, useEffect } from 'react';
 import type { Product, SectionBrands } from '../../lib/types';
-import { preloadImages } from '../../lib/imageCache';
 import { useProductNavigation } from '../../lib/productNavigation';
+import { apiFetch } from '../../lib/api';
 
 const nordesteLogo = new URL('../../assets/logo_nordeste_gravata.png', import.meta.url).href;
 
@@ -167,16 +167,16 @@ export default function Brands({ onLoad }: { onLoad?: () => void }) {
 
   useEffect(() => {
     async function load() {
-      const section: SectionBrands = await fetch('/api/sections.php?id=brands').then((r) => r.json()).catch(() => ({}));
+      const [section, allProds]: [SectionBrands, Product[]] = await Promise.all([
+        apiFetch('/api/sections.php?id=brands').then((r) => r.json()).catch(() => ({})),
+        apiFetch('/api/products.php').then((r) => r.json()).catch(() => []),
+      ]);
+
       const ids = section.productIds ?? [];
       if (!ids.length) { onLoad?.(); return; }
 
-      const allProds: Product[] = await fetch('/api/products.php').then((r) => r.json()).catch(() => []);
       const idSet = new Set(ids);
-      const filtered = allProds.filter((p) => idSet.has(p.id));
-
-      await preloadImages(filtered.map((p) => p.imageUrl));
-      setAllProducts(filtered);
+      setAllProducts(allProds.filter((p) => idSet.has(p.id)));
       onLoad?.();
     }
 

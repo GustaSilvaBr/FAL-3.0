@@ -6,7 +6,6 @@ export type NutritionRow = {
 
 export type NutritionTable = {
   energyKcal: NutritionRow;
-  energyKj: NutritionRow;
   carbs: NutritionRow;
   totalSugars: NutritionRow;
   addedSugars: NutritionRow;
@@ -20,7 +19,6 @@ export type NutritionTable = {
 
 export const EMPTY_NUTRITION: NutritionTable = {
   energyKcal: { per100g: '', per10g: '', vd: '' },
-  energyKj:   { per100g: '', per10g: '', vd: '' },
   carbs:       { per100g: '', per10g: '', vd: '' },
   totalSugars: { per100g: '', per10g: '', vd: '' },
   addedSugars: { per100g: '', per10g: '', vd: '—' },
@@ -43,14 +41,13 @@ export const NUTRITION_FIELDS: NutritionFieldMeta[] = [
   { key: 'energyKcal', label: 'Valor energético (kcal)' },
   { key: 'carbs',      label: 'Carboidratos (g)' },
   { key: 'totalSugars', label: 'Açúcares totais (g)' },
-  { key: 'addedSugars', label: 'Açúcares adicionados (g)', indent: true, noVd: true },
+  { key: 'addedSugars', label: 'Açúcares adicionados (g)', indent: true },
   { key: 'proteins',   label: 'Proteínas (g)' },
   { key: 'totalFat',   label: 'Gorduras totais (g)' },
   { key: 'satFat',     label: 'Gorduras saturadas (g)', indent: true },
   { key: 'transFat',   label: 'Gorduras trans (g)', indent: true },
   { key: 'fiber',      label: 'Fibras alimentares (g)' },
   { key: 'sodium',     label: 'Sódio (mg)' },
-  { key: 'energyKj',   label: 'Valor energético (kJ)' },
 ];
 
 export type Folder = {
@@ -69,6 +66,9 @@ export type Product = {
   imageUrl: string;
   imagePath: string;
   nutrition: NutritionTable;
+  servingsPerPackage: string;
+  servingSize: string;
+  servingMeasure: string;
   createdAt?: unknown;
 };
 

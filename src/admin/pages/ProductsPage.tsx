@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
+import { apiFetch } from '../../lib/api';
 import {
   Plus,
   Folder as FolderIcon,
@@ -182,9 +183,10 @@ function FolderRow({
 // ─── ProductsPage ─────────────────────────────────────────────────────────────
 
 export default function ProductsPage() {
+  const [searchParams] = useSearchParams();
   const [folders, setFolders] = useState<Folder[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
-  const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
+  const [selectedFolder, setSelectedFolder] = useState<string | null>(searchParams.get('folder'));
   const [refresh, setRefresh] = useState(0);
 
   const [newFolderName, setNewFolderName] = useState('');
@@ -236,13 +238,13 @@ export default function ProductsPage() {
   }, []);
 
   useEffect(() => {
-    fetch('/api/folders.php')
+    apiFetch('/api/folders.php')
       .then((r) => r.json())
       .then((rows: Folder[]) => setFolders([...rows].sort((a, b) => a.name.localeCompare(b.name))));
   }, [refresh]);
 
   useEffect(() => {
-    fetch('/api/products.php')
+    apiFetch('/api/products.php')
       .then((r) => r.json())
       .then((rows: Product[]) => setProducts([...rows].sort((a, b) => a.name.localeCompare(b.name))));
   }, [refresh]);
@@ -250,7 +252,7 @@ export default function ProductsPage() {
   const handleAddFolder = async () => {
     const name = newFolderName.trim();
     if (!name) return;
-    await fetch('/api/folders.php', {
+    await apiFetch('/api/folders.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, order: folders.length }),
@@ -263,7 +265,7 @@ export default function ProductsPage() {
   const handleAddSubfolder = async () => {
     const name = newSubfolderName.trim();
     if (!name || !addingSubfolderId) return;
-    await fetch('/api/folders.php', {
+    await apiFetch('/api/folders.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, parentId: addingSubfolderId, order: folders.length }),
@@ -283,7 +285,7 @@ export default function ProductsPage() {
     const name = renameValue.trim();
     if (name && renamingId) {
       const folder = folders.find((f) => f.id === renamingId);
-      await fetch(`/api/folders.php?id=${renamingId}`, {
+      await apiFetch(`/api/folders.php?id=${renamingId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, order: folder?.order ?? 0, parentId: folder?.parentId ?? null }),
@@ -300,7 +302,7 @@ export default function ProductsPage() {
 
   const confirmDeleteFolder = async () => {
     if (!folderToDelete) return;
-    await fetch(`/api/folders.php?id=${folderToDelete.id}`, { method: 'DELETE' });
+    await apiFetch(`/api/folders.php?id=${folderToDelete.id}`, { method: 'DELETE' });
     if (selectedFolder === folderToDelete.id) setSelectedFolder(null);
     setFolderToDelete(null);
     reload();
@@ -310,7 +312,7 @@ export default function ProductsPage() {
     if (!confirm(`Excluir "${product.name}"?`)) return;
     setDeletingId(product.id);
     try {
-      await fetch(`/api/products.php?id=${product.id}`, { method: 'DELETE' });
+      await apiFetch(`/api/products.php?id=${product.id}`, { method: 'DELETE' });
       reload();
     } finally {
       setDeletingId(null);
@@ -325,7 +327,7 @@ export default function ProductsPage() {
     if (!kw || !selectedFolder || currentKeywords.includes(kw)) { setKeywordInput(''); return; }
     const folder = folders.find((f) => f.id === selectedFolder);
     if (!folder) return;
-    await fetch(`/api/folders.php?id=${selectedFolder}`, {
+    await apiFetch(`/api/folders.php?id=${selectedFolder}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: folder.name, order: folder.order ?? 0, parentId: folder.parentId ?? null, keywords: [...currentKeywords, kw] }),
@@ -339,7 +341,7 @@ export default function ProductsPage() {
     if (!selectedFolder) return;
     const folder = folders.find((f) => f.id === selectedFolder);
     if (!folder) return;
-    await fetch(`/api/folders.php?id=${selectedFolder}`, {
+    await apiFetch(`/api/folders.php?id=${selectedFolder}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: folder.name, order: folder.order ?? 0, parentId: folder.parentId ?? null, keywords: currentKeywords.filter((k) => k !== kw) }),

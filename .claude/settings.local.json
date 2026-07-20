@@ -42,7 +42,8 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5173)",
       "Bash(node_modules/.bin/tsc --noEmit)",
       "PowerShell(Get-ChildItem -Recurse \"c:\\\\Users\\\\anjog\\\\projects\\\\FAL 3.0\\\\src\\\\assets\\\\TABELA_NUTRI\" | Where-Object { !$_.PSIsContainer } | Select-Object -ExpandProperty FullName)",
-      "Bash(Remove-Item -Recurse -Force \"c:\\\\Users\\\\anjog\\\\projects\\\\FAL 3.0\\\\src\\\\admin\\\\seed\")"
+      "Bash(Remove-Item -Recurse -Force \"c:\\\\Users\\\\anjog\\\\projects\\\\FAL 3.0\\\\src\\\\admin\\\\seed\")",
+      "Bash(dir /s /b api\\\\products.php)"
     ],
     "deny": [
       "Read(c:\\Users\\anjog\\projects\\FAL 3.0\\.env)",

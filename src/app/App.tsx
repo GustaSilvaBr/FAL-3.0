@@ -13,15 +13,16 @@ import InstagramSection from './components/InstagramSection';
 import Footer from './components/Footer';
 import { ProductNavigationProvider } from '../lib/productNavigation';
 
-// Sections that report when they finish loading: Novidades, PipocaGravata, Brands, ExploreProducts
+// Hero + Novidades + PipocaGravata + Brands
+// ExploreProducts carrega via IntersectionObserver (abaixo do fold)
 const TOTAL_ASYNC = 4;
 
 export default function App() {
   const [readyCount, setReadyCount] = useState(0);
   const onSectionLoad = useCallback(() => setReadyCount((c) => c + 1), []);
 
-  const allReady  = readyCount >= TOTAL_ASYNC;
-  const progress  = (readyCount / TOTAL_ASYNC) * 100;
+  const allReady = readyCount >= TOTAL_ASYNC;
+  const progress = (readyCount / TOTAL_ASYNC) * 100;
 
   return (
     <ProductNavigationProvider>
@@ -31,15 +32,14 @@ export default function App() {
 
       <div className="min-h-screen bg-gradient-to-br from-accent/20 to-primary/10">
         <Navigation />
-        <Hero />
+        <Hero onLoad={onSectionLoad} />
         <Novidades onLoad={onSectionLoad} />
         <PipocaGravata onLoad={onSectionLoad} />
-        <Brands        onLoad={onSectionLoad} />
+        <Brands onLoad={onSectionLoad} />
         <About />
-        <ExploreProducts onLoad={onSectionLoad} />
-           <InstagramSection />
+        <ExploreProducts />
+        <InstagramSection />
         <Contact />
-     
         <Footer />
       </div>
     </ProductNavigationProvider>

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useSearchParams, useNavigate, Link } from 'react-router';
+import { apiFetch } from '../../lib/api';
 import { ChevronLeft, Upload, X, Loader2, FolderPlus, Folder as FolderIcon, ChevronDown } from 'lucide-react';
 import {
   type Folder,
@@ -95,11 +96,24 @@ function FolderSelect({
 
 // ─────────────────────────────────────────────────────────────────────────────
 
+const SERVING_MEASURE_OPTIONS = [
+  '1 unidade',
+  '1/2 xícara',
+  '1 xícara',
+  '2 xícaras',
+  '3 xícaras',
+  '18 unidades',
+  '1 embalagem',
+];
+
 type FormState = {
   name: string;
   weight: string;
   folderId: string;
   nutrition: NutritionTable;
+  servingsPerPackage: string;
+  servingSize: string;
+  servingMeasure: string;
 };
 
 const EMPTY_FORM: FormState = {
@@ -107,6 +121,9 @@ const EMPTY_FORM: FormState = {
   weight: '',
   folderId: '',
   nutrition: EMPTY_NUTRITION,
+  servingsPerPackage: '',
+  servingSize: '',
+  servingMeasure: '',
 };
 
 export default function ProductFormPage() {
@@ -159,7 +176,7 @@ export default function ProductFormPage() {
 
   // Load folders
   useEffect(() => {
-    fetch('/api/folders.php')
+    apiFetch('/api/folders.php')
       .then((r) => r.json())
       .then((rows: Folder[]) => setFolders([...rows].sort((a, b) => a.name.localeCompare(b.name))));
   }, []);
@@ -167,7 +184,7 @@ export default function ProductFormPage() {
   // Load existing product
   useEffect(() => {
     if (!isEditing || !id) return;
-    fetch(`/api/products.php?id=${id}`)
+    apiFetch(`/api/products.php?id=${id}`)
       .then((r) => r.json())
       .then((p: Product) => {
         setExistingProduct(p);
@@ -176,6 +193,9 @@ export default function ProductFormPage() {
           weight: p.weight,
           folderId: p.folderId,
           nutrition: { ...EMPTY_NUTRITION, ...(p.nutrition ?? {}) },
+          servingsPerPackage: p.servingsPerPackage ?? '',
+          servingSize: p.servingSize ?? '',
+          servingMeasure: p.servingMeasure ?? '',
         });
         if (p.imageUrl) setImagePreview(p.imageUrl);
       });
@@ -197,7 +217,7 @@ export default function ProductFormPage() {
   const handleAddFolder = async () => {
     const name = newFolderName.trim();
     if (!name) return;
-    const res = await fetch('/api/folders.php', {
+    const res = await apiFetch('/api/folders.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, order: folders.length }),
@@ -243,10 +263,13 @@ export default function ProductFormPage() {
         imageUrl,
         imagePath,
         nutrition: form.nutrition,
+        servingsPerPackage: form.servingsPerPackage.trim(),
+        servingSize: form.servingSize.trim(),
+        servingMeasure: form.servingMeasure.trim(),
       };
 
       if (!isEditing) {
-        const createRes = await fetch('/api/products.php', {
+        const createRes = await apiFetch('/api/products.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(productData),
@@ -261,20 +284,20 @@ export default function ProductFormPage() {
         formData.append('file', imageFile);
         formData.append('type', 'products');
         formData.append('id', productId!);
-        const uploadRes = await fetch('/api/upload.php', { method: 'POST', body: formData });
+        const uploadRes = await apiFetch('/api/upload.php', { method: 'POST', body: formData });
         if (!uploadRes.ok) throw new Error('Erro no upload da imagem.');
         const uploadData = await uploadRes.json();
         imageUrl = uploadData.imageUrl;
         imagePath = uploadData.imagePath;
       }
 
-      await fetch(`/api/products.php?id=${productId}`, {
+      await apiFetch(`/api/products.php?id=${productId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...productData, imageUrl, imagePath }),
       });
 
-      navigate('/admin/products');
+      navigate(`/admin/products?folder=${form.folderId}`);
     } catch (e) {
       console.error(e);
       setError(e instanceof Error ? e.message : 'Erro ao salvar. Tente novamente.');
@@ -469,6 +492,47 @@ export default function ProductFormPage() {
               className="w-full font-mono text-xs p-3 border border-border rounded-xl outline-none focus:ring-2 focus:ring-primary/20 resize-y bg-muted/10"
             />
           ) : (
+            <>
+              <div className="grid grid-cols-3 gap-4 mb-5">
+                <div>
+                  <label className="block text-sm font-semibold text-foreground mb-1.5">
+                    Porção por embalagem
+                  </label>
+                  <input
+                    value={form.servingsPerPackage}
+                    onChange={(e) => setForm((f) => ({ ...f, servingsPerPackage: e.target.value }))}
+                    placeholder="Ex: cerca de 4 porções"
+                    className="w-full px-3 py-2.5 border border-border rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 bg-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-foreground mb-1.5">
+                    Porção (gramatura)
+                  </label>
+                  <input
+                    value={form.servingSize}
+                    onChange={(e) => setForm((f) => ({ ...f, servingSize: e.target.value }))}
+                    placeholder="Ex: 10 g"
+                    className="w-full px-3 py-2.5 border border-border rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 bg-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-foreground mb-1.5">
+                    Medida equivalente
+                  </label>
+                  <select
+                    value={form.servingMeasure}
+                    onChange={(e) => setForm((f) => ({ ...f, servingMeasure: e.target.value }))}
+                    className="w-full px-3 py-2.5 border border-border rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20 bg-white"
+                  >
+                    <option value="">Selecione…</option>
+                    {SERVING_MEASURE_OPTIONS.map((option) => (
+                      <option key={option} value={option}>{option}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
             <div className="overflow-x-auto">
               <table className="w-full text-sm border-collapse">
                 <thead>
@@ -480,7 +544,7 @@ export default function ProductFormPage() {
                       Por 100g
                     </th>
                     <th className="py-2 px-2 font-semibold text-foreground text-xs w-24 text-center">
-                      Por porção
+                      Por {form.servingSize.trim() || 'porção'}
                     </th>
                     <th className="py-2 pl-2 font-semibold text-foreground text-xs w-20 text-center">
                       %VD
@@ -529,6 +593,7 @@ export default function ProductFormPage() {
                 </tbody>
               </table>
             </div>
+            </>
           )}
         </section>
 

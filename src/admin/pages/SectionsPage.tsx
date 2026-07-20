@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Plus, X, Search, Loader2, GripVertical, ImagePlus, Trash2, Instagram, Package } from 'lucide-react';
+import { apiFetch } from '../../lib/api';
 import { ProductWheel } from '../../app/components/Brands';
 import type {
   Folder,
@@ -216,7 +217,7 @@ function NovidadesTab({ products }: { products: Product[] }) {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    fetch('/api/sections.php?id=novidades')
+    apiFetch('/api/sections.php?id=novidades')
       .then((r) => r.json())
       .then((data: SectionNovidades) => setItems(data.items ?? []));
   }, []);
@@ -235,7 +236,7 @@ function NovidadesTab({ products }: { products: Product[] }) {
 
   const handleSave = async () => {
     setSaving(true);
-    await fetch('/api/sections.php?id=novidades', {
+    await apiFetch('/api/sections.php?id=novidades', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ items }),
@@ -332,7 +333,7 @@ function PipocaTab({ products }: { products: Product[] }) {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    fetch('/api/sections.php?id=pipoca-gravata')
+    apiFetch('/api/sections.php?id=pipoca-gravata')
       .then((r) => r.json())
       .then((data: SectionPipoca) => setCategories(data.categories ?? []));
   }, []);
@@ -374,7 +375,7 @@ function PipocaTab({ products }: { products: Product[] }) {
 
   const handleSave = async () => {
     setSaving(true);
-    await fetch('/api/sections.php?id=pipoca-gravata', {
+    await apiFetch('/api/sections.php?id=pipoca-gravata', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ categories }),
@@ -493,8 +494,8 @@ function BrandsTab({ products }: { products: Product[] }) {
 
   useEffect(() => {
     Promise.all([
-      fetch('/api/folders.php').then((r) => r.json()) as Promise<Folder[]>,
-      fetch('/api/sections.php?id=brands').then((r) => r.json()) as Promise<SectionBrands>,
+      apiFetch('/api/folders.php').then((r) => r.json()) as Promise<Folder[]>,
+      apiFetch('/api/sections.php?id=brands').then((r) => r.json()) as Promise<SectionBrands>,
     ]).then(([folderRows, data]) => {
       const sorted = [...folderRows].sort((a, b) => a.name.localeCompare(b.name));
       setFolders(sorted);
@@ -544,7 +545,7 @@ function BrandsTab({ products }: { products: Product[] }) {
 
   const handleSave = async () => {
     setSaving(true);
-    await fetch('/api/sections.php?id=brands', {
+    await apiFetch('/api/sections.php?id=brands', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ productIds }),
@@ -728,7 +729,7 @@ function BannersTab() {
   const fileInputRef          = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    fetch('/api/sections.php?id=banners')
+    apiFetch('/api/sections.php?id=banners')
       .then((r) => r.json())
       .then((data: SectionBanners) => setItems(data.items ?? []));
   }, []);
@@ -741,7 +742,7 @@ function BannersTab() {
       const formData = new FormData();
       formData.append('file', file);
       formData.append('type', 'banners');
-      const uploadRes = await fetch('/api/upload.php', { method: 'POST', body: formData });
+      const uploadRes = await apiFetch('/api/upload.php', { method: 'POST', body: formData });
       if (uploadRes.ok) {
         const { imageUrl, imagePath } = await uploadRes.json();
         newItems.push({ id: crypto.randomUUID(), imageUrl, imagePath, alt: '' });
@@ -761,7 +762,7 @@ function BannersTab() {
 
   const handleSave = async () => {
     setSaving(true);
-    await fetch('/api/sections.php?id=banners', {
+    await apiFetch('/api/sections.php?id=banners', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ items }),
@@ -820,7 +821,7 @@ function BannersTab() {
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/*"
+        accept="image/webp,image/jpeg,image/png,image/gif"
         multiple
         className="hidden"
         onChange={(e) => handleFiles(e.target.files)}
@@ -867,7 +868,7 @@ function InstagramTab() {
   const [saved, setSaved]     = useState(false);
 
   useEffect(() => {
-    fetch('/api/sections.php?id=instagram')
+    apiFetch('/api/sections.php?id=instagram')
       .then((r) => r.json())
       .then((data: SectionInstagram) => setPosts(data.posts ?? []));
   }, []);
@@ -895,7 +896,7 @@ function InstagramTab() {
 
   const handleSave = async () => {
     setSaving(true);
-    await fetch('/api/sections.php?id=instagram', {
+    await apiFetch('/api/sections.php?id=instagram', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ posts }),
@@ -1004,7 +1005,7 @@ export default function SectionsPage() {
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    fetch('/api/products.php')
+    apiFetch('/api/products.php')
       .then((r) => r.json())
       .then((rows: Product[]) => setProducts([...rows].sort((a, b) => a.name.localeCompare(b.name))));
   }, []);

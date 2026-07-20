@@ -12,7 +12,7 @@ export default function Contact() {
     e.preventDefault();
     const subject = encodeURIComponent(`Contato de ${form.nome} ${form.sobrenome}`);
     const body = encodeURIComponent(`Nome: ${form.nome} ${form.sobrenome}\nE-mail: ${form.email}\n\n${form.mensagem}`);
-    window.location.href = `mailto:contato@fal.com.br?subject=${subject}&body=${body}`;
+    window.location.href = `mailto:vendas.fal@alimentos.ind.br?subject=${subject}&body=${body}`;
   }
 
   return (

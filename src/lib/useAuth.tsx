@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import { apiFetch } from './api';
 
 type AuthState = {
   username: string | null;
@@ -22,7 +23,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/auth.php')
+    apiFetch('/api/auth.php')
       .then((r) => r.json())
       .then((data) => {
         setUsername(data.email ?? null);
@@ -33,7 +34,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signIn = async (user: string, password: string) => {
-    const res = await fetch('/api/auth.php', {
+    const res = await apiFetch('/api/auth.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'login', email: user, password }),
@@ -45,7 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
-    await fetch('/api/auth.php', {
+    await apiFetch('/api/auth.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'logout' }),

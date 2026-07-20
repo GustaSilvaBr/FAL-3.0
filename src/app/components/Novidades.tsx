@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { preloadImages } from '../../lib/imageCache';
 import { motion, AnimatePresence } from 'motion/react';
 import { ArrowRight, Star } from 'lucide-react';
 import type { Product, SectionNovidades, NovidadesItem } from '../../lib/types';
 import { useProductNavigation } from '../../lib/productNavigation';
+import { apiFetch } from '../../lib/api';
 
 type DisplayItem = {
   image: string;
@@ -30,15 +30,15 @@ export default function Novidades({ onLoad }: { onLoad?: () => void }) {
 
   useEffect(() => {
     async function load() {
-      const section: SectionNovidades = await fetch('/api/sections.php?id=novidades').then((r) => r.json()).catch(() => ({}));
+      const [section, allProducts]: [SectionNovidades, Product[]] = await Promise.all([
+        apiFetch('/api/sections.php?id=novidades').then((r) => r.json()).catch(() => ({})),
+        apiFetch('/api/products.php').then((r) => r.json()).catch(() => []),
+      ]);
+
       if (!section.items?.length) { onLoad?.(); return; }
 
-      const allProducts: Product[] = await fetch('/api/products.php').then((r) => r.json()).catch(() => []);
       const productMap: Record<string, Product> = Object.fromEntries(allProducts.map((p) => [p.id, p]));
-
-      const displayItems = section.items.map((item) => toDisplayItem(item, productMap[item.productId]));
-      await preloadImages(displayItems.map((i) => i.image));
-      setItems(displayItems);
+      setItems(section.items.map((item) => toDisplayItem(item, productMap[item.productId])));
       onLoad?.();
     }
 

@@ -2,8 +2,8 @@ import { useState, useMemo, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Search, Star, X, SlidersHorizontal, ChevronLeft, ChevronRight } from 'lucide-react';
 import { NUTRITION_FIELDS, type Product, type Folder } from '../../lib/types';
-import { preloadImages } from '../../lib/imageCache';
 import { useProductNavigation } from '../../lib/productNavigation';
+import { apiFetch } from '../../lib/api';
 
 const weightRanges = [
   { label: 'Até 15g',    min: 0,  max: 15 },
@@ -19,7 +19,7 @@ function parseWeight(weight: string): number | null {
 
 const ITEMS_PER_PAGE = 9;
 
-export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
+export default function ExploreProducts() {
   const [products, setProducts]             = useState<Product[]>([]);
   const [folders, setFolders]               = useState<Folder[]>([]);
   const [search, setSearch]                 = useState('');
@@ -30,6 +30,7 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [freshFolder, setFreshFolder]         = useState<string | null>(null);
   const [highlightedProductId, setHighlightedProductId] = useState<string | null>(null);
+  const [shouldFetch, setShouldFetch]         = useState(false);
 
   const { pendingProduct, clearPendingProduct } = useProductNavigation();
 
@@ -39,23 +40,29 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
   const [canScrollLeft, setCanScrollLeft]   = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
 
-  // ── Fetch data once ──────────────────────────────────────────────────────────
-  const loadReported = useRef(false);
+  // ── Trigger fetch when section enters viewport ────────────────────────────
   useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setShouldFetch(true); observer.disconnect(); } },
+      { rootMargin: '400px' },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  // ── Fetch data once section is near viewport ──────────────────────────────
+  useEffect(() => {
+    if (!shouldFetch) return;
     Promise.all([
-      fetch('/api/folders.php').then((r) => r.json()),
-      fetch('/api/products.php').then((r) => r.json()),
+      apiFetch('/api/folders.php').then((r) => r.json()),
+      apiFetch('/api/products.php').then((r) => r.json()),
     ]).then(([folderRows, productRows]: [Folder[], Product[]]) => {
       setFolders([...folderRows].sort((a, b) => a.name.localeCompare(b.name)));
-      const prods = [...productRows].sort((a, b) => a.name.localeCompare(b.name));
-      setProducts(prods);
-      if (!loadReported.current) {
-        loadReported.current = true;
-        preloadImages(prods.map((p) => p.imageUrl));
-        onLoad?.();
-      }
-    }).catch(() => { onLoad?.(); });
-  }, [onLoad]);
+      setProducts([...productRows].sort((a, b) => a.name.localeCompare(b.name)));
+    }).catch(() => {});
+  }, [shouldFetch]);
 
   // ── Tab scroll state ─────────────────────────────────────────────────────────
   const updateScrollState = () => {
@@ -249,6 +256,12 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
       }))
     : [];
 
+  const servingLabel = selectedProduct
+    ? [selectedProduct.servingSize, selectedProduct.servingMeasure && `(${selectedProduct.servingMeasure})`]
+        .filter(Boolean)
+        .join(' ')
+    : '';
+
   return (
     <>
       <section id="produtos" ref={sectionRef} className="bg-gradient-to-br from-accent/20 to-primary/10 py-16">
@@ -439,6 +452,7 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
                           <img
                             src={product.imageUrl}
                             alt={product.name}
+                            loading="lazy"
                             className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
                           />
                         ) : (
@@ -557,13 +571,15 @@ export default function ExploreProducts({ onLoad }: { onLoad?: () => void }) {
                     Informação Nutricional
                   </div>
                   <div className="px-4 py-2.5 border-b border-border bg-muted/30 space-y-0.5">
-                    <p className="text-muted-foreground">Porção por embalagem: cerca de 4 porções</p>
-                    <p className="font-semibold text-foreground">Porção: 10 g (1 xícara)</p>
+                    {selectedProduct.servingsPerPackage && (
+                      <p className="text-muted-foreground">Porção por embalagem: {selectedProduct.servingsPerPackage}</p>
+                    )}
+                    <p className="font-semibold text-foreground">Porção: {servingLabel || '—'}</p>
                   </div>
                   <div className="grid grid-cols-[1fr_3rem_3rem_3rem] border-b-2 border-foreground/20 bg-muted/20">
                     <div className="px-4 py-2" />
                     <div className="py-2 text-center font-bold text-foreground">100g</div>
-                    <div className="py-2 text-center font-bold text-foreground">10g</div>
+                    <div className="py-2 text-center font-bold text-foreground">{selectedProduct.servingSize || '—'}</div>
                     <div className="py-2 text-center font-bold text-foreground">%VD*</div>
                   </div>
                   {nutritionRows.map((row, i) => (

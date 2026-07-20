@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Pencil, Trash2, Loader2, X, Shield, ShieldOff, RefreshCw, Copy, Check } from 'lucide-react';
 import { useAuth } from '../../lib/useAuth';
+import { apiFetch } from '../../lib/api';
 
 type AdminUser = {
   email: string;
@@ -91,7 +92,7 @@ function AdminModal({
       if (!isEdit) { body.email = email.trim(); body.password = password; }
       else if (password) body.password = password;
 
-      const res = await fetch(url, {
+      const res = await apiFetch(url, {
         method: isEdit ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -226,7 +227,7 @@ export default function UsersPage() {
   const [deletingEmail, setDeletingEmail] = useState<string | null>(null);
 
   const reload = () => {
-    fetch('/api/admins.php')
+    apiFetch('/api/admins.php')
       .then((r) => {
         if (r.status === 403) { setForbidden(true); return null; }
         return r.json();
@@ -243,7 +244,7 @@ export default function UsersPage() {
   const handleDelete = async (admin: AdminUser) => {
     if (!confirm(`Excluir o admin "${admin.email}"?\nEsta ação não pode ser desfeita.`)) return;
     setDeletingEmail(admin.email);
-    await fetch(`/api/admins.php?email=${encodeURIComponent(admin.email)}`, { method: 'DELETE' });
+    await apiFetch(`/api/admins.php?email=${encodeURIComponent(admin.email)}`, { method: 'DELETE' });
     setDeletingEmail(null);
     reload();
   };

@@ -56,7 +56,6 @@ export default function Footer() {
               <img src={falLogo} alt="FAL Alimentos" className="h-16 object-contain" />
             </div>
             <p className="text-gray-800 mb-6 text-base leading-relaxed">
-              Levando o sabor autêntico do Nordeste brasileiro para famílias de todo o país.
             </p>
             <div className="flex gap-4 mb-8">
               <a

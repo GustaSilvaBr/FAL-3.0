@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { SectionBanners } from '../../lib/types';
+import { apiFetch } from '../../lib/api';
+
 
 const PHOTO_DURATION = 5000;
 const SLIDE_VW = 62;
@@ -8,13 +10,13 @@ const PEEK_VW  = 16;
 
 type Slide = { src: string; alt: string };
 
-export default function Hero() {
+export default function Hero({ onLoad }: { onLoad?: () => void }) {
   const [slides, setSlides] = useState<Slide[]>([]);
   const [displayIdx, setDisplayIdx] = useState(1); // position within extSlides
   const [animated, setAnimated]     = useState(true);
 
   useEffect(() => {
-    fetch('/api/sections.php?id=banners')
+    apiFetch('/api/sections.php?id=banners')
       .then((r) => r.json())
       .then((data: SectionBanners) => {
         if (data.items?.length) {
@@ -22,9 +24,10 @@ export default function Hero() {
           items.forEach(({ src }) => { new Image().src = src; });
           setSlides(items);
         }
+        onLoad?.();
       })
-      .catch(() => {});
-  }, []);
+      .catch(() => { onLoad?.(); });
+  }, [onLoad]);
 
   // Auto-advance
   useEffect(() => {
@@ -46,7 +49,7 @@ export default function Hero() {
 
   if (slides.length === 0) {
     return (
-      <div id="home" className="w-full mt-4 animate-pulse rounded-2xl"
+      <div id="home" className="w-full mt-4 animate-pulse rounded-2xl bg-gradient-to-br from-accent/20 to-primary/10"
         style={{ height: `${SLIDE_VW * 9 / 16}vw` }} />
     );
   }
